@@ -13,6 +13,8 @@ export default function* loginWatchers() {
     takeEvery(EntryActionTypes.AUTHENTICATE, ({ payload: { data } }) =>
       services.authenticate(data),
     ),
+    takeEvery(EntryActionTypes.SIGN_UP, ({ payload: { data } }) => services.signUp(data)),
+    takeEvery(EntryActionTypes.WITH_GOOGLE_AUTHENTICATE, () => services.authenticateWithGoogle()),
     takeEvery(EntryActionTypes.AUTHENTICATE_ERROR_CLEAR, () => services.clearAuthenticateError()),
     takeEvery(EntryActionTypes.TOTP_VERIFY, ({ payload: { data } }) => services.verifyTotp(data)),
     takeEvery(EntryActionTypes.TOTP_CHALLENGE_CANCEL, () => services.cancelTotpChallenge()),

@@ -4,6 +4,8 @@
  */
 
 import { call, put, select } from 'redux-saga/effects';
+import { nanoid } from 'nanoid';
+import { replace } from '../../../lib/redux-router';
 
 import selectors from '../../../selectors';
 import actions from '../../../actions';
@@ -11,6 +13,10 @@ import api from '../../../api';
 import i18n from '../../../i18n';
 import { setAccessToken } from '../../../utils/access-token-storage';
 import AccessTokenSteps from '../../../constants/AccessTokenSteps';
+import Paths from '../../../constants/Paths';
+
+const GOOGLE_STATE_KEY = 'google-state';
+const GOOGLE_NONCE_KEY = 'google-nonce';
 
 export function* initializeLogin() {
   const { item: bootstrap } = yield call(api.getBootstrap); // TODO: handle error
@@ -18,12 +24,12 @@ export function* initializeLogin() {
   yield put(actions.initializeLogin(bootstrap));
 }
 
-export function* authenticate(data) {
-  yield put(actions.authenticate(data));
-
+// Every way in ends in the same access token response, terms and TOTP steps
+// included, so they share one success and failure path.
+function* requestAccessToken(request, data) {
   let accessToken;
   try {
-    ({ item: accessToken } = yield call(api.createAccessToken, data));
+    ({ item: accessToken } = yield call(request, data));
   } catch (error) {
     let terms;
     if (error.step === AccessTokenSteps.ACCEPT_TERMS) {
@@ -36,6 +42,64 @@ export function* authenticate(data) {
 
   yield call(setAccessToken, accessToken);
   yield put(actions.authenticate.success(accessToken));
+}
+
+export function* authenticate(data) {
+  yield put(actions.authenticate(data));
+  yield call(requestAccessToken, api.createAccessToken, data);
+}
+
+export function* signUp(data) {
+  yield put(actions.authenticate());
+  yield call(requestAccessToken, api.signUp, data);
+}
+
+export function* authenticateWithGoogle() {
+  const { google } = yield select(selectors.selectBootstrap);
+
+  yield put(actions.authenticate());
+
+  const state = nanoid();
+  window.sessionStorage.setItem(GOOGLE_STATE_KEY, state);
+
+  const nonce = nanoid();
+  window.sessionStorage.setItem(GOOGLE_NONCE_KEY, nonce);
+
+  const url = new URL(google.authorizationUrl);
+  url.searchParams.set('state', state);
+  url.searchParams.set('nonce', nonce);
+
+  window.location.href = url.href;
+}
+
+export function* authenticateWithGoogleCallback() {
+  const params = new URLSearchParams(window.location.search);
+
+  const state = window.sessionStorage.getItem(GOOGLE_STATE_KEY);
+  window.sessionStorage.removeItem(GOOGLE_STATE_KEY);
+
+  const nonce = window.sessionStorage.getItem(GOOGLE_NONCE_KEY);
+  window.sessionStorage.removeItem(GOOGLE_NONCE_KEY);
+
+  yield put(replace(Paths.LOGIN));
+
+  // Closing Google's account chooser is not an error worth showing.
+  if (params.get('error') === 'access_denied') {
+    return;
+  }
+
+  const code = params.get('code');
+
+  if (params.get('error') || !code || !state || !nonce || params.get('state') !== state) {
+    yield put(actions.authenticate.failure(new Error('Google sign-in failed')));
+    return;
+  }
+
+  yield put(actions.authenticate());
+  yield call(requestAccessToken, api.exchangeForAccessTokenWithGoogle, {
+    code,
+    nonce,
+  });
 }
 
 export function* clearAuthenticateError() {
@@ -134,6 +198,9 @@ export function* cancelTotpChallenge() {
 export default {
   initializeLogin,
   authenticate,
+  signUp,
+  authenticateWithGoogle,
+  authenticateWithGoogleCallback,
   clearAuthenticateError,
   acceptTerms,
   cancelTerms,

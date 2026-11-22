@@ -12,6 +12,8 @@ const getUsers = (headers) => socket.get('/users', undefined, headers);
 
 const createUser = (data, headers) => socket.post('/users', data, headers);
 
+const signUp = (data, headers) => http.post('/users/sign-up?withHttpOnlyToken=true', data, headers);
+
 /* const getUser = (id, headers) =>
   socket.get(`/users/${id}`, undefined, headers).then((body) => ({
     ...body,
@@ -57,6 +59,7 @@ const deleteUser = (id, headers) => socket.delete(`/users/${id}`, undefined, hea
 export default {
   getUsers,
   createUser,
+  signUp,
   // getUser,
   getCurrentUser,
   updateUser,

@@ -136,6 +136,17 @@ module.exports.custom = {
     process.env.DEFAULT_ADMIN_EMAIL && process.env.DEFAULT_ADMIN_EMAIL.toLowerCase(),
 
   showDetailedAuthErrors: process.env.SHOW_DETAILED_AUTH_ERRORS === 'true',
+
+  // Lets anyone create a board user account from the login page, with a
+  // password or with Google. Off by default: an instance is invite-only unless
+  // its operator decides otherwise.
+  signUpEnabled: process.env.SIGN_UP_ENABLED === 'true',
+
+  // Sign in with Google turns on when both are set. Existing users sign in by
+  // their verified Google email; new ones are created only when sign-up is on.
+  googleClientId: process.env.GOOGLE_CLIENT_ID,
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+
   outgoingProxy: process.env.OUTGOING_PROXY,
   outgoingBlockedIps: process.env.OUTGOING_BLOCKED_IPS,
   outgoingBlockedHosts: process.env.OUTGOING_BLOCKED_HOSTS,

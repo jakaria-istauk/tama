@@ -78,6 +78,18 @@ services:
       # It should not be enabled without a rate limiter for security reasons.
       # - SHOW_DETAILED_AUTH_ERRORS=false
 
+      # Set to true to let anyone create a board user account from the login page,
+      # with a password or with Google.
+      # - SIGN_UP_ENABLED=false
+
+      # Sign in with Google. Create an OAuth client ID (type "Web application") in the
+      # Google Cloud console and add <BASE_URL>/google-callback as an authorized redirect URI.
+      # Existing users sign in by their verified Google email; new accounts need SIGN_UP_ENABLED=true.
+      # - GOOGLE_CLIENT_ID=
+      # - GOOGLE_CLIENT_SECRET=
+      # Optionally store in secrets - then GOOGLE_CLIENT_SECRET should not be set
+      # - GOOGLE_CLIENT_SECRET__FILE=/run/secrets/google_client_secret
+
       # All outgoing HTTP requests (SMTP, webhooks, Apprise notifications, favicon fetching, etc.)
       # will be sent through this proxy if set.
       # If commented out, an internal Squid proxy will be started inside the container,

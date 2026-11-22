@@ -17,6 +17,18 @@ const clearAuthenticateError = () => ({
   payload: {},
 });
 
+const authenticateWithGoogle = () => ({
+  type: EntryActionTypes.WITH_GOOGLE_AUTHENTICATE,
+  payload: {},
+});
+
+const signUp = (data) => ({
+  type: EntryActionTypes.SIGN_UP,
+  payload: {
+    data,
+  },
+});
+
 const acceptTerms = (signature) => ({
   type: EntryActionTypes.TERMS_ACCEPT,
   payload: {
@@ -51,6 +63,8 @@ const cancelTotpChallenge = () => ({
 export default {
   authenticate,
   clearAuthenticateError,
+  authenticateWithGoogle,
+  signUp,
   acceptTerms,
   cancelTerms,
   updateTermsLanguage,

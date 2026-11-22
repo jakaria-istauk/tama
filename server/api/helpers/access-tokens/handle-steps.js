@@ -56,11 +56,9 @@ module.exports = {
 
     if (!internalConfig.isInitialized) {
       if (inputs.user.role === User.Roles.ADMIN) {
-        if (inputs.user.termsSignature) {
-          await InternalConfig.qm.updateOneMain({
-            isInitialized: true,
-          });
-        }
+        await InternalConfig.qm.updateOneMain({
+          isInitialized: true,
+        });
       } else {
         throw Errors.ADMIN_LOGIN_REQUIRED_TO_INITIALIZE_INSTANCE;
       }
@@ -114,18 +112,6 @@ module.exports = {
 
       return pendingToken;
     };
-
-    if (!sails.hooks.terms.isSignatureValid(inputs.user.termsSignature)) {
-      const pendingToken = await issuePendingToken(AccessTokenSteps.ACCEPT_TERMS);
-
-      throw {
-        termsAcceptanceRequired: {
-          pendingToken,
-          message: 'Terms acceptance required',
-          step: AccessTokenSteps.ACCEPT_TERMS,
-        },
-      };
-    }
 
     if (inputs.user.isTotpEnabled) {
       const trustCookie =

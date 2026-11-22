@@ -162,6 +162,7 @@ load_secret SECRET_KEY
 load_secret DEFAULT_ADMIN_PASSWORD
 load_secret S3_SECRET_ACCESS_KEY
 load_secret SMTP_PASSWORD
+load_secret GOOGLE_CLIENT_SECRET
 
 ensure_runtime_directories
 

@@ -8,6 +8,7 @@ import { push } from '../../../lib/redux-router';
 
 import selectors from '../../../selectors';
 import { setLoginRedirect, takeLoginRedirect } from '../../../utils/login-redirect-storage';
+import { authenticateWithGoogleCallback } from './login';
 import ActionTypes from '../../../constants/ActionTypes';
 import Paths from '../../../constants/Paths';
 
@@ -71,6 +72,10 @@ export function* handleLocationChange() {
   }
 
   switch (pathsMatch.pattern.path) {
+    case Paths.GOOGLE_CALLBACK:
+      yield call(authenticateWithGoogleCallback);
+
+      break;
     default:
   }
 }

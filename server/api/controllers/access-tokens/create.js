@@ -214,7 +214,9 @@ module.exports = {
         : Errors.INVALID_CREDENTIALS;
     }
 
-    const isPasswordValid = await bcrypt.compare(inputs.password, user.password);
+    // Accounts made with Google have no password until their owner sets one.
+    const isPasswordValid =
+      !!user.password && (await bcrypt.compare(inputs.password, user.password));
 
     if (!isPasswordValid) {
       sails.log.warn(`Invalid password! (IP: ${remoteAddress})`);

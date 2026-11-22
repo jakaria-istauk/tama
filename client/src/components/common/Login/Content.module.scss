@@ -51,6 +51,27 @@
     margin-bottom: 32px;
   }
 
+  .googleButton {
+    align-items: center;
+    background: #fff;
+    border: 1px solid rgba(9, 30, 66, 0.25);
+    color: #172b4d;
+    display: flex;
+    font-size: 16px;
+    gap: 10px;
+    justify-content: center;
+
+    &:hover,
+    &:focus {
+      background: #f4f5f7;
+    }
+  }
+
+  .googleIcon {
+    height: 18px;
+    width: 18px;
+  }
+
   .grid {
     height: 100%;
     margin: 0;
@@ -90,6 +111,30 @@
     display: flex;
     justify-content: center;
     margin-bottom: 40px;
+  }
+
+  .modeToggle {
+    color: #6b808c;
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  .modeToggleButton {
+    background: none;
+    border: none;
+    color: #2185d0;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
   }
 
   .wrapper {
