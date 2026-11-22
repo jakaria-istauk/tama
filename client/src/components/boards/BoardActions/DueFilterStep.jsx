@@ -99,7 +99,11 @@ const DueFilterStep = React.memo(({ value, onChange, onBack, onClose }) => {
               className={classNames(styles.item, isActive && styles.itemActive)}
               onClick={handlePresetClick}
             >
-              <Icon fitted name={isActive ? 'check' : 'calendar outline'} className={styles.itemIcon} />
+              <Icon
+                fitted
+                name={isActive ? 'check' : 'calendar outline'}
+                className={styles.itemIcon}
+              />
               {t(`common.dueFilterRanges.${range}`)}
             </button>
           );
@@ -109,7 +113,11 @@ const DueFilterStep = React.memo(({ value, onChange, onBack, onClose }) => {
           className={classNames(styles.item, isCustomActive && styles.itemActive)}
           onClick={handleCustomClick}
         >
-          <Icon fitted name={isCustomActive ? 'check' : 'calendar alternate outline'} className={styles.itemIcon} />
+          <Icon
+            fitted
+            name={isCustomActive ? 'check' : 'calendar alternate outline'}
+            className={styles.itemIcon}
+          />
           {t('common.dueFilterRanges.custom')}
         </button>
         {isCustomOpened && (
