@@ -658,6 +658,11 @@
         font-weight: 600;
       }
 
+      .badge.done {
+        background: color-mix(in srgb, #10b981 16%, transparent);
+        color: #059669;
+      }
+
       .badge.later {
         background: var(--bg-soft);
         color: var(--muted);
@@ -915,7 +920,7 @@
                 </tr>
                 <tr>
                   <th scope="row">Views and custom fields</th>
-                  <td class="us yes">Kanban, grid and list views, custom fields, all included</td>
+                  <td class="us yes">Kanban, grid, list and calendar views, custom fields, all included</td>
                   <td class="them no">Extra views and fields often on paid plans</td>
                 </tr>
                 <tr>
@@ -1069,19 +1074,20 @@ docker compose run --rm tama \
       <section id="roadmap">
         <div class="wrap">
           <div class="section-head">
-            <h2>What's coming next</h2>
+            <h2>Roadmap</h2>
             <p>
-              The features people miss most when they leave a hosted board, planned in the open.
+              The features people miss most when they leave a hosted board: what has shipped and
+              what comes next, planned in the open.
             </p>
           </div>
           <div class="roadmap">
             <article class="feature">
-              <h3>Saved filters <span class="badge">In review</span></h3>
+              <h3>Saved filters <span class="badge done">Shipped</span></h3>
               <p>Save a board filter by member, label, creator or due date and get back to it in one click.</p>
             </article>
             <article class="feature">
-              <h3>Calendar view <span class="badge">Next</span></h3>
-              <p>See every card with a due date on a month or week calendar, and drag to reschedule.</p>
+              <h3>Calendar view <span class="badge done">Shipped</span></h3>
+              <p>See every card with a due date on a month calendar, and drag to reschedule.</p>
             </article>
             <article class="feature">
               <h3>Card templates <span class="badge">Next</span></h3>
