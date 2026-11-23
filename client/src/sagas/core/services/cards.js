@@ -124,7 +124,38 @@ export function* handleCardsUpdate(cards, activities) {
   yield put(actions.handleCardsUpdate(cards, activities));
 }
 
+// Duplicates the template into the list, as a normal card named as typed or as the template
+function* createCardFromTemplate(listId, { templateId, name }, index, autoOpen) {
+  const list = yield select(selectors.selectListById, listId);
+  const template = yield select(selectors.selectCardById, templateId);
+
+  if (!template) {
+    return;
+  }
+
+  const data = {
+    listId,
+    name: name || template.name,
+  };
+
+  if (isListFinite(list)) {
+    data.position = yield select(selectors.selectNextCardPosition, listId, index);
+  }
+
+  // eslint-disable-next-line no-use-before-define
+  const card = yield call(duplicateCard, templateId, data);
+
+  if (card && autoOpen) {
+    yield call(goToCard, card.id);
+  }
+}
+
 export function* createCard(listId, data, index, autoOpen) {
+  if (data.templateId) {
+    yield call(createCardFromTemplate, listId, data, index, autoOpen);
+    return;
+  }
+
   const localId = yield call(createLocalId);
   const list = yield select(selectors.selectListById, listId);
 
@@ -563,15 +594,17 @@ export function* duplicateCard(id, data) {
       ...nextData,
       creatorUserId: currentUserMembership.userId,
       isClosed: typeState === ListTypeStates.CLOSED,
-      ...(sourceCard && {
-        name: `${sourceCard.name} (${i18n.t('common.copy', {
-          context: 'inline',
-        })})`,
-      }),
+      ...(sourceCard &&
+        !nextData.name && {
+          name: `${sourceCard.name} (${i18n.t('common.copy', {
+            context: 'inline',
+          })})`,
+        }),
     }),
   );
 
-  if (id === currentCardId) {
+  // A template is not shown on the board, so stay on the card it was saved from
+  if (id === currentCardId && !nextData.isTemplate) {
     yield call(goToBoard, boardId);
   }
 
@@ -606,7 +639,7 @@ export function* duplicateCard(id, data) {
       type: ToastTypes.SOURCE_CARD_NOT_COPYABLE,
     });
 
-    return;
+    return undefined;
   }
 
   if (card.coverAttachmentId) {
@@ -633,12 +666,35 @@ export function* duplicateCard(id, data) {
       customFieldValues,
     ),
   );
+
+  return card;
 }
 
 export function* duplicateCurrentCard(data) {
   const { cardId } = yield select(selectors.selectPath);
 
   yield call(duplicateCard, cardId, data);
+}
+
+export function* saveCardAsTemplate(id) {
+  const card = yield select(selectors.selectCardById, id);
+
+  const template = yield call(duplicateCard, id, {
+    name: card.name,
+    isTemplate: true,
+  });
+
+  if (template) {
+    yield call(toast, {
+      type: ToastTypes.CARD_SAVED_AS_TEMPLATE,
+    });
+  }
+}
+
+export function* saveCurrentCardAsTemplate() {
+  const { cardId } = yield select(selectors.selectPath);
+
+  yield call(saveCardAsTemplate, cardId);
 }
 
 export function* copyCard(id) {
@@ -790,6 +846,8 @@ export default {
   transferCurrentCard,
   duplicateCard,
   duplicateCurrentCard,
+  saveCardAsTemplate,
+  saveCurrentCardAsTemplate,
   copyCard,
   cutCard,
   pasteCard,

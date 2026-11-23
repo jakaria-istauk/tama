@@ -311,7 +311,8 @@ module.exports = {
       user: values.creatorUser,
     });
 
-    if (values.creatorUser.subscribeToOwnCards) {
+    // Templates are not worked on, so nobody needs their notifications
+    if (values.creatorUser.subscribeToOwnCards && !card.isTemplate) {
       try {
         await CardSubscription.qm.createOne({
           cardId: card.id,

@@ -150,6 +150,18 @@ const duplicateCurrentCard = (data = {}) => ({
   },
 });
 
+const saveCardAsTemplate = (id) => ({
+  type: EntryActionTypes.CARD_SAVE_AS_TEMPLATE,
+  payload: {
+    id,
+  },
+});
+
+const saveCurrentCardAsTemplate = () => ({
+  type: EntryActionTypes.CURRENT_CARD_SAVE_AS_TEMPLATE,
+  payload: {},
+});
+
 const copyCard = (id) => ({
   type: EntryActionTypes.CARD_COPY,
   payload: {
@@ -227,6 +239,8 @@ export default {
   transferCurrentCard,
   duplicateCard,
   duplicateCurrentCard,
+  saveCardAsTemplate,
+  saveCurrentCardAsTemplate,
   copyCard,
   cutCard,
   pasteCard,

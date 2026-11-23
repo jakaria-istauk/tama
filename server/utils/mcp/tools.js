@@ -54,7 +54,8 @@ const pickCardRelations = (cards, included) => {
 
 // Board responses only carry cards of finite lists (active, closed); cards of endless lists
 // (archive, trash) are paged through `cards/index`
-const getCards = async ({ boardId, listId, search }, req) => {
+// Templates are hidden like they are in the board views, unless asked for
+const getCards = async ({ boardId, listId, search, includeTemplates }, req) => {
   const { included } = await runAction('boards/show', { id: boardId }, req);
 
   if (listId) {
@@ -71,11 +72,16 @@ const getCards = async ({ boardId, listId, search }, req) => {
         req,
       );
 
-      return pickCardRelations(items, cardsIncluded);
+      return pickCardRelations(
+        items.filter((card) => includeTemplates || !card.isTemplate),
+        cardsIncluded,
+      );
     }
   }
 
-  let cards = listId ? included.cards.filter((card) => card.listId === listId) : included.cards;
+  let cards = included.cards.filter(
+    (card) => (!listId || card.listId === listId) && (includeTemplates || !card.isTemplate),
+  );
 
   if (search) {
     cards = cards.filter((card) => matchesSearch(card, search));
@@ -193,11 +199,12 @@ module.exports = [
   {
     name: 'list_cards',
     description:
-      'List the cards of a board, or of one list on it, with their labels and members. Archive and trash lists return their latest cards.',
+      'List the cards of a board, or of one list on it, with their labels and members. Archive and trash lists return their latest cards. Card templates are left out unless includeTemplates is set.',
     annotations: READ_ONLY,
     inputSchema: {
       boardId: id('Board ID'),
       listId: id('Only cards of this list').optional(),
+      includeTemplates: z.boolean().optional().describe('Also list card templates'),
     },
     handler: (inputs, req) => getCards(inputs, req),
   },
@@ -214,12 +221,13 @@ module.exports = [
   {
     name: 'search_cards',
     description:
-      'Search the cards of a board by words in their name or description, optionally in one list.',
+      'Search the cards of a board by words in their name or description, optionally in one list. Card templates are left out unless includeTemplates is set.',
     annotations: READ_ONLY,
     inputSchema: {
       boardId: id('Board ID'),
       query: z.string().trim().min(1).max(128).describe('Words that must all appear'),
       listId: id('Only cards of this list').optional(),
+      includeTemplates: z.boolean().optional().describe('Also search card templates'),
     },
     handler: (inputs, req) =>
       getCards(
@@ -227,6 +235,7 @@ module.exports = [
           boardId: inputs.boardId,
           listId: inputs.listId,
           search: inputs.query,
+          includeTemplates: inputs.includeTemplates,
         },
         req,
       ),
@@ -254,6 +263,82 @@ module.exports = [
         {
           ...inputs,
           position,
+        },
+        req,
+      );
+    },
+  },
+  {
+    name: 'list_card_templates',
+    description:
+      'List the card templates of a board. Use create_card_from_template to make a card from one.',
+    annotations: READ_ONLY,
+    inputSchema: {
+      boardId: id('Board ID'),
+    },
+    async handler(inputs, req) {
+      const { included } = await runAction('boards/show', { id: inputs.boardId }, req);
+
+      return pickCardRelations(
+        included.cards.filter((card) => card.isTemplate),
+        included,
+      );
+    },
+  },
+  {
+    name: 'create_card_from_template',
+    description:
+      'Create a card in a list from a card template, copying its description, labels, members, task lists, attachments and custom fields. It goes to the end of the list unless a position is set.',
+    annotations: WRITE,
+    inputSchema: {
+      templateCardId: id('Card template ID'),
+      listId: id('List ID on the board of the template'),
+      name: z.string().min(1).max(1024).optional().describe('Defaults to the template name'),
+      position: z.number().min(0).optional(),
+    },
+    async handler(inputs, req) {
+      const { item: template } = await runAction('cards/show', { id: inputs.templateCardId }, req);
+
+      if (!template.isTemplate) {
+        throw new ActionError('cardTemplateNotFound', 'Card template not found');
+      }
+
+      const position = _.isUndefined(inputs.position)
+        ? await getCardEndPosition(inputs.listId)
+        : inputs.position;
+
+      return runAction(
+        'cards/duplicate',
+        {
+          position,
+          id: template.id,
+          listId: inputs.listId,
+          name: inputs.name || template.name,
+          isTemplate: false,
+        },
+        req,
+      );
+    },
+  },
+  {
+    name: 'save_card_as_template',
+    description:
+      'Save a copy of a card as a card template on its board. The card itself is left as it is.',
+    annotations: WRITE,
+    inputSchema: {
+      cardId: id('Card ID'),
+      name: z.string().min(1).max(1024).optional().describe('Defaults to the card name'),
+    },
+    async handler(inputs, req) {
+      const { item: card } = await runAction('cards/show', { id: inputs.cardId }, req);
+
+      return runAction(
+        'cards/duplicate',
+        {
+          id: card.id,
+          position: await getCardEndPosition(card.listId),
+          name: inputs.name || card.name,
+          isTemplate: true,
         },
         req,
       );

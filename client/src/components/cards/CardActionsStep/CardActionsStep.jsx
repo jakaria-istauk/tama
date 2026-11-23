@@ -126,6 +126,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
     if (canEditName) menuItemsTotal += 1;
     if (!board.limitCardTypesToDefaultOne && canEditType) menuItemsTotal += 1;
     if (canDuplicate) menuItemsTotal += 1;
+    if (canDuplicate && !card.isTemplate) menuItemsTotal += 1;
     if (canMove) menuItemsTotal += 1;
     if (prevList && canRestore) menuItemsTotal += 1;
 
@@ -150,6 +151,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
   }, [
     board.limitCardTypesToDefaultOne,
     card.type,
+    card.isTemplate,
     list.type,
     prevList,
     canEditType,
@@ -237,6 +239,11 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
     onClose();
   }, [cardId, onClose, dispatch]);
 
+  const handleSaveAsTemplateClick = useCallback(() => {
+    dispatch(entryActions.saveCardAsTemplate(cardId));
+    onClose();
+  }, [cardId, onClose, dispatch]);
+
   const handleRestoreClick = useCallback(() => {
     dispatch(entryActions.moveCard(cardId, card.prevListId, undefined, true));
   }, [cardId, card.prevListId, dispatch]);
@@ -246,14 +253,16 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
   }, [cardId, dispatch]);
 
   const isInTrashList = list.type === ListTypes.TRASH;
+  // Templates are not worked on, so they skip the trash and are deleted right away
+  const deletesForever = isInTrashList || card.isTemplate;
 
   const handleDeleteConfirm = useCallback(() => {
-    if (isInTrashList) {
+    if (deletesForever) {
       dispatch(entryActions.deleteCard(cardId));
     } else {
       dispatch(entryActions.moveCardToTrash(cardId));
     }
-  }, [cardId, isInTrashList, dispatch]);
+  }, [cardId, deletesForever, dispatch]);
 
   const handleUserSelect = useCallback(
     (userId) => {
@@ -372,13 +381,13 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
       case StepTypes.DELETE:
         return (
           <ConfirmationStep
-            title={isInTrashList ? 'common.deleteCardForever' : 'common.deleteCard'}
+            title={deletesForever ? 'common.deleteCardForever' : 'common.deleteCard'}
             content={
-              isInTrashList
+              deletesForever
                 ? 'common.areYouSureYouWantToDeleteThisCardForever'
                 : 'common.areYouSureYouWantToDeleteThisCard'
             }
-            buttonContent={isInTrashList ? 'action.deleteCardForever' : 'action.deleteCard'}
+            buttonContent={deletesForever ? 'action.deleteCardForever' : 'action.deleteCard'}
             onConfirm={handleDeleteConfirm}
             onBack={handleBack}
           />
@@ -477,6 +486,14 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
               })}
             </Menu.Item>
           )}
+          {canDuplicate && !card.isTemplate && (
+            <Menu.Item className={styles.menuItem} onClick={handleSaveAsTemplateClick}>
+              <Icon name="clone outline" className={styles.menuItemIcon} />
+              {t('action.saveAsTemplate', {
+                context: 'title',
+              })}
+            </Menu.Item>
+          )}
           {canMove && (
             <Menu.Item className={styles.menuItem} onClick={handleMoveClick}>
               <Icon name="share square outline" className={styles.menuItemIcon} />
@@ -505,7 +522,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
           {canDelete && !withActionBar && (
             <Menu.Item className={styles.menuItem} onClick={handleDeleteClick}>
               <Icon name="trash alternate outline" className={styles.menuItemIcon} />
-              {isInTrashList
+              {deletesForever
                 ? t('action.deleteForever', {
                     context: 'title',
                   })
@@ -564,7 +581,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
                   <a className={styles.actionBarItem} onClick={handleDeleteClick}>
                     <Icon fitted name="trash alternate outline" />
                     <span className={styles.actionBarItemText}>
-                      {isInTrashList
+                      {deletesForever
                         ? t('action.deleteForever', {
                             context: 'title',
                           })

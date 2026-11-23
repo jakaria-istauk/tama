@@ -14,6 +14,7 @@ import { useClosableModal } from '../../../hooks';
 import GeneralPane from './GeneralPane';
 import PreferencesPane from './PreferencesPane';
 import NotificationsPane from './NotificationsPane';
+import TemplatesPane from './TemplatesPane';
 
 const BoardSettingsModal = React.memo(() => {
   const openPreferences = useSelector(
@@ -41,6 +42,12 @@ const BoardSettingsModal = React.memo(() => {
         context: 'title',
       }),
       render: () => <PreferencesPane />,
+    },
+    {
+      menuItem: t('common.cardTemplates', {
+        context: 'title',
+      }),
+      render: () => <TemplatesPane />,
     },
     {
       menuItem: t('common.notifications', {

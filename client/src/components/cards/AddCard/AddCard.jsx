@@ -18,6 +18,7 @@ import { useClosable, useForm, useNestedRef } from '../../../hooks';
 import { isComposing, isModifierKeyPressed } from '../../../utils/event-helpers';
 import { CardTypeIcons } from '../../../constants/Icons';
 import SelectCardTypeStep from '../SelectCardTypeStep';
+import SelectCardTemplateStep from '../SelectCardTemplateStep';
 
 import styles from './AddCard.module.scss';
 
@@ -28,6 +29,10 @@ const DEFAULT_DATA = {
 const AddCard = React.memo(({ isOpened, className, onCreate, onClose }) => {
   const { defaultCardType: defaultType, limitCardTypesToDefaultOne: limitTypesToDefaultOne } =
     useSelector(selectors.selectCurrentBoard);
+
+  const hasTemplates = useSelector(
+    (state) => selectors.selectTemplateCardsForCurrentBoard(state).length > 0,
+  );
 
   const [t] = useTranslation();
   const prevDefaultType = usePrevious(defaultType);
@@ -43,6 +48,7 @@ const AddCard = React.memo(({ isOpened, className, onCreate, onClose }) => {
   const [nameFieldRef, handleNameFieldRef] = useNestedRef();
   const [submitButtonRef, handleSubmitButtonRef] = useNestedRef();
   const [selectTypeButtonRef, handleSelectTypeButtonRef] = useNestedRef();
+  const [selectTemplateButtonRef, handleSelectTemplateButtonRef] = useNestedRef();
 
   const submit = useCallback(
     (autoOpen) => {
@@ -108,6 +114,22 @@ const AddCard = React.memo(({ isOpened, className, onCreate, onClose }) => {
     [onClose, submit],
   );
 
+  // The typed title, if any, names the new card; otherwise it takes the template name
+  const handleTemplateSelect = useCallback(
+    (templateId) => {
+      onCreate({
+        templateId,
+        name: data.name.trim(),
+      });
+
+      setData({
+        ...DEFAULT_DATA,
+        type: defaultType,
+      });
+    },
+    [onCreate, defaultType, data.name, setData],
+  );
+
   const handleSelectTypeClose = useCallback(() => {
     deactivateClosable();
     nameFieldRef.current.focus();
@@ -126,7 +148,7 @@ const AddCard = React.memo(({ isOpened, className, onCreate, onClose }) => {
   }, [nameFieldRef]);
 
   const clickAwayProps = useClickAwayListener(
-    [nameFieldRef, submitButtonRef, selectTypeButtonRef],
+    [nameFieldRef, submitButtonRef, selectTypeButtonRef, selectTemplateButtonRef],
     handleAwayClick,
     handleClickAwayCancel,
   );
@@ -151,6 +173,11 @@ const AddCard = React.memo(({ isOpened, className, onCreate, onClose }) => {
   }, [focusNameFieldState]);
 
   const SelectCardTypePopup = usePopup(SelectCardTypeStep, {
+    onOpen: activateClosable,
+    onClose: handleSelectTypeClose,
+  });
+
+  const SelectCardTemplatePopup = usePopup(SelectCardTemplateStep, {
     onOpen: activateClosable,
     onClose: handleSelectTypeClose,
   });
@@ -195,6 +222,19 @@ const AddCard = React.memo(({ isOpened, className, onCreate, onClose }) => {
             {t(`common.${data.type}`)}
           </Button>
         </SelectCardTypePopup>
+        {hasTemplates && (
+          <SelectCardTemplatePopup onSelect={handleTemplateSelect}>
+            <Button
+              {...clickAwayProps} // eslint-disable-line react/jsx-props-no-spreading
+              ref={handleSelectTemplateButtonRef}
+              type="button"
+              icon="clone outline"
+              title={t('common.createFromTemplate')}
+              aria-label={t('common.createFromTemplate')}
+              className={classNames(styles.button, styles.selectTemplateButton)}
+            />
+          </SelectCardTemplatePopup>
+        )}
       </div>
     </Form>
   );

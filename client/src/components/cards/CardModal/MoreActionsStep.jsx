@@ -71,6 +71,11 @@ const MoreActionsStep = React.memo(({ onClose }) => {
     dispatch(entryActions.duplicateCurrentCard());
   }, [dispatch]);
 
+  const handleSaveAsTemplateClick = useCallback(() => {
+    dispatch(entryActions.saveCurrentCardAsTemplate());
+    onClose();
+  }, [onClose, dispatch]);
+
   const handleEditTypeClick = useCallback(() => {
     openStep(StepTypes.EDIT_TYPE);
   }, [openStep]);
@@ -120,6 +125,14 @@ const MoreActionsStep = React.memo(({ onClose }) => {
             <Menu.Item className={styles.menuItem} onClick={handleDuplicateClick}>
               <Icon name="copy outline" className={styles.menuItemIcon} />
               {t('action.duplicateCard', {
+                context: 'title',
+              })}
+            </Menu.Item>
+          )}
+          {canDuplicate && !card.isTemplate && (
+            <Menu.Item className={styles.menuItem} onClick={handleSaveAsTemplateClick}>
+              <Icon name="clone outline" className={styles.menuItemIcon} />
+              {t('action.saveAsTemplate', {
                 context: 'title',
               })}
             </Menu.Item>

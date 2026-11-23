@@ -70,6 +70,8 @@ const ProjectContent = React.memo(() => {
 
   const isInArchiveList = list.type === ListTypes.ARCHIVE;
   const isInTrashList = list.type === ListTypes.TRASH;
+  // Templates are not worked on, so they skip the trash and are deleted right away
+  const deletesForever = isInTrashList || card.isTemplate;
 
   const {
     canEditType,
@@ -247,12 +249,12 @@ const ProjectContent = React.memo(() => {
   }, [dispatch]);
 
   const handleDeleteConfirm = useCallback(() => {
-    if (isInTrashList) {
+    if (deletesForever) {
       dispatch(entryActions.deleteCurrentCard());
     } else {
       dispatch(entryActions.moveCurrentCardToTrash());
     }
-  }, [isInTrashList, dispatch]);
+  }, [deletesForever, dispatch]);
 
   const handleUserSelect = useCallback(
     (userId) => {
@@ -814,18 +816,20 @@ const ProjectContent = React.memo(() => {
                 )}
                 {canDelete && (
                   <ConfirmationPopup
-                    title={isInTrashList ? 'common.deleteCardForever' : 'common.deleteCard'}
+                    title={deletesForever ? 'common.deleteCardForever' : 'common.deleteCard'}
                     content={
-                      isInTrashList
+                      deletesForever
                         ? 'common.areYouSureYouWantToDeleteThisCardForever'
                         : 'common.areYouSureYouWantToDeleteThisCard'
                     }
-                    buttonContent={isInTrashList ? 'action.deleteCardForever' : 'action.deleteCard'}
+                    buttonContent={
+                      deletesForever ? 'action.deleteCardForever' : 'action.deleteCard'
+                    }
                     onConfirm={handleDeleteConfirm}
                   >
                     <Button fluid className={classNames(styles.actionButton, styles.hidable)}>
                       <Icon name="trash alternate outline" className={styles.actionIcon} />
-                      {isInTrashList
+                      {deletesForever
                         ? t('action.deleteForever', {
                             context: 'title',
                           })

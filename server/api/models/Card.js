@@ -32,6 +32,7 @@
  *         - stopwatch
  *         - commentsTotal
  *         - isClosed
+ *         - isTemplate
  *         - listChangedAt
  *         - createdAt
  *         - updatedAt
@@ -120,6 +121,11 @@
  *           default: false
  *           description: Whether the card is closed
  *           example: false
+ *         isTemplate:
+ *           type: boolean
+ *           default: false
+ *           description: Whether the card is a template, hidden from board views and used to create new cards
+ *           example: false
  *         listChangedAt:
  *           type: string
  *           format: date-time
@@ -192,6 +198,11 @@ module.exports = {
       type: 'boolean',
       defaultsTo: false,
       columnName: 'is_closed',
+    },
+    isTemplate: {
+      type: 'boolean',
+      defaultsTo: false,
+      columnName: 'is_template',
     },
     listChangedAt: {
       type: 'ref',
