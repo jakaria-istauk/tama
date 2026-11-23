@@ -339,6 +339,7 @@ export default {
       filterByLists_title: 'Filter By Lists',
       filterByMembers_title: 'Filter By Members',
       filterName: 'Filter name',
+      filters: 'Filters',
       forPersonalProjects: 'For personal projects.',
       forTeamBasedProjects: 'For team-based projects.',
       fromComputer_title: 'From Computer',

@@ -94,6 +94,7 @@ const Filters = React.memo(() => {
   const [t] = useTranslation();
   const [search, setSearch] = useState(board.search);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isDrawerOpened, setIsDrawerOpened] = useState(false);
   // Cache-buster for the "last filter" localStorage bucket below. Bumping it
   // after a write re-runs the memo that reads it, which is all the syncing it
   // needs — nothing here watches storage, so another window's snapshot never
@@ -537,6 +538,34 @@ const Filters = React.memo(() => {
     [currentFilter, dispatch, savedFilters],
   );
 
+  const handleDrawerToggleClick = useCallback(() => {
+    setIsDrawerOpened((prevIsDrawerOpened) => !prevIsDrawerOpened);
+  }, []);
+
+  const handleDrawerCloseClick = useCallback(() => {
+    setIsDrawerOpened(false);
+  }, []);
+
+  // Escape closes the drawer, unless it was meant for something on top of it:
+  // an open popup or the search field handle their own Escape first.
+  useEffect(() => {
+    if (!isDrawerOpened) {
+      return undefined;
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && !event.defaultPrevented && !document.querySelector('.ui.popup')) {
+        setIsDrawerOpened(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isDrawerOpened]);
+
   useDidUpdate(() => {
     setSearch(board.search);
   }, [board.search]);
@@ -549,11 +578,85 @@ const Filters = React.memo(() => {
   const SaveFilterPopup = usePopup(SaveFilterStep);
   const SavedFiltersPopup = usePopup(SavedFiltersStep);
 
-  const isSearchActive = search || isSearchFocused;
   const isListView = board.view === BoardViews.LIST;
+
+  // How many kinds of filter are on, not counting the search, which shows in
+  // the bar already. Drives the badge on the drawer toggle.
+  const activeFilterCount = [
+    userIds.length > 0 || !!board.filterNoMember,
+    labelIds.length > 0 || excludedLabelIds.length > 0,
+    creatorUserIds.length > 0,
+    !!due,
+    isListView && listIds.length > 0,
+  ].filter(Boolean).length;
+
+  const isSearchActive = search || isSearchFocused;
+
+  const searchNode = (
+    <Input
+      ref={handleSearchFieldRef}
+      value={search}
+      placeholder={t('common.searchCards')}
+      maxLength={128}
+      icon={
+        isSearchActive ? <Icon link name="cancel" onClick={handleCancelSearchClick} /> : 'search'
+      }
+      className={classNames(styles.search, !isSearchActive && styles.searchInactive)}
+      onFocus={handleSearchFocus}
+      onKeyDown={handleSearchKeyDown}
+      onChange={handleSearchChange}
+      onBlur={handleSearchBlur}
+    />
+  );
 
   return (
     <>
+      <span className={styles.filter}>{searchNode}</span>
+      <span className={styles.filter}>
+        <button
+          type="button"
+          aria-expanded={isDrawerOpened}
+          aria-controls="board-filters-drawer"
+          className={classNames(
+            styles.drawerToggle,
+            (isDrawerOpened || activeFilterCount > 0) && styles.drawerToggleActive,
+          )}
+          onClick={handleDrawerToggleClick}
+        >
+          <Icon fitted name="filter" />
+          <span className={styles.drawerToggleText}>{t('common.filters')}</span>
+          {activeFilterCount > 0 && (
+            <span className={styles.drawerToggleCount}>{activeFilterCount}</span>
+          )}
+        </button>
+        {hasFilter && (
+          <Tooltip content={t('common.clearFilter')}>
+            <button type="button" className={styles.filterButton} onClick={handleClearClick}>
+              <span className={styles.filterLabel}>
+                <Icon fitted name="close" className={styles.filterLabelIcon} />
+              </span>
+            </button>
+          </Tooltip>
+        )}
+      </span>
+      {isDrawerOpened && (
+        <aside
+          id="board-filters-drawer"
+          aria-label={t('common.filters')}
+          className={styles.drawer}
+        >
+          <div className={styles.drawerHeader}>
+            <span className={styles.drawerTitle}>{t('common.filters')}</span>
+            <button
+              type="button"
+              aria-label={t('action.close')}
+              className={styles.drawerClose}
+              onClick={handleDrawerCloseClick}
+            >
+              <Icon fitted name="close" />
+            </button>
+          </div>
+          <div className={styles.drawerBody}>
       <span className={styles.filter}>
         <BoardMembershipsPopup
           currentUserIds={userIds}
@@ -667,35 +770,12 @@ const Filters = React.memo(() => {
           ))}
         </span>
       )}
-      <span className={styles.filter}>
-        <Input
-          ref={handleSearchFieldRef}
-          value={search}
-          placeholder={t('common.searchCards')}
-          maxLength={128}
-          icon={
-            isSearchActive ? (
-              <Icon link name="cancel" onClick={handleCancelSearchClick} />
-            ) : (
-              'search'
-            )
-          }
-          className={classNames(styles.search, !isSearchActive && styles.searchInactive)}
-          onFocus={handleSearchFocus}
-          onKeyDown={handleSearchKeyDown}
-          onChange={handleSearchChange}
-          onBlur={handleSearchBlur}
-        />
-      </span>
-      <span className={styles.filter}>
+      <span className={classNames(styles.filter, styles.drawerActions)}>
         {hasFilter && (
-          <Tooltip content={t('common.clearFilter')}>
-            <button type="button" className={styles.filterButton} onClick={handleClearClick}>
-              <span className={styles.filterLabel}>
-                <Icon fitted name="close" className={styles.filterLabelIcon} />
-              </span>
-            </button>
-          </Tooltip>
+          <button type="button" className={styles.drawerAction} onClick={handleClearClick}>
+            <Icon name="close" />
+            {t('common.clearFilter')}
+          </button>
         )}
         {/* Takes the place of the clear button once the filter is gone, and
             only while there is something to put back. */}
@@ -745,6 +825,9 @@ const Filters = React.memo(() => {
           </button>
         </SavedFiltersPopup>
       </span>
+          </div>
+        </aside>
+      )}
     </>
   );
 });

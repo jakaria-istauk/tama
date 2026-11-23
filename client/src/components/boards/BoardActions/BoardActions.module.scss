@@ -57,7 +57,9 @@
     margin-right: 8px;
   }
 
+  // The filters drawer is positioned against the bar.
   .wrapper {
     padding: 6px 0;
+    position: relative;
   }
 }
