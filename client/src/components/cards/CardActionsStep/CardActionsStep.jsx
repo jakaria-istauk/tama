@@ -253,14 +253,16 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
   }, [cardId, dispatch]);
 
   const isInTrashList = list.type === ListTypes.TRASH;
+  // Templates are not worked on, so they skip the trash and are deleted right away
+  const deletesForever = isInTrashList || card.isTemplate;
 
   const handleDeleteConfirm = useCallback(() => {
-    if (isInTrashList) {
+    if (deletesForever) {
       dispatch(entryActions.deleteCard(cardId));
     } else {
       dispatch(entryActions.moveCardToTrash(cardId));
     }
-  }, [cardId, isInTrashList, dispatch]);
+  }, [cardId, deletesForever, dispatch]);
 
   const handleUserSelect = useCallback(
     (userId) => {
@@ -379,13 +381,13 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
       case StepTypes.DELETE:
         return (
           <ConfirmationStep
-            title={isInTrashList ? 'common.deleteCardForever' : 'common.deleteCard'}
+            title={deletesForever ? 'common.deleteCardForever' : 'common.deleteCard'}
             content={
-              isInTrashList
+              deletesForever
                 ? 'common.areYouSureYouWantToDeleteThisCardForever'
                 : 'common.areYouSureYouWantToDeleteThisCard'
             }
-            buttonContent={isInTrashList ? 'action.deleteCardForever' : 'action.deleteCard'}
+            buttonContent={deletesForever ? 'action.deleteCardForever' : 'action.deleteCard'}
             onConfirm={handleDeleteConfirm}
             onBack={handleBack}
           />
@@ -520,7 +522,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
           {canDelete && !withActionBar && (
             <Menu.Item className={styles.menuItem} onClick={handleDeleteClick}>
               <Icon name="trash alternate outline" className={styles.menuItemIcon} />
-              {isInTrashList
+              {deletesForever
                 ? t('action.deleteForever', {
                     context: 'title',
                   })
@@ -579,7 +581,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
                   <a className={styles.actionBarItem} onClick={handleDeleteClick}>
                     <Icon fitted name="trash alternate outline" />
                     <span className={styles.actionBarItemText}>
-                      {isInTrashList
+                      {deletesForever
                         ? t('action.deleteForever', {
                             context: 'title',
                           })
