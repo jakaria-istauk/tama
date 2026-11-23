@@ -81,6 +81,8 @@ export default {
       areYouSureYouWantToDeleteThisProject: 'Are you sure you want to delete this project?',
       areYouSureYouWantToDeleteThisTask: 'Are you sure you want to delete this task?',
       areYouSureYouWantToDeleteThisTaskList: 'Are you sure you want to delete this task list?',
+      areYouSureYouWantToDeleteThisTemplate:
+        'Are you sure you want to delete this template? Cards made from it are kept.',
       areYouSureYouWantToDeleteThisUser: 'Are you sure you want to delete this user?',
       areYouSureYouWantToDeleteThisWebhook: 'Are you sure you want to delete this webhook?',
       areYouSureYouWantToEmptyTrash: 'Are you sure you want to empty the trash?',
@@ -143,6 +145,7 @@ export default {
       cardsOnThisListAreCompleteAndReadyToBeArchived:
         'Cards on this list are complete and ready to be archived.',
       cardsOnThisListAreReadyToBeWorkedOn: 'Cards on this list are ready to be worked on.',
+      cardTemplates_title: 'Templates',
       clearFilter: 'Clear filter',
       clickHereOrRefreshPageToUpdate: '<0>Click here</0> or refresh the page to update.',
       clientHostnameInEhlo: 'Client hostname in EHLO',
@@ -175,6 +178,7 @@ export default {
       customFields_title: 'Custom Fields',
       customerPanel_title: 'Customer Panel',
       dangerZone_title: 'Danger Zone',
+      deleteTemplate_title: 'Delete Template',
       disable2fa_title: 'Disable Two-Factor Authentication',
       disable2faWarning:
         'You will need to confirm your current password and a TOTP code. Existing sessions stay signed in.',
@@ -218,6 +222,7 @@ export default {
       never: 'Never',
       noApiKeyCreatedForMcp:
         'No API key yet. Assistants configured with a file or command need one.',
+      noCardTemplates: "No templates yet. Use Save as template in a card's actions to add one.",
       noConnectedApps: 'No apps are connected. Apps you approve through Tama sign-in appear here.',
       noTrustedDevices: 'No trusted devices.',
       openBoardActions: 'Open board actions',
@@ -251,6 +256,7 @@ export default {
       showHiddenProjects: 'Show hidden projects',
       signedInAs: 'Signed in as {{name}}',
       signInWithTama: 'Sign in with Tama',
+      templateName: 'Template name',
       today: 'Today',
       totpCode: 'TOTP code',
       totpOrRecoveryCode: 'TOTP or recovery code',
@@ -621,6 +627,7 @@ export default {
       deleteTask: 'Delete task',
       deleteTaskList: 'Delete task list',
       deleteTask_title: 'Delete Task',
+      deleteTemplate: 'Delete template',
       deleteUser: 'Delete user',
       deleteUser_title: 'Delete User',
       deleteWebhook: 'Delete webhook',
@@ -674,6 +681,7 @@ export default {
       moveList_title: 'Move List',
       nextMonth: 'Next month',
       openMenu: 'Open menu',
+      openTemplate: 'Open template',
       paste: 'Paste',
       previousMonth: 'Previous month',
       regenerate: 'Regenerate',
