@@ -17,20 +17,20 @@ import { Input, Tooltip } from '../../../lib/custom-ui';
 import selectors from '../../../selectors';
 import entryActions from '../../../entry-actions';
 import { useNestedRef } from '../../../hooks';
-import { BoardViews, LabelFilterModes } from '../../../constants/Enums';
+import { BoardViews, DueFilterRanges, LabelFilterModes } from '../../../constants/Enums';
+import { isSameDueFilter, parseDueFilterDate } from '../../../utils/due-filter';
 import UserAvatar from '../../users/UserAvatar';
 import BoardMembershipsStep from '../../board-memberships/BoardMembershipsStep';
 import LabelChip from '../../labels/LabelChip';
 import LabelsStep from '../../labels/LabelsStep';
 import ListsFilterStep from '../../lists/ListsFilterStep';
+import DueFilterStep from './DueFilterStep';
 import SaveFilterStep from './SaveFilterStep';
 import SavedFiltersStep from './SavedFiltersStep';
 import {
-  addSavedFilter,
   clearLastFilter,
   readLastFilter,
-  readSavedFilters,
-  removeSavedFilter,
+  takeLegacySavedFilters,
   writeLastFilter,
 } from './useFilterStorage';
 
@@ -64,6 +64,17 @@ FilterListChip.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
+const formatDueFilterLabel = (due, t) => {
+  if (due.range !== DueFilterRanges.CUSTOM) {
+    return t(`common.dueFilterRanges.${due.range}`);
+  }
+
+  const from = parseDueFilterDate(due.from).toLocaleDateString();
+  const to = parseDueFilterDate(due.to).toLocaleDateString();
+
+  return from === to ? from : `${from} – ${to}`;
+};
+
 const Filters = React.memo(() => {
   const board = useSelector(selectors.selectCurrentBoard);
   const userIds = useSelector(selectors.selectFilterUserIdsForCurrentBoard);
@@ -71,6 +82,9 @@ const Filters = React.memo(() => {
   const excludedLabelIds = useSelector(selectors.selectFilterExcludedLabelIdsForCurrentBoard);
   const listIds = useSelector(selectors.selectFilterListIdsForCurrentBoard);
   const currentUserId = useSelector(selectors.selectCurrentUserId);
+  const savedFilters = useSelector(selectors.selectSavedFiltersForCurrentBoard);
+  const creatorUserIds = board.filterCreatorUserIds;
+  const due = board.filterDue;
 
   const withCurrentUserSelector = useSelector(
     (state) => !!selectors.selectCurrentUserMembershipForCurrentBoard(state),
@@ -80,9 +94,9 @@ const Filters = React.memo(() => {
   const [t] = useTranslation();
   const [search, setSearch] = useState(board.search);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  // Cache-buster for the two localStorage buckets below. Bumping it after a
-  // write re-runs the memos that read them, which is all the syncing they
-  // need — nothing here watches storage, so another window's snapshot never
+  // Cache-buster for the "last filter" localStorage bucket below. Bumping it
+  // after a write re-runs the memo that reads it, which is all the syncing it
+  // needs — nothing here watches storage, so another window's snapshot never
   // arrives uninvited.
   const [storageRev, setStorageRev] = useState(0);
 
@@ -145,8 +159,19 @@ const Filters = React.memo(() => {
       excludedLabelIds,
       listIds,
       noMember: !!board.filterNoMember,
+      creatorUserIds,
+      due,
     }),
-    [board.filterNoMember, board.search, excludedLabelIds, labelIds, listIds, userIds],
+    [
+      board.filterNoMember,
+      board.search,
+      creatorUserIds,
+      due,
+      excludedLabelIds,
+      labelIds,
+      listIds,
+      userIds,
+    ],
   );
 
   const hasFilter =
@@ -155,13 +180,23 @@ const Filters = React.memo(() => {
     excludedLabelIds.length > 0 ||
     listIds.length > 0 ||
     !!board.filterNoMember ||
-    currentFilter.search.length > 0;
+    currentFilter.search.length > 0 ||
+    creatorUserIds.length > 0 ||
+    !!due;
 
-  const savedFilters = useMemo(
-    () => readSavedFilters(currentUserId, board.id),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [board.id, currentUserId, storageRev],
-  );
+  // Saved filters used to live in this browser only. The first time a board
+  // opens after they moved to the server, whatever this browser still holds
+  // for it is saved there and dropped here.
+  useEffect(() => {
+    takeLegacySavedFilters(currentUserId, board.id).forEach(({ name, filter }) => {
+      dispatch(
+        entryActions.createSavedFilterInCurrentBoard({
+          name,
+          filter,
+        }),
+      );
+    });
+  }, [board.id, currentUserId, dispatch]);
 
   // Only looked up while the board is unfiltered, and only to decide whether
   // the restore button is worth showing. Reading it never applies it.
@@ -175,13 +210,15 @@ const Filters = React.memo(() => {
   // highlight in the list and the second-click-to-deactivate behaviour.
   const activeSavedFilterId = useMemo(() => {
     const match = savedFilters.find(
-      (item) =>
-        sameIds(item.userIds || [], currentFilter.userIds) &&
-        sameIds(item.labelIds || [], currentFilter.labelIds) &&
-        sameIds(item.excludedLabelIds || [], currentFilter.excludedLabelIds) &&
-        sameIds(item.listIds || [], currentFilter.listIds) &&
-        !!item.noMember === currentFilter.noMember &&
-        (item.search || '') === currentFilter.search,
+      ({ filter }) =>
+        sameIds(filter.userIds || [], currentFilter.userIds) &&
+        sameIds(filter.labelIds || [], currentFilter.labelIds) &&
+        sameIds(filter.excludedLabelIds || [], currentFilter.excludedLabelIds) &&
+        sameIds(filter.listIds || [], currentFilter.listIds) &&
+        !!filter.noMember === currentFilter.noMember &&
+        (filter.search || '') === currentFilter.search &&
+        sameIds(filter.creatorUserIds || [], currentFilter.creatorUserIds) &&
+        isSameDueFilter(filter.due || null, currentFilter.due),
     );
 
     return match && match.id;
@@ -233,6 +270,47 @@ const Filters = React.memo(() => {
     },
     [dispatch, invalidateLastFilter],
   );
+
+  const handleCreatorSelect = useCallback(
+    (userId) => {
+      dispatch(entryActions.addCreatorToFilterInCurrentBoard(userId));
+    },
+    [dispatch],
+  );
+
+  const handleCreatorDeselect = useCallback(
+    (userId) => {
+      dispatch(entryActions.removeCreatorFromFilterInCurrentBoard(userId));
+      invalidateLastFilter();
+    },
+    [dispatch, invalidateLastFilter],
+  );
+
+  const handleCreatorClick = useCallback(
+    ({
+      currentTarget: {
+        dataset: { id: userId },
+      },
+    }) => {
+      handleCreatorDeselect(userId);
+    },
+    [handleCreatorDeselect],
+  );
+
+  const handleDueChange = useCallback(
+    (nextDue) => {
+      dispatch(entryActions.updateDueFilterInCurrentBoard(nextDue));
+
+      if (!nextDue) {
+        invalidateLastFilter();
+      }
+    },
+    [dispatch, invalidateLastFilter],
+  );
+
+  const handleDueClearClick = useCallback(() => {
+    handleDueChange(null);
+  }, [handleDueChange]);
 
   const handleListSelect = useCallback(
     (listId) => {
@@ -332,6 +410,14 @@ const Filters = React.memo(() => {
       dispatch(entryActions.removeNoMemberFromFilterInCurrentBoard());
     }
 
+    creatorUserIds.forEach((userId) => {
+      dispatch(entryActions.removeCreatorFromFilterInCurrentBoard(userId));
+    });
+
+    if (due) {
+      dispatch(entryActions.updateDueFilterInCurrentBoard(null));
+    }
+
     debouncedSearch.cancel();
     setSearch('');
 
@@ -341,8 +427,10 @@ const Filters = React.memo(() => {
   }, [
     board.filterNoMember,
     board.search,
+    creatorUserIds,
     debouncedSearch,
     dispatch,
+    due,
     excludedLabelIds,
     labelIds,
     listIds,
@@ -374,6 +462,14 @@ const Filters = React.memo(() => {
         dispatch(entryActions.addListToFilterInCurrentBoard(listId));
       });
 
+      (filter.creatorUserIds || []).forEach((userId) => {
+        dispatch(entryActions.addCreatorToFilterInCurrentBoard(userId));
+      });
+
+      if (filter.due) {
+        dispatch(entryActions.updateDueFilterInCurrentBoard(filter.due));
+      }
+
       if (filter.search) {
         debouncedSearch.cancel();
         setSearch(filter.search);
@@ -404,7 +500,7 @@ const Filters = React.memo(() => {
       clearCurrentFilter();
 
       if (item.id !== activeSavedFilterId) {
-        applyFilter(item);
+        applyFilter(item.filter);
       }
     },
     [activeSavedFilterId, applyFilter, clearCurrentFilter],
@@ -412,22 +508,33 @@ const Filters = React.memo(() => {
 
   const handleSavedFilterRemove = useCallback(
     (id) => {
-      removeSavedFilter(currentUserId, board.id, id);
-      setStorageRev((prevStorageRev) => prevStorageRev + 1);
+      dispatch(entryActions.deleteSavedFilter(id));
     },
-    [board.id, currentUserId],
+    [dispatch],
   );
 
+  // Saving under a name already in use replaces that filter rather than
+  // adding a second one with the same name.
   const handleSaveFilter = useCallback(
     (name) => {
-      addSavedFilter(currentUserId, board.id, {
-        name,
-        ...currentFilter,
-      });
+      const existing = savedFilters.find((item) => item.name === name);
 
-      setStorageRev((prevStorageRev) => prevStorageRev + 1);
+      if (existing && existing.isPersisted) {
+        dispatch(
+          entryActions.updateSavedFilter(existing.id, {
+            filter: currentFilter,
+          }),
+        );
+      } else {
+        dispatch(
+          entryActions.createSavedFilterInCurrentBoard({
+            name,
+            filter: currentFilter,
+          }),
+        );
+      }
     },
-    [board.id, currentFilter, currentUserId],
+    [currentFilter, dispatch, savedFilters],
   );
 
   useDidUpdate(() => {
@@ -437,6 +544,8 @@ const Filters = React.memo(() => {
   const BoardMembershipsPopup = usePopup(BoardMembershipsStep);
   const LabelsPopup = usePopup(LabelsStep);
   const ListsFilterPopup = usePopup(ListsFilterStep);
+  const CreatorsPopup = usePopup(BoardMembershipsStep);
+  const DueFilterPopup = usePopup(DueFilterStep);
   const SaveFilterPopup = usePopup(SaveFilterStep);
   const SavedFiltersPopup = usePopup(SavedFiltersStep);
 
@@ -504,6 +613,39 @@ const Filters = React.memo(() => {
             <LabelChip id={labelId} size="small" isExcluded onClick={handleLabelClick} />
           </span>
         ))}
+      </span>
+      <span className={styles.filter}>
+        <CreatorsPopup
+          currentUserIds={creatorUserIds}
+          title="common.filterByCreator"
+          onUserSelect={handleCreatorSelect}
+          onUserDeselect={handleCreatorDeselect}
+        >
+          <button type="button" className={styles.filterButton}>
+            <span className={styles.filterTitle}>{`${t('common.createdBy')}:`}</span>
+            {creatorUserIds.length === 0 && (
+              <span className={styles.filterLabel}>{t('common.all')}</span>
+            )}
+          </button>
+        </CreatorsPopup>
+        {creatorUserIds.map((userId) => (
+          <span key={userId} className={styles.filterItem}>
+            <UserAvatar id={userId} size="tiny" onClick={handleCreatorClick} />
+          </span>
+        ))}
+      </span>
+      <span className={styles.filter}>
+        <DueFilterPopup value={due} onChange={handleDueChange}>
+          <button type="button" className={styles.filterButton}>
+            <span className={styles.filterTitle}>{`${t('common.due')}:`}</span>
+            {!due && <span className={styles.filterLabel}>{t('common.anyTime')}</span>}
+          </button>
+        </DueFilterPopup>
+        {due && (
+          <button type="button" className={styles.filterButton} onClick={handleDueClearClick}>
+            <span className={styles.filterLabel}>{formatDueFilterLabel(due, t)}</span>
+          </button>
+        )}
       </span>
       {isListView && (
         <span className={styles.filter}>

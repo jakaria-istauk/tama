@@ -8,6 +8,7 @@ import { attr, fk } from 'redux-orm';
 import BaseModel from './BaseModel';
 import buildSearchParts from '../utils/build-search-parts';
 import filterCardLabels from '../utils/filter-card-labels';
+import { getDueFilterInterval, isDueDateInInterval } from '../utils/due-filter';
 import { isListFinite } from '../utils/record-helpers';
 import ActionTypes from '../constants/ActionTypes';
 import Config from '../constants/Config';
@@ -387,6 +388,20 @@ export default class extends BaseModel {
 
     if (filterLabelIds.length > 0 || filterExcludedLabelIds.length > 0) {
       cardModels = filterCardLabels(cardModels, filterLabelIds, filterExcludedLabelIds);
+    }
+
+    if (this.board.filterCreatorUserIds.length > 0) {
+      cardModels = cardModels.filter((cardModel) =>
+        this.board.filterCreatorUserIds.includes(cardModel.creatorUserId),
+      );
+    }
+
+    const dueInterval = getDueFilterInterval(this.board.filterDue);
+
+    if (dueInterval) {
+      cardModels = cardModels.filter((cardModel) =>
+        isDueDateInInterval(cardModel.dueDate, dueInterval),
+      );
     }
 
     if (this.board.filterNoMember) {

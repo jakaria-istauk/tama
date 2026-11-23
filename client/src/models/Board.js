@@ -10,6 +10,7 @@ import buildSearchParts from '../utils/build-search-parts';
 import filterCardLabels from '../utils/filter-card-labels';
 import { isListKanban } from '../utils/record-helpers';
 import { recallBoardView } from '../utils/board-view-memory';
+import { getDueFilterInterval, isDueDateInInterval } from '../utils/due-filter';
 import ActionTypes from '../constants/ActionTypes';
 import Config from '../constants/Config';
 import { BoardContexts, BoardViews, LabelFilterModes } from '../constants/Enums';
@@ -74,6 +75,15 @@ export default class extends BaseModel {
       getDefault: () => false,
     }),
     filterLists: many('List', 'filterBoards'),
+    // Plain ids rather than a relation to User: filterUsers already owns the
+    // User <-> Board many-to-many that redux-orm builds for filtering.
+    filterCreatorUserIds: attr({
+      getDefault: () => [],
+    }),
+    // { range, from?, to? } or null, see utils/due-filter.
+    filterDue: attr({
+      getDefault: () => null,
+    }),
   };
 
   static reducer({ type, payload }, Board) {
@@ -323,6 +333,34 @@ export default class extends BaseModel {
         boardModel.update({ filterNoMember: false });
         break;
       }
+      case ActionTypes.CREATOR_TO_BOARD_FILTER_ADD: {
+        const boardModel = Board.withId(payload.boardId);
+
+        if (!boardModel.filterCreatorUserIds.includes(payload.userId)) {
+          boardModel.update({
+            filterCreatorUserIds: [...boardModel.filterCreatorUserIds, payload.userId],
+          });
+        }
+
+        break;
+      }
+      case ActionTypes.CREATOR_FROM_BOARD_FILTER_REMOVE: {
+        const boardModel = Board.withId(payload.boardId);
+
+        boardModel.update({
+          filterCreatorUserIds: boardModel.filterCreatorUserIds.filter(
+            (userId) => userId !== payload.userId,
+          ),
+        });
+
+        break;
+      }
+      case ActionTypes.DUE_BOARD_FILTER_UPDATE:
+        Board.withId(payload.boardId).update({
+          filterDue: payload.due,
+        });
+
+        break;
       default:
     }
   }
@@ -451,6 +489,20 @@ export default class extends BaseModel {
 
     if (filterListIds.length > 0) {
       cardModels = cardModels.filter((cardModel) => filterListIds.includes(cardModel.listId));
+    }
+
+    if (this.filterCreatorUserIds.length > 0) {
+      cardModels = cardModels.filter((cardModel) =>
+        this.filterCreatorUserIds.includes(cardModel.creatorUserId),
+      );
+    }
+
+    const dueInterval = getDueFilterInterval(this.filterDue);
+
+    if (dueInterval) {
+      cardModels = cardModels.filter((cardModel) =>
+        isDueDateInInterval(cardModel.dueDate, dueInterval),
+      );
     }
 
     return cardModels;

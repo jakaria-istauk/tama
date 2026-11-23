@@ -44,12 +44,18 @@
  *                   type: object
  *                   required:
  *                     - notificationServices
+ *                     - savedFilters
  *                   properties:
  *                     notificationServices:
  *                       type: array
  *                       description: Related notification services (for current user)
  *                       items:
  *                         $ref: '#/components/schemas/NotificationService'
+ *                     savedFilters:
+ *                       type: array
+ *                       description: Saved board filters (for current user)
+ *                       items:
+ *                         $ref: '#/components/schemas/SavedFilter'
  *       400:
  *         $ref: '#/components/responses/ValidationError'
  *       401:
@@ -97,10 +103,12 @@ module.exports = {
 
     let user;
     let notificationServices = [];
+    let savedFilters = [];
 
     if (inputs.id === CURRENT_USER_ID || inputs.id === currentUser.id) {
       user = currentUser;
       notificationServices = await NotificationService.qm.getByUserId(currentUser.id);
+      savedFilters = await SavedFilter.qm.getByUserId(currentUser.id);
 
       if (inputs.subscribe && this.req.isSocket) {
         sails.sockets.join(this.req, `user:${user.id}`);
@@ -121,6 +129,7 @@ module.exports = {
       item: sails.helpers.users.presentOne(user, currentUser),
       included: {
         notificationServices,
+        savedFilters,
       },
     };
   },

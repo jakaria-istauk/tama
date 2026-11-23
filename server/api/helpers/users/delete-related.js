@@ -115,6 +115,10 @@ module.exports = {
       userId: userIdOrIds,
     });
 
+    await SavedFilter.qm.delete({
+      userId: userIdOrIds,
+    });
+
     return {
       projectManagers,
       boardMemberships,

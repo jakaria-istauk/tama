@@ -3,12 +3,13 @@
  * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
  */
 
-// LocalStorage helpers behind the two filter-recall behaviours:
+// LocalStorage helpers behind the "last filter" recall: clearing the
+// whole filter via the X leaves a snapshot here, so the next click of the
+// restore button can put it back.
 //
-//   • "last filter" — clearing the whole filter via the X leaves a
-//     snapshot here, so the next click of the restore button can put
-//     it back.
-//   • "saved filters" — named filter recipes, per user and per board.
+// Saved filters used to live here too, per user and per board. They are
+// kept on the server now (the SavedFilter model); takeLegacySavedFilters
+// hands over whatever a browser still holds, once.
 //
 // NOTHING IN HERE IS EVER APPLIED ON ITS OWN. There is no effect that
 // reads a stored filter when a board opens; every read below happens
@@ -33,20 +34,6 @@ const buildKey = (prefix, userId, boardId) => {
   return `${prefix}:${userId}:${boardId}`;
 };
 
-// Stable-ish id for a saved filter. It doesn't need to be globally
-// unique — just unique inside one (user, board) bucket. Time plus a
-// short random suffix is plenty, and reads cleanly when inspecting
-// localStorage by hand.
-const createSavedFilterId = () => {
-  const time = Date.now().toString(36);
-
-  const random = Math.floor(Math.random() * 1e6)
-    .toString(36)
-    .padStart(4, '0');
-
-  return `f-${time}-${random}`;
-};
-
 // A filter worth remembering. Every dimension Community can filter on
 // counts, including the ones Pro has no equivalent for — otherwise a
 // "cards without a member" filter could never be saved.
@@ -57,7 +44,9 @@ const isFilterMeaningful = (filter) =>
     (filter.excludedLabelIds && filter.excludedLabelIds.length > 0) ||
     (filter.listIds && filter.listIds.length > 0) ||
     !!filter.noMember ||
-    (filter.search && filter.search.length > 0));
+    (filter.search && filter.search.length > 0) ||
+    (filter.creatorUserIds && filter.creatorUserIds.length > 0) ||
+    !!filter.due);
 
 // One shape for both buckets. `userIds` / `labelIds` / `search` are the
 // fields Pro reads; the rest are Community-only and additive.
@@ -68,6 +57,8 @@ const normalizeFilter = (filter) => ({
   excludedLabelIds: filter.excludedLabelIds || [],
   listIds: filter.listIds || [],
   noMember: !!filter.noMember,
+  creatorUserIds: filter.creatorUserIds || [],
+  due: filter.due || null,
 });
 
 export const readLastFilter = (userId, boardId) => {
@@ -126,10 +117,10 @@ export const clearLastFilter = (userId, boardId) => {
   }
 };
 
-// A list of { id, name, ...filter } per (user, board). The id is local
-// to this bucket and lets us address one entry for removal. Order:
-// most recently saved first, so the user's last save is easy to spot.
-export const readSavedFilters = (userId, boardId) => {
+// Saved filters this browser kept before they moved to the server, as
+// { name, filter } entries ready to be created there. Reading them also
+// removes them, so they are handed over only once.
+export const takeLegacySavedFilters = (userId, boardId) => {
   const key = buildKey(SAVED_KEY_PREFIX, userId, boardId);
 
   if (!key) {
@@ -143,80 +134,24 @@ export const readSavedFilters = (userId, boardId) => {
       return [];
     }
 
+    window.localStorage.removeItem(key);
+
     const parsed = JSON.parse(raw);
 
     if (!Array.isArray(parsed)) {
       return [];
     }
 
-    return parsed.filter(
-      (entry) =>
-        entry &&
-        typeof entry.id === 'string' &&
-        typeof entry.name === 'string' &&
-        isFilterMeaningful(entry),
-    );
+    return parsed
+      .filter(
+        (entry) =>
+          entry && typeof entry.name === 'string' && entry.name.trim() && isFilterMeaningful(entry),
+      )
+      .map(({ name, ...filter }) => ({
+        name: name.trim(),
+        filter: normalizeFilter(filter),
+      }));
   } catch {
     return [];
   }
-};
-
-const writeSavedFilters = (userId, boardId, entries) => {
-  const key = buildKey(SAVED_KEY_PREFIX, userId, boardId);
-
-  if (!key) {
-    return;
-  }
-
-  try {
-    if (entries.length > 0) {
-      window.localStorage.setItem(key, JSON.stringify(entries));
-    } else {
-      window.localStorage.removeItem(key);
-    }
-  } catch {
-    // See writeLastFilter.
-  }
-};
-
-export const addSavedFilter = (userId, boardId, { name, ...filter }) => {
-  if (!userId || !boardId) {
-    return null;
-  }
-
-  const cleanName = name.trim();
-
-  if (!cleanName) {
-    return null;
-  }
-
-  const cleanFilter = normalizeFilter(filter);
-
-  if (!isFilterMeaningful(cleanFilter)) {
-    return null;
-  }
-
-  const entry = {
-    id: createSavedFilterId(),
-    name: cleanName,
-    ...cleanFilter,
-  };
-
-  const current = readSavedFilters(userId, boardId);
-
-  // Newest first, and re-saving under an existing name overwrites that
-  // entry rather than adding a duplicate.
-  writeSavedFilters(userId, boardId, [entry, ...current.filter((item) => item.name !== cleanName)]);
-
-  return entry;
-};
-
-export const removeSavedFilter = (userId, boardId, id) => {
-  const current = readSavedFilters(userId, boardId);
-
-  writeSavedFilters(
-    userId,
-    boardId,
-    current.filter((entry) => entry.id !== id),
-  );
 };

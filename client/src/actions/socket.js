@@ -36,6 +36,7 @@ const handleSocketReconnect = (
   customFieldValues,
   notifications,
   notificationServices,
+  savedFilters,
 ) => ({
   type: ActionTypes.SOCKET_RECONNECT_HANDLE,
   payload: {
@@ -64,6 +65,7 @@ const handleSocketReconnect = (
     customFieldValues,
     notifications,
     notificationServices,
+    savedFilters,
   },
 });
 

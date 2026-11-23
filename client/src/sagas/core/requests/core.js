@@ -15,7 +15,7 @@ import { UserRoles } from '../../../constants/Enums';
 export function* fetchCore() {
   const {
     item: user,
-    included: { notificationServices: notificationServices1 },
+    included: { notificationServices: notificationServices1, savedFilters },
   } = yield call(request, api.getCurrentUser, true);
 
   let config;
@@ -132,6 +132,7 @@ export function* fetchCore() {
     cards: mergeRecords(card && [card], cards1),
     customFields: mergeRecords(customFields1, customFields2),
     notificationServices: mergeRecords(notificationServices1, notificationServices2),
+    savedFilters,
   };
 }
 

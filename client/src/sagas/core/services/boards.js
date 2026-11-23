@@ -271,6 +271,30 @@ export function* removeNoMemberFromFilterInCurrentBoard() {
   });
 }
 
+export function* addCreatorToFilterInCurrentBoard(userId) {
+  const { boardId } = yield select(selectors.selectPath);
+  yield put({
+    type: ActionTypes.CREATOR_TO_BOARD_FILTER_ADD,
+    payload: { boardId, userId },
+  });
+}
+
+export function* removeCreatorFromFilterInCurrentBoard(userId) {
+  const { boardId } = yield select(selectors.selectPath);
+  yield put({
+    type: ActionTypes.CREATOR_FROM_BOARD_FILTER_REMOVE,
+    payload: { boardId, userId },
+  });
+}
+
+export function* updateDueFilterInCurrentBoard(due) {
+  const { boardId } = yield select(selectors.selectPath);
+  yield put({
+    type: ActionTypes.DUE_BOARD_FILTER_UPDATE,
+    payload: { boardId, due },
+  });
+}
+
 export default {
   createBoard,
   createBoardInCurrentProject,
@@ -289,4 +313,7 @@ export default {
   handleBoardDelete,
   setNoMemberToFilterInCurrentBoard,
   removeNoMemberFromFilterInCurrentBoard,
+  addCreatorToFilterInCurrentBoard,
+  removeCreatorFromFilterInCurrentBoard,
+  updateDueFilterInCurrentBoard,
 };

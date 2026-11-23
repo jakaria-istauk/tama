@@ -302,6 +302,10 @@ module.exports.routes = {
   'POST /api/notification-services/:id/test': 'notification-services/test',
   'DELETE /api/notification-services/:id': 'notification-services/delete',
 
+  'POST /api/boards/:boardId/saved-filters': 'saved-filters/create',
+  'PATCH /api/saved-filters/:id': 'saved-filters/update',
+  'DELETE /api/saved-filters/:id': 'saved-filters/delete',
+
   'GET /api/oauth/clients/:clientId': 'oauth-clients/show',
   'POST /api/oauth/consents': 'oauth-consents/create',
   'GET /api/oauth/connections': 'oauth-connections/index',

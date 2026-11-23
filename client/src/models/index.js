@@ -24,6 +24,7 @@ import Comment from './Comment';
 import Activity from './Activity';
 import Notification from './Notification';
 import NotificationService from './NotificationService';
+import SavedFilter from './SavedFilter';
 
 export {
   Webhook,
@@ -47,4 +48,5 @@ export {
   Activity,
   Notification,
   NotificationService,
+  SavedFilter,
 };

@@ -48,6 +48,10 @@ module.exports = {
       boardId: boardIdOrIds,
     });
 
+    await SavedFilter.qm.delete({
+      boardId: boardIdOrIds,
+    });
+
     return { boardMemberships };
   },
 };

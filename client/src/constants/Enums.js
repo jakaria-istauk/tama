@@ -79,6 +79,16 @@ export const LabelFilterModes = {
   EXCLUDE: 'exclude',
 };
 
+// Matches SavedFilter.DueRanges on the server.
+export const DueFilterRanges = {
+  TODAY: 'today',
+  THIS_WEEK: 'thisWeek',
+  NEXT_7_DAYS: 'next7Days',
+  THIS_MONTH: 'thisMonth',
+  NEXT_30_DAYS: 'next30Days',
+  CUSTOM: 'custom',
+};
+
 export const ListTypes = {
   ACTIVE: 'active',
   CLOSED: 'closed',

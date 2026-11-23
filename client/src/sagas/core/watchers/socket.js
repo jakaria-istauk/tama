@@ -293,6 +293,18 @@ const createSocketEventsChannel = () =>
       emit(entryActions.handleNotificationServiceDelete(item));
     };
 
+    const handleSavedFilterCreate = ({ item }) => {
+      emit(entryActions.handleSavedFilterCreate(item));
+    };
+
+    const handleSavedFilterUpdate = ({ item }) => {
+      emit(entryActions.handleSavedFilterUpdate(item));
+    };
+
+    const handleSavedFilterDelete = ({ item }) => {
+      emit(entryActions.handleSavedFilterDelete(item));
+    };
+
     socket.on('disconnect', handleDisconnect);
     socket.on('reconnect', handleReconnect);
 
@@ -388,6 +400,10 @@ const createSocketEventsChannel = () =>
     socket.on('notificationServiceCreate', handleNotificationServiceCreate);
     socket.on('notificationServiceUpdate', handleNotificationServiceUpdate);
     socket.on('notificationServiceDelete', handleNotificationServiceDelete);
+
+    socket.on('savedFilterCreate', handleSavedFilterCreate);
+    socket.on('savedFilterUpdate', handleSavedFilterUpdate);
+    socket.on('savedFilterDelete', handleSavedFilterDelete);
 
     return () => {
       socket.off('disconnect', handleDisconnect);
@@ -485,6 +501,10 @@ const createSocketEventsChannel = () =>
       socket.off('notificationServiceCreate', handleNotificationServiceCreate);
       socket.off('notificationServiceUpdate', handleNotificationServiceUpdate);
       socket.off('notificationServiceDelete', handleNotificationServiceDelete);
+
+      socket.off('savedFilterCreate', handleSavedFilterCreate);
+      socket.off('savedFilterUpdate', handleSavedFilterUpdate);
+      socket.off('savedFilterDelete', handleSavedFilterDelete);
     };
   });
 

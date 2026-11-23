@@ -23,6 +23,7 @@ import {
   NotificationService,
   Project,
   ProjectManager,
+  SavedFilter,
   Task,
   TaskList,
   User,
@@ -55,6 +56,7 @@ orm.register(
   Activity,
   Notification,
   NotificationService,
+  SavedFilter,
 );
 
 export default orm;

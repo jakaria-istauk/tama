@@ -101,6 +101,27 @@ const removeNoMemberFromFilterInCurrentBoard = () => ({
   type: EntryActionTypes.NO_MEMBER_FROM_FILTER_IN_CURRENT_BOARD_REMOVE,
 });
 
+const addCreatorToFilterInCurrentBoard = (userId) => ({
+  type: EntryActionTypes.CREATOR_TO_FILTER_IN_CURRENT_BOARD_ADD,
+  payload: {
+    userId,
+  },
+});
+
+const removeCreatorFromFilterInCurrentBoard = (userId) => ({
+  type: EntryActionTypes.CREATOR_FROM_FILTER_IN_CURRENT_BOARD_REMOVE,
+  payload: {
+    userId,
+  },
+});
+
+const updateDueFilterInCurrentBoard = (due) => ({
+  type: EntryActionTypes.DUE_FILTER_IN_CURRENT_BOARD_UPDATE,
+  payload: {
+    due,
+  },
+});
+
 export default {
   createBoardInCurrentProject,
   handleBoardCreate,
@@ -116,4 +137,7 @@ export default {
   handleBoardDelete,
   setNoMemberToFilterInCurrentBoard,
   removeNoMemberFromFilterInCurrentBoard,
+  addCreatorToFilterInCurrentBoard,
+  removeCreatorFromFilterInCurrentBoard,
+  updateDueFilterInCurrentBoard,
 };

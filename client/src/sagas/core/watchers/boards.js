@@ -52,5 +52,15 @@ export default function* boardsWatchers() {
       EntryActionTypes.NO_MEMBER_FROM_FILTER_IN_CURRENT_BOARD_REMOVE,
       services.removeNoMemberFromFilterInCurrentBoard,
     ),
+    takeEvery(EntryActionTypes.CREATOR_TO_FILTER_IN_CURRENT_BOARD_ADD, ({ payload: { userId } }) =>
+      services.addCreatorToFilterInCurrentBoard(userId),
+    ),
+    takeEvery(
+      EntryActionTypes.CREATOR_FROM_FILTER_IN_CURRENT_BOARD_REMOVE,
+      ({ payload: { userId } }) => services.removeCreatorFromFilterInCurrentBoard(userId),
+    ),
+    takeEvery(EntryActionTypes.DUE_FILTER_IN_CURRENT_BOARD_UPDATE, ({ payload: { due } }) =>
+      services.updateDueFilterInCurrentBoard(due),
+    ),
   ]);
 }
