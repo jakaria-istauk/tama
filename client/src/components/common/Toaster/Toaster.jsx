@@ -10,6 +10,7 @@ import ToastTypes from '../../../constants/ToastTypes';
 import FileIsTooBigToast from './FileIsTooBigToast';
 import NotEnoughStorageToast from './NotEnoughStorageToast';
 import EmptyTrashToast from './EmptyTrashToast';
+import CardSavedAsTemplateToast from './CardSavedAsTemplateToast';
 import SourceCardNotCopyableToast from './SourceCardNotCopyableToast';
 import SourceCardNotMovableToast from './SourceCardNotMovableToast';
 
@@ -19,6 +20,7 @@ const TOAST_BY_TYPE = {
   [ToastTypes.EMPTY_TRASH]: EmptyTrashToast,
   [ToastTypes.SOURCE_CARD_NOT_COPYABLE]: SourceCardNotCopyableToast,
   [ToastTypes.SOURCE_CARD_NOT_MOVABLE]: SourceCardNotMovableToast,
+  [ToastTypes.CARD_SAVED_AS_TEMPLATE]: CardSavedAsTemplateToast,
 };
 
 const Toaster = React.memo(() => (

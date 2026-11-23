@@ -134,6 +134,7 @@ export default {
       canOnlyViewBoard: 'Can only view the board.',
       cardActions_title: 'Card Actions',
       cardNotFound_title: 'Card Not Found',
+      cardSavedAsTemplate: 'Saved as a template. Find it under Templates in the board settings.',
       cardsOnACalendarByDueDate: 'Cards on a calendar by their due date.',
       cardsOnThisListAreAvailableToAllBoardMembers:
         'Cards on this list are available to all board members.',
@@ -688,6 +689,7 @@ export default {
       returnToProjects: 'Return to projects',
       revoke: 'Revoke',
       save: 'Save',
+      saveAsTemplate_title: 'Save as Template',
       sendTestEmail: 'Send test email',
       showActive: 'Show active',
       showAllAttachments: 'Show all attachments ({{hidden}} hidden)',

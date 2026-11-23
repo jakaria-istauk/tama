@@ -126,6 +126,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
     if (canEditName) menuItemsTotal += 1;
     if (!board.limitCardTypesToDefaultOne && canEditType) menuItemsTotal += 1;
     if (canDuplicate) menuItemsTotal += 1;
+    if (canDuplicate && !card.isTemplate) menuItemsTotal += 1;
     if (canMove) menuItemsTotal += 1;
     if (prevList && canRestore) menuItemsTotal += 1;
 
@@ -150,6 +151,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
   }, [
     board.limitCardTypesToDefaultOne,
     card.type,
+    card.isTemplate,
     list.type,
     prevList,
     canEditType,
@@ -234,6 +236,11 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
 
   const handleDuplicateClick = useCallback(() => {
     dispatch(entryActions.duplicateCard(cardId));
+    onClose();
+  }, [cardId, onClose, dispatch]);
+
+  const handleSaveAsTemplateClick = useCallback(() => {
+    dispatch(entryActions.saveCardAsTemplate(cardId));
     onClose();
   }, [cardId, onClose, dispatch]);
 
@@ -473,6 +480,14 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
             <Menu.Item className={styles.menuItem} onClick={handleDuplicateClick}>
               <Icon name="copy outline" className={styles.menuItemIcon} />
               {t('action.duplicateCard', {
+                context: 'title',
+              })}
+            </Menu.Item>
+          )}
+          {canDuplicate && !card.isTemplate && (
+            <Menu.Item className={styles.menuItem} onClick={handleSaveAsTemplateClick}>
+              <Icon name="clone outline" className={styles.menuItemIcon} />
+              {t('action.saveAsTemplate', {
                 context: 'title',
               })}
             </Menu.Item>
