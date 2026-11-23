@@ -12,6 +12,7 @@ import selectors from '../../../selectors';
 import version from '../../../version';
 import ModalTypes from '../../../constants/ModalTypes';
 import Paths from '../../../constants/Paths';
+import { ColorSchemes } from '../../../constants/Enums';
 import { SidebarContext } from '../../../contexts';
 import { useTheme } from '../../../hooks';
 import { resolveTheme, subscribeToThemeChange } from '../../../utils/theme-storage';
@@ -36,6 +37,10 @@ const Core = React.memo(() => {
   const project = useSelector(selectors.selectCurrentProject);
   const board = useSelector(selectors.selectCurrentBoard);
   const currentUserId = useSelector(selectors.selectCurrentUserId);
+  const colorScheme = useSelector((state) => {
+    const currentUser = selectors.selectCurrentUser(state);
+    return currentUser && currentUser.colorScheme;
+  });
   const pathsMatch = useSelector(selectors.selectPathsMatch);
 
   // TODO: move to selector?
@@ -76,6 +81,21 @@ const Core = React.memo(() => {
       delete dataset.theme;
     };
   }, [theme]);
+
+  // The accent follows the user's colour scheme, saved on their account
+  useEffect(() => {
+    const { dataset } = document.documentElement;
+
+    if (colorScheme && colorScheme !== ColorSchemes.TANGERINE) {
+      dataset.accent = colorScheme;
+    } else {
+      delete dataset.accent;
+    }
+
+    return () => {
+      delete dataset.accent;
+    };
+  }, [colorScheme]);
 
   useEffect(() => {
     const titleParts = [];

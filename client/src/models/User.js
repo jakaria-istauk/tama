@@ -90,6 +90,7 @@ export default class extends BaseModel {
     turnOffRecentCardHighlighting: attr(),
     isDefaultAdmin: attr(),
     autoLogoutMode: attr(),
+    colorScheme: attr(),
     isTotpEnabled: attr(),
     totpEnabledAt: attr(),
     totpRecoveryCodesRemaining: attr(),

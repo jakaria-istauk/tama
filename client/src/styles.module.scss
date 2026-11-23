@@ -68,6 +68,106 @@
     color-scheme: dark;
   }
 
+  // Accent colour schemes each user can pick in their preferences. Tangerine is the
+  // default and lives in :root above, so pages before login use it too.
+  :root[data-accent='teal'] {
+    --pk-accent: #0f766e;
+    --pk-accent-hover: #0b5953;
+    --pk-accent-soft: #e6f4f2;
+    --pk-accent-text: #0b5953;
+  }
+
+  :root[data-accent='indigo'] {
+    --pk-accent: #4f46e5;
+    --pk-accent-hover: #4338ca;
+    --pk-accent-soft: #eef0ff;
+    --pk-accent-text: #3730a3;
+  }
+
+  :root[data-accent='forest'] {
+    --pk-accent: #2f5d50;
+    --pk-accent-hover: #1f3f36;
+    --pk-accent-soft: #e9f1ee;
+    --pk-accent-text: #1f3f36;
+  }
+
+  :root[data-accent='navy'] {
+    --pk-accent: #1e3a5f;
+    --pk-accent-hover: #142844;
+    --pk-accent-soft: #e8eef6;
+    --pk-accent-text: #142844;
+  }
+
+  :root[data-accent='plum'] {
+    --pk-accent: #6d28d9;
+    --pk-accent-hover: #5b21b6;
+    --pk-accent-soft: #f3eefd;
+    --pk-accent-text: #4c1d95;
+  }
+
+  :root[data-accent='ocean'] {
+    --pk-accent: #1d6fe0;
+    --pk-accent-hover: #1553ae;
+    --pk-accent-soft: #eaf2fd;
+    --pk-accent-text: #1553ae;
+  }
+
+  :root[data-accent='graphite'] {
+    --pk-accent: #27272a;
+    --pk-accent-hover: #18181b;
+    --pk-accent-soft: #f0f0f1;
+    --pk-accent-text: #18181b;
+  }
+
+  :root[data-theme='dark'][data-accent='teal'] {
+    --pk-accent: #14a396;
+    --pk-accent-hover: #2dbbae;
+    --pk-accent-soft: #12302e;
+    --pk-accent-text: #99e6dc;
+  }
+
+  :root[data-theme='dark'][data-accent='indigo'] {
+    --pk-accent: #7c74ff;
+    --pk-accent-hover: #918aff;
+    --pk-accent-soft: #26244a;
+    --pk-accent-text: #c7c3ff;
+  }
+
+  :root[data-theme='dark'][data-accent='forest'] {
+    --pk-accent: #4e8e7a;
+    --pk-accent-hover: #62a28e;
+    --pk-accent-soft: #1c2c27;
+    --pk-accent-text: #b5d9c9;
+  }
+
+  :root[data-theme='dark'][data-accent='navy'] {
+    --pk-accent: #4a79b8;
+    --pk-accent-hover: #5f8cc9;
+    --pk-accent-soft: #1a2638;
+    --pk-accent-text: #bfd3ee;
+  }
+
+  :root[data-theme='dark'][data-accent='plum'] {
+    --pk-accent: #8b5cf6;
+    --pk-accent-hover: #a07bfa;
+    --pk-accent-soft: #2a1f45;
+    --pk-accent-text: #d8c8fd;
+  }
+
+  :root[data-theme='dark'][data-accent='ocean'] {
+    --pk-accent: #3b82f6;
+    --pk-accent-hover: #5b97f8;
+    --pk-accent-soft: #162640;
+    --pk-accent-text: #bfd7fd;
+  }
+
+  :root[data-theme='dark'][data-accent='graphite'] {
+    --pk-accent: #71717a;
+    --pk-accent-hover: #8a8a93;
+    --pk-accent-soft: #26262a;
+    --pk-accent-text: #e4e4e7;
+  }
+
   // Semantic UI paints these in fixed light colours, so the dark theme recolours them
   :root[data-theme='dark'] #app {
     color: var(--pk-text);
