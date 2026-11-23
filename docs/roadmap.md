@@ -10,23 +10,36 @@ Asana or similar tools, and how each one fits into the code. Order is by value
 to users against effort. Each feature ships as its own pull request, with the
 server and client changes in separate commits.
 
+Progress:
+
+- [x] 1. Saved filters ([#7](https://github.com/jakaria-istauk/tama/pull/7))
+- [x] 2. Calendar view ([#11](https://github.com/jakaria-istauk/tama/pull/11))
+- [ ] 3. Card templates
+- [ ] 4. Recurring cards
+- [ ] 5. Automation rules
+- [ ] 6. Start dates and timeline view
+- [ ] 7. Card dependencies
+- [ ] 8. Board templates
+- [ ] 9. Email to board
+- [ ] 10. Time reports
+
 | # | Feature | Status | Size |
 | --- | --- | --- | --- |
-| 1 | Saved filters | Done ([#7](https://github.com/jakaria-istauk/tama/pull/7)) | M |
-| 2 | Calendar view | Done ([#11](https://github.com/jakaria-istauk/tama/pull/11)) | M |
-| 3 | Card templates | Next | M |
-| 4 | Recurring cards | Next | M |
-| 5 | Automation rules | Planned | L |
-| 6 | Start dates and timeline view | Planned | L |
-| 7 | Card dependencies | Planned | M |
-| 8 | Board templates | Later | S |
-| 9 | Email to board | Later | L |
-| 10 | Time reports | Later | S |
+| 1 | Saved filters | ✅ Done ([#7](https://github.com/jakaria-istauk/tama/pull/7)) | M |
+| 2 | Calendar view | ✅ Done ([#11](https://github.com/jakaria-istauk/tama/pull/11)) | M |
+| 3 | Card templates | ⏭️ Next | M |
+| 4 | Recurring cards | ⏭️ Next | M |
+| 5 | Automation rules | 📋 Planned | L |
+| 6 | Start dates and timeline view | 📋 Planned | L |
+| 7 | Card dependencies | 📋 Planned | M |
+| 8 | Board templates | 💤 Later | S |
+| 9 | Email to board | 💤 Later | L |
+| 10 | Time reports | 💤 Later | S |
 
 Each feature must also be exposed through the MCP server (`server/api/controllers/mcp/`)
 so AI assistants can use it, and through the REST API and Swagger docs.
 
-## 2. Calendar view
+## 2. Calendar view ✅ Done
 
 Shipped in [#11](https://github.com/jakaria-istauk/tama/pull/11). A week view
 and drag and drop on touch devices are left for later.
