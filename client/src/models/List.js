@@ -286,7 +286,8 @@ export default class extends BaseModel {
           ['desc', 'desc', 'desc'],
         ];
 
-    return this.cards.orderBy(...orderByArgs);
+    // Templates stay in their list but are not shown in it, see selectTemplateCardsForCurrentBoard
+    return this.cards.filter((card) => !card.isTemplate).orderBy(...orderByArgs);
   }
 
   getCardsModelArray() {

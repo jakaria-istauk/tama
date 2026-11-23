@@ -338,6 +338,31 @@ export const selectCardsExceptCurrentForCurrentBoard = createSelector(
   },
 );
 
+export const selectTemplateCardsForCurrentBoard = createSelector(
+  orm,
+  (state) => selectPath(state).boardId,
+  ({ Board }, id) => {
+    if (!id) {
+      return id;
+    }
+
+    const boardModel = Board.withId(id);
+
+    if (!boardModel) {
+      return boardModel;
+    }
+
+    return boardModel.cards
+      .filter((card) => card.isTemplate)
+      .orderBy(['name', 'id'])
+      .toRefArray()
+      .map((card) => ({
+        ...card,
+        isPersisted: !isLocalId(card.id),
+      }));
+  },
+);
+
 export const selectFilteredCardIdsForCurrentBoard = createSelector(
   orm,
   (state) => selectPath(state).boardId,
@@ -542,6 +567,7 @@ export default {
   selectKanbanListIdsForCurrentBoard,
   selectAvailableListsForCurrentBoard,
   selectCardsExceptCurrentForCurrentBoard,
+  selectTemplateCardsForCurrentBoard,
   selectFilteredCardIdsForCurrentBoard,
   selectFilteredCardsForCurrentBoard,
   selectCustomFieldGroupIdsForCurrentBoard,
