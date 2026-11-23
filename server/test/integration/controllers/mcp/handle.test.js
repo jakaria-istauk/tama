@@ -271,6 +271,9 @@ describe('POST /api/mcp', () => {
         'list_cards',
         'get_card',
         'search_cards',
+        'list_card_templates',
+        'create_card_from_template',
+        'save_card_as_template',
         'create_card',
         'update_card',
         'move_card',
@@ -567,6 +570,178 @@ describe('POST /api/mcp', () => {
       const card = await createCard();
 
       await expectToolError(viewer, 'delete_card', { cardId: card.id }, 'Not enough rights');
+    });
+  });
+
+  describe('card templates', () => {
+    // A card with a label, a member, a task and a custom field value, to check they are copied
+    const createFilledCard = async (name) => {
+      const card = await createCard({ name, description: 'Steps' });
+
+      await callTool(editor, 'add_label_to_card', { cardId: card.id, labelId: label.id });
+      await callTool(editor, 'add_member_to_card', { cardId: card.id, userId: editor.id });
+      await callTool(editor, 'create_task', { cardId: card.id, name: 'Check' });
+
+      const customFieldGroup = await CustomFieldGroup.qm.createOne({
+        cardId: card.id,
+        position: POSITION_GAP,
+        name: 'Details',
+      });
+
+      const customField = await CustomField.qm.createOne({
+        customFieldGroupId: customFieldGroup.id,
+        position: POSITION_GAP,
+        name: 'Estimate',
+      });
+
+      await CustomFieldValue.qm.createOrUpdateOne({
+        cardId: card.id,
+        customFieldGroupId: customFieldGroup.id,
+        customFieldId: customField.id,
+        content: '3 days',
+      });
+
+      return card;
+    };
+
+    const saveAsTemplate = async (card) => {
+      const { data } = await callTool(editor, 'save_card_as_template', { cardId: card.id });
+
+      return data.item;
+    };
+
+    const expectFilledCopy = async (copy) => {
+      const cardLabels = await CardLabel.qm.getByCardId(copy.id);
+      const cardMemberships = await CardMembership.qm.getByCardId(copy.id);
+      const taskLists = await TaskList.qm.getByCardId(copy.id);
+      const tasks = await Task.qm.getByTaskListIds(sails.helpers.utils.mapRecords(taskLists));
+      const customFieldValues = await CustomFieldValue.qm.getByCardId(copy.id);
+
+      expect(copy.description).to.equal('Steps');
+      expect(cardLabels.map(({ labelId }) => labelId)).to.deep.equal([label.id]);
+      expect(cardMemberships.map(({ userId }) => userId)).to.deep.equal([editor.id]);
+      expect(tasks.map(({ name }) => name)).to.deep.equal(['Check']);
+      expect(customFieldValues.map(({ content }) => content)).to.deep.equal(['3 days']);
+    };
+
+    it('save_card_as_template copies the card into a template and keeps the card', async () => {
+      const card = await createFilledCard('Release');
+      const template = await saveAsTemplate(card);
+
+      expect(template.id).to.not.equal(card.id);
+      expect(template.isTemplate).to.equal(true);
+      expect(template.name).to.equal('Release');
+      expect(template.listId).to.equal(list.id);
+
+      const { isTemplate } = await Card.qm.getOneById(card.id);
+      expect(isTemplate).to.equal(false);
+
+      await expectFilledCopy(template);
+    });
+
+    it('save_card_as_template does not subscribe the creator to the template', async () => {
+      await User.qm.updateOne(editor.id, { subscribeToOwnCards: true });
+
+      try {
+        const template = await saveAsTemplate(await createCard());
+        const subscriptions = await CardSubscription.qm.getByCardId(template.id);
+
+        expect(subscriptions).to.have.lengthOf(0);
+      } finally {
+        await User.qm.updateOne(editor.id, { subscribeToOwnCards: false });
+      }
+    });
+
+    it('save_card_as_template denies viewers', async () => {
+      const card = await createCard();
+
+      await expectToolError(
+        viewer,
+        'save_card_as_template',
+        { cardId: card.id },
+        'Not enough rights',
+      );
+    });
+
+    it('create_card_from_template creates a normal card with the template contents', async () => {
+      const template = await saveAsTemplate(await createFilledCard('Weekly report'));
+
+      const { data } = await callTool(editor, 'create_card_from_template', {
+        templateCardId: template.id,
+        listId: otherList.id,
+      });
+
+      expect(data.item.isTemplate).to.equal(false);
+      expect(data.item.name).to.equal('Weekly report');
+      expect(data.item.listId).to.equal(otherList.id);
+
+      await expectFilledCopy(data.item);
+
+      const { isTemplate } = await Card.qm.getOneById(template.id);
+      expect(isTemplate).to.equal(true);
+    });
+
+    it('create_card_from_template takes a name', async () => {
+      const template = await saveAsTemplate(await createCard({ name: 'Bug report' }));
+
+      const { data } = await callTool(editor, 'create_card_from_template', {
+        templateCardId: template.id,
+        listId: list.id,
+        name: 'Login fails',
+      });
+
+      expect(data.item.name).to.equal('Login fails');
+    });
+
+    it('create_card_from_template rejects a card that is not a template', async () => {
+      const card = await createCard();
+
+      await expectToolError(
+        editor,
+        'create_card_from_template',
+        { templateCardId: card.id, listId: list.id },
+        'Card template not found',
+      );
+    });
+
+    it('create_card_from_template denies outsiders', async () => {
+      const template = await saveAsTemplate(await createCard());
+
+      await expectToolError(
+        outsider,
+        'create_card_from_template',
+        { templateCardId: template.id, listId: list.id },
+        'Card not found',
+      );
+    });
+
+    it('lists templates only when asked for', async () => {
+      const template = await saveAsTemplate(await createCard({ name: 'Hidden template' }));
+
+      const { data: cards } = await callTool(viewer, 'list_cards', { boardId: board.id });
+      const { data: found } = await callTool(viewer, 'search_cards', {
+        boardId: board.id,
+        query: 'Hidden template',
+      });
+
+      const { data: withTemplates } = await callTool(viewer, 'list_cards', {
+        boardId: board.id,
+        includeTemplates: true,
+      });
+
+      const { data: templates } = await callTool(viewer, 'list_card_templates', {
+        boardId: board.id,
+      });
+
+      const cardIds = sails.helpers.utils.mapRecords(cards.cards);
+
+      expect(cardIds).to.not.include(template.id);
+      expect(cards.cards.every(({ isTemplate }) => !isTemplate)).to.equal(true);
+      // Only the card the template was saved from
+      expect(found.cards.map(({ isTemplate }) => isTemplate)).to.deep.equal([false]);
+      expect(sails.helpers.utils.mapRecords(withTemplates.cards)).to.include(template.id);
+      expect(templates.cards.every(({ isTemplate }) => isTemplate)).to.equal(true);
+      expect(sails.helpers.utils.mapRecords(templates.cards)).to.include(template.id);
     });
   });
 
