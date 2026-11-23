@@ -2,7 +2,7 @@
 
 Tama already covers the core of a hosted kanban tool: boards with kanban, grid,
 list and calendar views, cards with tasks, labels, custom fields, due dates and
-attachments, saved board filters, real-time updates, Trello import, webhooks,
+attachments, card templates, saved board filters, real-time updates, Trello import, webhooks,
 notifications and an MCP server for AI assistants.
 
 This page lists the features people most often miss when they move from Trello,
@@ -14,7 +14,7 @@ Progress:
 
 - [x] 1. Saved filters ([#7](https://github.com/jakaria-istauk/tama/pull/7))
 - [x] 2. Calendar view ([#11](https://github.com/jakaria-istauk/tama/pull/11))
-- [ ] 3. Card templates
+- [x] 3. Card templates ([#15](https://github.com/jakaria-istauk/tama/pull/15))
 - [ ] 4. Recurring cards
 - [ ] 5. Automation rules
 - [ ] 6. Start dates and timeline view
@@ -27,7 +27,7 @@ Progress:
 | --- | --- | --- | --- |
 | 1 | Saved filters | ✅ Done ([#7](https://github.com/jakaria-istauk/tama/pull/7)) | M |
 | 2 | Calendar view | ✅ Done ([#11](https://github.com/jakaria-istauk/tama/pull/11)) | M |
-| 3 | Card templates | ⏭️ Next | M |
+| 3 | Card templates | ✅ Done ([#15](https://github.com/jakaria-istauk/tama/pull/15)) | M |
 | 4 | Recurring cards | ⏭️ Next | M |
 | 5 | Automation rules | 📋 Planned | L |
 | 6 | Start dates and timeline view | 📋 Planned | L |
@@ -62,7 +62,11 @@ change its due date.
 - **Tests:** a reducer and selector test for cards grouped by day, and a browser
   check of drag to reschedule.
 
-## 3. Card templates
+## 3. Card templates ✅ Done
+
+Shipped in [#15](https://github.com/jakaria-istauk/tama/pull/15). Templates are
+hidden by the client's list card query rather than left out of board responses,
+so the client can list them and open them in the card modal.
 
 Save a card as a template and create new cards from it, with labels, task lists,
 custom fields and description filled in.
