@@ -310,6 +310,10 @@ module.exports.routes = {
   'PATCH /api/card-recurrences/:id': 'card-recurrences/update',
   'DELETE /api/card-recurrences/:id': 'card-recurrences/delete',
 
+  'POST /api/boards/:boardId/board-automations': 'board-automations/create',
+  'PATCH /api/board-automations/:id': 'board-automations/update',
+  'DELETE /api/board-automations/:id': 'board-automations/delete',
+
   'GET /api/oauth/clients/:clientId': 'oauth-clients/show',
   'POST /api/oauth/consents': 'oauth-consents/create',
   'GET /api/oauth/connections': 'oauth-connections/index',

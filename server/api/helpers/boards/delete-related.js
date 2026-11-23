@@ -56,6 +56,10 @@ module.exports = {
       boardId: boardIdOrIds,
     });
 
+    await BoardAutomation.qm.delete({
+      boardId: boardIdOrIds,
+    });
+
     return { boardMemberships };
   },
 };

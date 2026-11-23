@@ -65,6 +65,7 @@
  *                     - customFields
  *                     - customFieldValues
  *                     - cardRecurrences
+ *                     - boardAutomations
  *                   properties:
  *                     users:
  *                       type: array
@@ -148,6 +149,11 @@
  *                       description: Recurrences of the board's card templates
  *                       items:
  *                         $ref: '#/components/schemas/CardRecurrence'
+ *                     boardAutomations:
+ *                       type: array
+ *                       description: Automation rules of the board
+ *                       items:
+ *                         $ref: '#/components/schemas/BoardAutomation'
  *       400:
  *         $ref: '#/components/responses/ValidationError'
  *       401:
@@ -242,6 +248,7 @@ module.exports = {
     const customFields = await CustomField.qm.getByCustomFieldGroupIds(customFieldGroupIds);
     const customFieldValues = await CustomFieldValue.qm.getByCardIds(cardIds);
     const cardRecurrences = await CardRecurrence.qm.getByBoardId(board.id);
+    const boardAutomations = await BoardAutomation.qm.getByBoardId(board.id);
 
     const cardSubscriptions = await CardSubscription.qm.getByCardIdsAndUserId(
       cardIds,
@@ -280,6 +287,7 @@ module.exports = {
         customFields,
         customFieldValues,
         cardRecurrences,
+        boardAutomations,
         users: sails.helpers.users.presentMany(users, currentUser),
         projects: [project],
         attachments: sails.helpers.attachments.presentMany(attachments),
