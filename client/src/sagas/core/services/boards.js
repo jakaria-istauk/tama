@@ -106,6 +106,7 @@ export function* fetchBoard(id) {
   let customFields;
   let customFieldValues;
   let cardRecurrences;
+  let boardAutomations;
 
   try {
     ({
@@ -126,6 +127,7 @@ export function* fetchBoard(id) {
         customFields,
         customFieldValues,
         cardRecurrences,
+        boardAutomations,
       },
     } = yield call(request, api.getBoard, id, true));
   } catch (error) {
@@ -151,6 +153,7 @@ export function* fetchBoard(id) {
       customFields,
       customFieldValues,
       cardRecurrences,
+      boardAutomations,
     ),
   );
 }

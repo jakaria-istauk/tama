@@ -4,44 +4,120 @@
  */
 
 :global(#app) {
+  .body {
+    flex: 1;
+    min-width: 0;
+  }
+
   .content {
-    color: #fff;
-    font-size: 16px;
-    line-height: 1.4;
+    color: var(--pk-text-secondary);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
 
     a {
-      color: #fff;
+      color: var(--message-color);
       cursor: pointer;
+      font-weight: 500;
       text-decoration: underline;
+      text-underline-offset: 2px;
     }
   }
 
   .header {
-    color: #fff;
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 1.2;
-    margin-bottom: 8px;
+    color: var(--pk-text);
+    font-size: 19px;
+    font-weight: 300;
+    letter-spacing: 0.01em;
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+
+  .icon {
+    color: var(--message-color);
+    font-size: 17px;
+  }
+
+  // A ring around the icon, with a soft pulse while the message stands
+  .iconWrapper {
+    align-items: center;
+    background: var(--message-soft);
+    border: 1.5px solid var(--message-color);
+    border-radius: 50%;
+    display: inline-flex;
+    flex: none;
+    height: 40px;
+    justify-content: center;
+    position: relative;
+    width: 40px;
+
+    &::after {
+      animation: messagePulse 2s ease-out infinite;
+      border: 1.5px solid var(--message-color);
+      border-radius: 50%;
+      content: '';
+      inset: -1.5px;
+      position: absolute;
+    }
   }
 
   .wrapper {
-    border-radius: 4px;
+    align-items: flex-start;
+    animation: messageIn 220ms ease-out;
+    background: var(--pk-surface);
+    border: 1px solid var(--pk-border);
+    border-left: 4px solid var(--message-color);
+    border-radius: var(--pk-radius-lg, 12px);
     bottom: 20px;
+    box-shadow: var(--pk-shadow-md);
+    display: flex;
+    gap: 14px;
     max-width: calc(100% - 40px);
-    padding: 12px 18px;
+    padding: 14px 18px 14px 14px;
     position: fixed;
     right: 20px;
-    width: 390px;
+    width: 380px;
     z-index: 10001;
   }
 
   .wrapperError {
-    background: #cf513d;
-    box-shadow: #6e2f1a 0 1px 0;
+    --message-color: #e5484d;
+    --message-soft: rgba(229, 72, 77, 0.12);
   }
 
   .wrapperInfo {
-    background: #2185d0;
-    box-shadow: rgba(34, 36, 38, 0.15) 0 1px 0;
+    --message-color: var(--pk-accent);
+    --message-soft: var(--pk-accent-soft);
+  }
+
+  @keyframes messageIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes messagePulse {
+    from {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+
+    to {
+      opacity: 0;
+      transform: scale(1.5);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wrapper,
+    .iconWrapper::after {
+      animation: none;
+    }
   }
 }

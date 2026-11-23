@@ -62,6 +62,7 @@ export function* fetchCore() {
   let customFields2;
   let customFieldValues;
   let cardRecurrences;
+  let boardAutomations;
 
   try {
     ({
@@ -77,6 +78,7 @@ export function* fetchCore() {
       customFieldGroups,
       customFieldValues,
       cardRecurrences,
+      boardAutomations,
       users: users3,
       projects: projects2,
       boardMemberships: boardMemberships2,
@@ -128,6 +130,7 @@ export function* fetchCore() {
     customFieldGroups,
     customFieldValues,
     cardRecurrences,
+    boardAutomations,
     notifications,
     users: mergeRecords(users1, users2, users3, users4),
     projects: mergeRecords(projects1, projects2),

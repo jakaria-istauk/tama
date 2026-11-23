@@ -26,6 +26,7 @@ const handleLocationChange = (
   customFields,
   customFieldValues,
   cardRecurrences,
+  boardAutomations,
   notificationsToDelete,
 ) => ({
   type: ActionTypes.LOCATION_CHANGE_HANDLE,
@@ -50,6 +51,7 @@ const handleLocationChange = (
     customFields,
     customFieldValues,
     cardRecurrences,
+    boardAutomations,
     notificationsToDelete,
   },
 });

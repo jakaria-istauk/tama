@@ -124,6 +124,11 @@ module.exports = {
       creatorUserId: userIdOrIds,
     });
 
+    // So do the automation rules that ran on their behalf
+    await BoardAutomation.qm.delete({
+      creatorUserId: userIdOrIds,
+    });
+
     return {
       projectManagers,
       boardMemberships,

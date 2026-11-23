@@ -179,7 +179,17 @@ const Item = React.memo(({ id }) => {
         <UserAvatar id={activity.userId} />
       </span>
       <div className={styles.content}>
-        <div>{contentNode}</div>
+        <div>
+          {contentNode}
+          {activity.data && activity.data.boardAutomation && (
+            <span className={styles.automation}>
+              {' '}
+              {t('common.byAutomation', {
+                name: activity.data.boardAutomation.name,
+              })}
+            </span>
+          )}
+        </div>
         <span className={styles.date}>
           <TimeAgo date={activity.createdAt} />
         </span>

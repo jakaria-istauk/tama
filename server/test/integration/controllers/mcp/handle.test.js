@@ -276,6 +276,10 @@ describe('POST /api/mcp', () => {
         'save_card_as_template',
         'set_card_recurrence',
         'delete_card_recurrence',
+        'list_board_automations',
+        'create_board_automation',
+        'update_board_automation',
+        'delete_board_automation',
         'create_card',
         'update_card',
         'move_card',
@@ -696,6 +700,44 @@ describe('POST /api/mcp', () => {
       await callTool(editor, 'delete_card_recurrence', { templateCardId: template.id });
 
       expect(await CardRecurrence.qm.getOneById(created.item.id)).to.equal(undefined);
+    });
+
+    it('creates, lists, updates and deletes board automation rules', async () => {
+      const { data: created } = await callTool(editor, 'create_board_automation', {
+        boardId: board.id,
+        name: 'Label new cards',
+        trigger: { type: 'cardCreated' },
+        actions: [{ type: 'addLabel', labelId: label.id }],
+      });
+
+      expect(created.item.trigger).to.deep.equal({ type: 'cardCreated', listId: null });
+      expect(created.item.creatorUserId).to.equal(editor.id);
+
+      const { data: listed } = await callTool(editor, 'list_board_automations', {
+        boardId: board.id,
+      });
+
+      expect(sails.helpers.utils.mapRecords(listed.items)).to.include(created.item.id);
+
+      const { data: updated } = await callTool(editor, 'update_board_automation', {
+        id: created.item.id,
+        isEnabled: false,
+        actions: [{ type: 'setDueDate', days: 2 }],
+      });
+
+      expect(updated.item.isEnabled).to.equal(false);
+      expect(updated.item.actions).to.deep.equal([{ type: 'setDueDate', days: 2 }]);
+
+      await expectToolError(
+        viewer,
+        'delete_board_automation',
+        { id: created.item.id },
+        'Not enough rights',
+      );
+
+      await callTool(editor, 'delete_board_automation', { id: created.item.id });
+
+      expect(await BoardAutomation.qm.getOneById(created.item.id)).to.equal(undefined);
     });
 
     it('set_card_recurrence only takes templates and allowed rules', async () => {

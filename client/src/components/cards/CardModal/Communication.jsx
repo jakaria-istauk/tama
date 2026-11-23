@@ -9,6 +9,7 @@ import { Icon, Menu, Tab } from 'semantic-ui-react';
 
 import Comments from '../../comments/Comments';
 import CardActivities from '../../activities/CardActivities';
+import Timeline from './Timeline';
 
 import styles from './Communication.module.scss';
 
@@ -16,6 +17,15 @@ const Communication = React.memo(() => {
   const [t] = useTranslation();
 
   const panes = [
+    {
+      menuItem: (
+        <Menu.Item key="all" className={styles.menuItem}>
+          <Icon name="inbox" />
+          {t('common.all')}
+        </Menu.Item>
+      ),
+      render: () => <Timeline />,
+    },
     {
       menuItem: (
         <Menu.Item key="comments" className={styles.menuItem}>

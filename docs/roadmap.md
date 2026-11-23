@@ -17,7 +17,7 @@ Progress:
 - [x] 2. Calendar view ([#11](https://github.com/jakaria-istauk/tama/pull/11))
 - [x] 3. Card templates ([#15](https://github.com/jakaria-istauk/tama/pull/15))
 - [x] 4. Recurring cards ([#16](https://github.com/jakaria-istauk/tama/pull/16))
-- [ ] 5. Automation rules
+- [x] 5. Automation rules ([#17](https://github.com/jakaria-istauk/tama/pull/17))
 - [ ] 6. Start dates and timeline view
 - [ ] 7. Card dependencies
 - [ ] 8. Board templates
@@ -30,8 +30,8 @@ Progress:
 | 2 | Calendar view | ✅ Done ([#11](https://github.com/jakaria-istauk/tama/pull/11)) | M |
 | 3 | Card templates | ✅ Done ([#15](https://github.com/jakaria-istauk/tama/pull/15)) | M |
 | 4 | Recurring cards | ✅ Done ([#16](https://github.com/jakaria-istauk/tama/pull/16)) | M |
-| 5 | Automation rules | ⏭️ Next | L |
-| 6 | Start dates and timeline view | 📋 Planned | L |
+| 5 | Automation rules | ✅ Done ([#17](https://github.com/jakaria-istauk/tama/pull/17)) | L |
+| 6 | Start dates and timeline view | ⏭️ Next | L |
 | 7 | Card dependencies | 📋 Planned | M |
 | 8 | Board templates | 💤 Later | S |
 | 9 | Email to board | 💤 Later | L |
@@ -105,7 +105,13 @@ chosen list, from a template card.
 - **Tests:** rule-to-next-run unit tests across month ends and time zones; a hook
   test that two concurrent runs create one card.
 
-## 5. Automation rules
+## 5. Automation rules ✅ Done
+
+Shipped in [#17](https://github.com/jakaria-istauk/tama/pull/17). Changes made by
+a rule can trigger other rules, but never the same rule again and only three
+rules deep. A due date trigger only covers due dates that pass while the rule is
+on. There is no separate "send a notification" action: a comment action that
+@mentions people notifies them.
 
 Per-board rules in the form "when this happens, do that", like Trello's Butler.
 

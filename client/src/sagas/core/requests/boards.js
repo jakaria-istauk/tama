@@ -40,6 +40,7 @@ export function* fetchBoardByCurrentPath() {
   let customFieldValues1;
   let customFieldValues2;
   let cardRecurrences;
+  let boardAutomations;
 
   if (pathsMatch) {
     let boardId;
@@ -82,6 +83,7 @@ export function* fetchBoardByCurrentPath() {
           customFields: customFields2,
           customFieldValues: customFieldValues2,
           cardRecurrences,
+          boardAutomations,
         },
       } = yield call(request, api.getBoard, boardId, true));
     }
@@ -105,6 +107,7 @@ export function* fetchBoardByCurrentPath() {
     customFields: mergeRecords(customFields1, customFields2),
     customFieldValues: mergeRecords(customFieldValues1, customFieldValues2),
     cardRecurrences,
+    boardAutomations,
   };
 }
 

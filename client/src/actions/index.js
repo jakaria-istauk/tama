@@ -33,6 +33,7 @@ import notifications from './notifications';
 import notificationServices from './notification-services';
 import savedFilters from './saved-filters';
 import cardRecurrences from './card-recurrences';
+import boardAutomations from './board-automations';
 
 export default {
   ...router,
@@ -65,4 +66,5 @@ export default {
   ...notificationServices,
   ...savedFilters,
   ...cardRecurrences,
+  ...boardAutomations,
 };

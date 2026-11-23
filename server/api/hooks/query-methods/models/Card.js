@@ -24,6 +24,24 @@ const getByBoardId = (boardId) =>
     boardId,
   });
 
+// Open cards (not templates, due date not completed) whose due date falls in (from, to]
+const getByBoardIdAndDuePassedBetween = (boardId, from, to, { limit = LIMIT } = {}) =>
+  defaultFind(
+    {
+      boardId,
+      isTemplate: false,
+      isDueCompleted: false,
+      dueDate: {
+        '>': from,
+        '<=': to,
+      },
+    },
+    {
+      limit,
+      sort: 'dueDate',
+    },
+  );
+
 const getByListId = async (listId, { exceptIdOrIds, sort = ['position', 'id'] } = {}) => {
   const criteria = {
     listId,
@@ -258,6 +276,7 @@ module.exports = {
   createOne,
   getByIds,
   getByBoardId,
+  getByBoardIdAndDuePassedBetween,
   getByListId,
   getByEndlessListId,
   getByListIds,

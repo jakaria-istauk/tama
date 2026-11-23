@@ -76,6 +76,10 @@ Any client that reads an `.mcp.json`-style config:
 | `save_card_as_template` | Save a copy of a card as a template on its board; the card stays as it is |
 | `set_card_recurrence` | Make a template recurring, or change its schedule: an RFC 5545 RRULE (daily to yearly, at most one card a day) read in an IANA time zone, and the list to make cards in |
 | `delete_card_recurrence` | Stop a template from recurring; the template and the cards already made stay |
+| `list_board_automations` | Automation rules of a board, with the lists, labels and members they can name |
+| `create_board_automation` | Add a "when this happens, do that" rule: a trigger (card created or moved to a list, label added, due date passed, all tasks completed) and up to ten actions (move, labels, members, due date, comment), run on your behalf |
+| `update_board_automation` | Change a rule's name, trigger or actions, or turn it on or off |
+| `delete_board_automation` | Delete a rule; changes it already made stay |
 | `create_card` | New card, at the end of the list unless a position is given |
 | `update_card` | Name, description, type, due date |
 | `move_card` | Move to another list or board, at the end unless a position is given |

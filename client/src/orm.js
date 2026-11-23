@@ -25,6 +25,7 @@ import {
   ProjectManager,
   SavedFilter,
   CardRecurrence,
+  BoardAutomation,
   Task,
   TaskList,
   User,
@@ -59,6 +60,7 @@ orm.register(
   NotificationService,
   SavedFilter,
   CardRecurrence,
+  BoardAutomation,
 );
 
 export default orm;

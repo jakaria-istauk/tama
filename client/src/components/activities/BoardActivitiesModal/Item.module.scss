@@ -4,6 +4,11 @@
  */
 
 :global(#app) {
+  .automation {
+    color: var(--pk-text-secondary);
+    font-style: italic;
+  }
+
   .author {
     color: #17394d;
     font-weight: bold;

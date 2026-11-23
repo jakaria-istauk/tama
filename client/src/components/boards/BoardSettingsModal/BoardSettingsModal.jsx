@@ -15,6 +15,7 @@ import GeneralPane from './GeneralPane';
 import PreferencesPane from './PreferencesPane';
 import NotificationsPane from './NotificationsPane';
 import TemplatesPane from './TemplatesPane';
+import AutomationsPane from './AutomationsPane';
 
 const BoardSettingsModal = React.memo(() => {
   const openPreferences = useSelector(
@@ -48,6 +49,12 @@ const BoardSettingsModal = React.memo(() => {
         context: 'title',
       }),
       render: () => <TemplatesPane />,
+    },
+    {
+      menuItem: t('common.automations', {
+        context: 'title',
+      }),
+      render: () => <AutomationsPane />,
     },
     {
       menuItem: t('common.notifications', {

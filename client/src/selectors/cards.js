@@ -443,6 +443,58 @@ export const selectActivityIdsForCurrentCard = createSelector(
   },
 );
 
+// Ids compare by length first, as in the card's comment and activity query sets
+const compareIds = (a, b) => {
+  if (a.length !== b.length) {
+    return a.length - b.length;
+  }
+
+  return a < b ? -1 : a > b ? 1 : 0; // eslint-disable-line no-nested-ternary
+};
+
+// Comments and activities of the current card in one list, newest first. Ids grow with time
+// across both, so they order the list. While a list still has older pages to fetch, items
+// older than its oldest loaded one are held back, so nothing shows out of order.
+export const selectTimelineItemsForCurrentCard = createSelector(
+  orm,
+  (state) => selectPath(state).cardId,
+  ({ Card }, id) => {
+    if (!id) {
+      return [];
+    }
+
+    const cardModel = Card.withId(id);
+
+    if (!cardModel) {
+      return [];
+    }
+
+    const commentIds = cardModel.getCommentsModelArray().map((commentModel) => commentModel.id);
+    const activityIds = cardModel
+      .getActivitiesModelArray()
+      .map((activityModel) => activityModel.id);
+
+    const cutoffs = [];
+
+    if (cardModel.isAllCommentsFetched === false && commentIds.length > 0) {
+      cutoffs.push(commentIds[commentIds.length - 1]);
+    }
+
+    if (cardModel.isAllActivitiesFetched === false && activityIds.length > 0) {
+      cutoffs.push(activityIds[activityIds.length - 1]);
+    }
+
+    const cutoff = cutoffs.sort(compareIds).pop();
+
+    return [
+      ...commentIds.map((itemId) => ({ type: 'comment', id: itemId })),
+      ...activityIds.map((itemId) => ({ type: 'activity', id: itemId })),
+    ]
+      .filter((item) => !cutoff || compareIds(item.id, cutoff) >= 0)
+      .sort((a, b) => compareIds(b.id, a.id));
+  },
+);
+
 export const selectIsCurrentUserInCurrentCard = createSelector(
   orm,
   (state) => selectPath(state).cardId,
@@ -494,5 +546,6 @@ export default {
   selectCustomFieldGroupIdsForCurrentCard,
   selectCommentIdsForCurrentCard,
   selectActivityIdsForCurrentCard,
+  selectTimelineItemsForCurrentCard,
   selectIsCurrentUserInCurrentCard,
 };
