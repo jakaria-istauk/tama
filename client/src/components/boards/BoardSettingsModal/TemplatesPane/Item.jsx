@@ -17,6 +17,7 @@ import entryActions from '../../../../entry-actions';
 import { useEscapeInterceptor, useNestedRef, usePopupInClosableContext } from '../../../../hooks';
 import Paths from '../../../../constants/Paths';
 import ConfirmationStep from '../../../common/ConfirmationStep';
+import EditCardRecurrenceStep from '../../../cards/EditCardRecurrenceStep';
 
 import styles from './Item.module.scss';
 
@@ -24,6 +25,7 @@ const Item = React.memo(({ id, canEdit }) => {
   const selectCardById = useMemo(() => selectors.makeSelectCardById(), []);
 
   const template = useSelector((state) => selectCardById(state, id));
+  const isRecurring = useSelector((state) => !!selectors.selectCardRecurrenceByCardId(state, id));
 
   const dispatch = useDispatch();
   const [t] = useTranslation();
@@ -90,6 +92,7 @@ const Item = React.memo(({ id, canEdit }) => {
   }, [template.name]);
 
   const ConfirmationPopup = usePopupInClosableContext(ConfirmationStep);
+  const EditCardRecurrencePopup = usePopupInClosableContext(EditCardRecurrenceStep);
 
   return (
     <Form className={styles.wrapper} onSubmit={handleSubmit}>
@@ -115,6 +118,34 @@ const Item = React.memo(({ id, canEdit }) => {
           <Icon fitted name="external alternate" />
         </Button>
       </Tooltip>
+      {canEdit ? (
+        <EditCardRecurrencePopup cardId={id}>
+          <Tooltip content={isRecurring ? t('common.repeats') : t('action.repeat')}>
+            <Button
+              type="button"
+              primary={isRecurring}
+              disabled={!template.isPersisted}
+              aria-label={t('action.repeat')}
+              className={styles.button}
+            >
+              <Icon fitted name="redo alternate" />
+            </Button>
+          </Tooltip>
+        </EditCardRecurrencePopup>
+      ) : (
+        isRecurring && (
+          <Tooltip content={t('common.repeats')}>
+            <Button
+              type="button"
+              disabled
+              aria-label={t('common.repeats')}
+              className={styles.button}
+            >
+              <Icon fitted name="redo alternate" />
+            </Button>
+          </Tooltip>
+        )
+      )}
       {canEdit && (
         <ConfirmationPopup
           title="common.deleteTemplate"
