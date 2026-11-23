@@ -26,6 +26,45 @@ const getOneByTemplateCardId = (templateCardId) =>
     templateCardId,
   });
 
+// Takes the recurrences due at a moment and moves each one to its next run, in one
+// transaction. Rows another server instance has taken are skipped, so each run is claimed
+// by exactly one instance; the caller then makes the cards of the claimed runs.
+const claimDue = (date, limit, getNextRunAt) =>
+  sails.getDatastore().transaction(async (db) => {
+    const queryResult = await sails
+      .sendNativeQuery(
+        'SELECT id FROM card_recurrence WHERE next_run_at <= $1 ORDER BY next_run_at LIMIT $2 FOR UPDATE SKIP LOCKED',
+        [date.toISOString(), limit],
+      )
+      .usingConnection(db);
+
+    if (queryResult.rows.length === 0) {
+      return [];
+    }
+
+    const cardRecurrences = await CardRecurrence.find({
+      id: sails.helpers.utils.mapRecords(queryResult.rows),
+    })
+      .sort('nextRunAt')
+      .usingConnection(db);
+
+    const claimedCardRecurrences = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const cardRecurrence of cardRecurrences) {
+      // eslint-disable-next-line no-await-in-loop
+      const claimedCardRecurrence = await CardRecurrence.updateOne(cardRecurrence.id)
+        .set({
+          nextRunAt: getNextRunAt(cardRecurrence),
+        })
+        .usingConnection(db);
+
+      claimedCardRecurrences.push(claimedCardRecurrence);
+    }
+
+    return claimedCardRecurrences;
+  });
+
 const updateOne = (criteria, values) => CardRecurrence.updateOne(criteria).set({ ...values });
 
 // eslint-disable-next-line no-underscore-dangle
@@ -39,6 +78,7 @@ module.exports = {
   getByListId,
   getOneById,
   getOneByTemplateCardId,
+  claimDue,
   updateOne,
   deleteOne,
   delete: delete_,
