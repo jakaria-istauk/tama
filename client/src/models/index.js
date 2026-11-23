@@ -25,6 +25,7 @@ import Activity from './Activity';
 import Notification from './Notification';
 import NotificationService from './NotificationService';
 import SavedFilter from './SavedFilter';
+import CardRecurrence from './CardRecurrence';
 
 export {
   Webhook,
@@ -49,4 +50,5 @@ export {
   Notification,
   NotificationService,
   SavedFilter,
+  CardRecurrence,
 };

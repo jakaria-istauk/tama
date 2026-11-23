@@ -17,12 +17,14 @@ import { isListArchiveOrTrash } from '../../../utils/record-helpers';
 import { BoardMembershipRoles } from '../../../constants/Enums';
 import SelectCardTypeStep from '../SelectCardTypeStep';
 import MoveCardStep from '../MoveCardStep';
+import EditCardRecurrenceStep from '../EditCardRecurrenceStep';
 
 import styles from './MoreActionsStep.module.scss';
 
 const StepTypes = {
   EDIT_TYPE: 'EDIT_TYPE',
   MOVE: 'MOVE',
+  REPEAT: 'REPEAT',
 };
 
 const MoreActionsStep = React.memo(({ onClose }) => {
@@ -84,6 +86,10 @@ const MoreActionsStep = React.memo(({ onClose }) => {
     openStep(StepTypes.MOVE);
   }, [openStep]);
 
+  const handleRepeatClick = useCallback(() => {
+    openStep(StepTypes.REPEAT);
+  }, [openStep]);
+
   if (step) {
     switch (step.type) {
       case StepTypes.EDIT_TYPE:
@@ -100,6 +106,8 @@ const MoreActionsStep = React.memo(({ onClose }) => {
         );
       case StepTypes.MOVE:
         return <MoveCardStep id={card.id} onBack={handleBack} onClose={onClose} />;
+      case StepTypes.REPEAT:
+        return <EditCardRecurrenceStep cardId={card.id} onBack={handleBack} onClose={onClose} />;
       default:
     }
   }
@@ -133,6 +141,14 @@ const MoreActionsStep = React.memo(({ onClose }) => {
             <Menu.Item className={styles.menuItem} onClick={handleSaveAsTemplateClick}>
               <Icon name="clone outline" className={styles.menuItemIcon} />
               {t('action.saveAsTemplate', {
+                context: 'title',
+              })}
+            </Menu.Item>
+          )}
+          {canDuplicate && card.isTemplate && (
+            <Menu.Item className={styles.menuItem} onClick={handleRepeatClick}>
+              <Icon name="redo alternate" className={styles.menuItemIcon} />
+              {t('action.repeat', {
                 context: 'title',
               })}
             </Menu.Item>

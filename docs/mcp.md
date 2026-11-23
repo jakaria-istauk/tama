@@ -71,9 +71,11 @@ Any client that reads an `.mcp.json`-style config:
 | `list_cards` | Cards of a board or one list (archive and trash lists return their latest cards); card templates only with `includeTemplates` |
 | `get_card` | One card with labels, members, tasks, attachments and custom fields |
 | `search_cards` | Cards of a board whose name or description contains every word of the query; card templates only with `includeTemplates` |
-| `list_card_templates` | Card templates of a board |
+| `list_card_templates` | Card templates of a board, with the schedules of recurring ones |
 | `create_card_from_template` | New card from a template, with its description, labels, members, tasks, attachments and custom fields, at the end of the list unless a position is given |
 | `save_card_as_template` | Save a copy of a card as a template on its board; the card stays as it is |
+| `set_card_recurrence` | Make a template recurring, or change its schedule: an RFC 5545 RRULE (daily to yearly, at most one card a day) read in an IANA time zone, and the list to make cards in |
+| `delete_card_recurrence` | Stop a template from recurring; the template and the cards already made stay |
 | `create_card` | New card, at the end of the list unless a position is given |
 | `update_card` | Name, description, type, due date |
 | `move_card` | Move to another list or board, at the end unless a position is given |

@@ -52,6 +52,10 @@ module.exports = {
       boardId: boardIdOrIds,
     });
 
+    await CardRecurrence.qm.delete({
+      boardId: boardIdOrIds,
+    });
+
     return { boardMemberships };
   },
 };

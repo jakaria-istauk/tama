@@ -2,8 +2,9 @@
 
 Tama already covers the core of a hosted kanban tool: boards with kanban, grid,
 list and calendar views, cards with tasks, labels, custom fields, due dates and
-attachments, card templates, saved board filters, real-time updates, Trello import, webhooks,
-notifications and an MCP server for AI assistants.
+attachments, card templates and recurring cards, saved board filters, real-time
+updates, Trello import, webhooks, notifications and an MCP server for AI
+assistants.
 
 This page lists the features people most often miss when they move from Trello,
 Asana or similar tools, and how each one fits into the code. Order is by value
@@ -15,7 +16,7 @@ Progress:
 - [x] 1. Saved filters ([#7](https://github.com/jakaria-istauk/tama/pull/7))
 - [x] 2. Calendar view ([#11](https://github.com/jakaria-istauk/tama/pull/11))
 - [x] 3. Card templates ([#15](https://github.com/jakaria-istauk/tama/pull/15))
-- [ ] 4. Recurring cards
+- [x] 4. Recurring cards ([#16](https://github.com/jakaria-istauk/tama/pull/16))
 - [ ] 5. Automation rules
 - [ ] 6. Start dates and timeline view
 - [ ] 7. Card dependencies
@@ -28,8 +29,8 @@ Progress:
 | 1 | Saved filters | ✅ Done ([#7](https://github.com/jakaria-istauk/tama/pull/7)) | M |
 | 2 | Calendar view | ✅ Done ([#11](https://github.com/jakaria-istauk/tama/pull/11)) | M |
 | 3 | Card templates | ✅ Done ([#15](https://github.com/jakaria-istauk/tama/pull/15)) | M |
-| 4 | Recurring cards | ⏭️ Next | M |
-| 5 | Automation rules | 📋 Planned | L |
+| 4 | Recurring cards | ✅ Done ([#16](https://github.com/jakaria-istauk/tama/pull/16)) | M |
+| 5 | Automation rules | ⏭️ Next | L |
 | 6 | Start dates and timeline view | 📋 Planned | L |
 | 7 | Card dependencies | 📋 Planned | M |
 | 8 | Board templates | 💤 Later | S |
@@ -81,7 +82,13 @@ custom fields and description filled in.
 - **Tests:** controller tests for create-from-template copying labels, tasks and
   custom field values, and that templates do not appear in normal card lists.
 
-## 4. Recurring cards
+## 4. Recurring cards ✅ Done
+
+Shipped in [#16](https://github.com/jakaria-istauk/tama/pull/16). A recurrence
+also stores its board and IANA time zone, and the hook claims due rows and moves
+them to their next run before making cards, so a failed run is skipped rather
+than retried every minute. Runs missed while the server was down make one card.
+Shifting the template's due date with each run is left for later.
 
 Create a card on a schedule (daily, weekly on chosen days, monthly on a day) in a
 chosen list, from a template card.

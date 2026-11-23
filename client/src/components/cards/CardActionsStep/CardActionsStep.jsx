@@ -19,6 +19,7 @@ import SelectCardTypeStep from '../SelectCardTypeStep';
 import EditDueDateStep from '../EditDueDateStep';
 import EditStopwatchStep from '../EditStopwatchStep';
 import MoveCardStep from '../MoveCardStep';
+import EditCardRecurrenceStep from '../EditCardRecurrenceStep';
 import ConfirmationStep from '../../common/ConfirmationStep';
 import BoardMembershipsStep from '../../board-memberships/BoardMembershipsStep';
 import LabelsStep from '../../labels/LabelsStep';
@@ -32,6 +33,7 @@ const StepTypes = {
   EDIT_DUE_DATE: 'EDIT_DUE_DATE',
   EDIT_STOPWATCH: 'EDIT_STOPWATCH',
   MOVE: 'MOVE',
+  REPEAT: 'REPEAT',
   ARCHIVE: 'ARCHIVE',
   DELETE: 'DELETE',
 };
@@ -126,7 +128,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
     if (canEditName) menuItemsTotal += 1;
     if (!board.limitCardTypesToDefaultOne && canEditType) menuItemsTotal += 1;
     if (canDuplicate) menuItemsTotal += 1;
-    if (canDuplicate && !card.isTemplate) menuItemsTotal += 1;
+    if (canDuplicate) menuItemsTotal += 1; // Save as template, or Repeat for templates
     if (canMove) menuItemsTotal += 1;
     if (prevList && canRestore) menuItemsTotal += 1;
 
@@ -151,7 +153,6 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
   }, [
     board.limitCardTypesToDefaultOne,
     card.type,
-    card.isTemplate,
     list.type,
     prevList,
     canEditType,
@@ -321,6 +322,10 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
     openStep(StepTypes.MOVE);
   }, [openStep]);
 
+  const handleRepeatClick = useCallback(() => {
+    openStep(StepTypes.REPEAT);
+  }, [openStep]);
+
   const handleArchiveClick = useCallback(() => {
     openStep(StepTypes.ARCHIVE);
   }, [openStep]);
@@ -368,6 +373,8 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
         return <EditStopwatchStep cardId={cardId} onBack={handleBack} onClose={onClose} />;
       case StepTypes.MOVE:
         return <MoveCardStep id={cardId} onBack={handleBack} onClose={onClose} />;
+      case StepTypes.REPEAT:
+        return <EditCardRecurrenceStep cardId={cardId} onBack={handleBack} onClose={onClose} />;
       case StepTypes.ARCHIVE:
         return (
           <ConfirmationStep
@@ -490,6 +497,14 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
             <Menu.Item className={styles.menuItem} onClick={handleSaveAsTemplateClick}>
               <Icon name="clone outline" className={styles.menuItemIcon} />
               {t('action.saveAsTemplate', {
+                context: 'title',
+              })}
+            </Menu.Item>
+          )}
+          {canDuplicate && card.isTemplate && (
+            <Menu.Item className={styles.menuItem} onClick={handleRepeatClick}>
+              <Icon name="redo alternate" className={styles.menuItemIcon} />
+              {t('action.repeat', {
                 context: 'title',
               })}
             </Menu.Item>
