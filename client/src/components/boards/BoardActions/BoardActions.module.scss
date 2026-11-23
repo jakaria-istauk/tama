@@ -8,18 +8,16 @@
     align-items: center;
     display: flex;
     flex: 0 0 auto;
+    min-height: 34px;
+  }
 
-    &:first-child {
-      padding-left: 20px;
-    }
-
-    &:last-child {
-      padding-right: 20px;
-    }
-
-    &:not(:last-child) {
-      margin-right: 20px;
-    }
+  // Filters take the space between the members and the view switcher and
+  // wrap onto more rows instead of pushing the bar into a horizontal scroll.
+  .actionFilters {
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    min-width: 0;
+    row-gap: 6px;
   }
 
   .actionRightSide {
@@ -27,8 +25,23 @@
   }
 
   .actions {
+    align-items: flex-start;
+    column-gap: 20px;
     display: flex;
-    height: 46px;
+    min-height: 46px;
+    padding: 6px 20px;
+
+    // On narrow screens the members and the view switcher share the first row
+    // and the filters get a full-width row of their own below.
+    @media only screen and (width < 768px) {
+      flex-wrap: wrap;
+      row-gap: 8px;
+
+      .actionFilters {
+        flex-basis: 100%;
+        order: 1;
+      }
+    }
   }
 
   .contextTitle {
@@ -45,14 +58,6 @@
   }
 
   .wrapper {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -ms-overflow-style: none;
-    padding: 12px 0;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    padding: 6px 0;
   }
 }

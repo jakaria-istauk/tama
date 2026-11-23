@@ -5,7 +5,12 @@
 
 :global(#app) {
   .filter {
+    align-items: center;
+    display: inline-flex;
+    flex-wrap: wrap;
     margin-right: 10px;
+    min-height: 30px;
+    row-gap: 4px;
   }
 
   .filterButton {
