@@ -799,7 +799,10 @@ const Filters = React.memo(() => {
                   wrapped around the button swallows the open. */}
               {hasFilter && (
                 <SaveFilterPopup onSave={handleSaveFilter}>
-                  <button type="button" className={styles.drawerAction}>
+                  <button
+                    type="button"
+                    className={classNames(styles.drawerAction, styles.drawerActionPrimary)}
+                  >
                     <Icon name="bookmark outline" />
                     {t('common.saveFilter', {
                       context: 'title',

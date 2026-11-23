@@ -55,26 +55,65 @@
 
   .drawerAction {
     align-items: center;
-    background: transparent;
+    background: var(--pk-surface);
     border: 1px solid var(--pk-border);
-    border-radius: 8px;
+    border-radius: var(--pk-radius, 8px);
     color: var(--pk-text-secondary);
     cursor: pointer;
     display: inline-flex;
-    font-size: 12px;
-    gap: 2px;
-    margin-right: 6px;
-    padding: 3px 10px 3px 6px;
+    font-size: 13px;
+    font-weight: 500;
+    gap: 6px;
+    justify-content: center;
+    line-height: 1;
+    min-height: 34px;
+    padding: 0 12px;
+    transition:
+      background 120ms ease,
+      border-color 120ms ease,
+      color 120ms ease;
+    white-space: nowrap;
+
+    :global(.icon) {
+      height: auto;
+      margin: 0;
+    }
 
     &:hover {
       background: var(--pk-surface-muted);
+      border-color: var(--pk-border-strong);
       color: var(--pk-text);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--pk-accent);
+      outline-offset: 1px;
     }
   }
 
+  .drawerActionPrimary {
+    background: var(--pk-accent-soft);
+    border-color: transparent;
+    color: var(--pk-accent-text);
+
+    &:hover {
+      background: var(--pk-accent-soft);
+      border-color: var(--pk-accent);
+      color: var(--pk-accent-text);
+    }
+  }
+
+  // Equal-width buttons, two to a row; a last button left on its own fills the row
   .drawer .drawerActions {
     border-bottom: 0;
-    gap: 4px;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-top: 12px;
+
+    > :last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
   }
 
   .drawerBody {
