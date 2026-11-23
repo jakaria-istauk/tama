@@ -118,12 +118,20 @@
   }
 
   .projectDot {
+    align-items: center;
     background: var(--pk-accent);
-    border-radius: 4px;
+    border-radius: 5px;
+    color: #fff;
+    display: flex;
     flex: 0 0 auto;
-    height: 12px;
-    margin: 0 3px;
-    width: 12px;
+    height: 18px;
+    justify-content: center;
+    width: 18px;
+  }
+
+  .projectMark {
+    height: 13px;
+    width: 13px;
   }
 
   .scrim {
