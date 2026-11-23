@@ -124,7 +124,38 @@ export function* handleCardsUpdate(cards, activities) {
   yield put(actions.handleCardsUpdate(cards, activities));
 }
 
+// Duplicates the template into the list, as a normal card named as typed or as the template
+function* createCardFromTemplate(listId, { templateId, name }, index, autoOpen) {
+  const list = yield select(selectors.selectListById, listId);
+  const template = yield select(selectors.selectCardById, templateId);
+
+  if (!template) {
+    return;
+  }
+
+  const data = {
+    listId,
+    name: name || template.name,
+  };
+
+  if (isListFinite(list)) {
+    data.position = yield select(selectors.selectNextCardPosition, listId, index);
+  }
+
+  // eslint-disable-next-line no-use-before-define
+  const card = yield call(duplicateCard, templateId, data);
+
+  if (card && autoOpen) {
+    yield call(goToCard, card.id);
+  }
+}
+
 export function* createCard(listId, data, index, autoOpen) {
+  if (data.templateId) {
+    yield call(createCardFromTemplate, listId, data, index, autoOpen);
+    return;
+  }
+
   const localId = yield call(createLocalId);
   const list = yield select(selectors.selectListById, listId);
 

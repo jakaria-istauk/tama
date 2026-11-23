@@ -50,6 +50,19 @@
     }
   }
 
+  .selectTemplateButton {
+    background: transparent;
+    box-shadow: none;
+    color: #6b808c;
+    margin: 0 0 0 4px;
+    transition: none;
+
+    &:hover {
+      background: rgba(9, 30, 66, 0.08);
+      color: #092d42;
+    }
+  }
+
   .selectTypeButtonIcon {
     text-decoration: none;
   }

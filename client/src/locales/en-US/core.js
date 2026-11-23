@@ -133,6 +133,8 @@ export default {
       cannotConnectApp_title: 'Cannot Connect App',
       canOnlyViewBoard: 'Can only view the board.',
       cardActions_title: 'Card Actions',
+      cardFromTemplateHint:
+        'The new card takes the typed title, or the template name if none is typed.',
       cardNotFound_title: 'Card Not Found',
       cardSavedAsTemplate: 'Saved as a template. Find it under Templates in the board settings.',
       cardsOnACalendarByDueDate: 'Cards on a calendar by their due date.',
@@ -157,6 +159,8 @@ export default {
       copy_inline: 'copy',
       createBoard_title: 'Create Board',
       createCustomFieldGroup_title: 'Create Custom Field Group',
+      createFromTemplate: 'Create from template',
+      createFromTemplate_title: 'Create From Template',
       createLabel_title: 'Create Label',
       createNewOneOrSelectExistingOne: 'Create a new one or select<br />an existing one.',
       createProject_title: 'Create Project',
