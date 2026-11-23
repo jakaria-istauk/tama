@@ -143,6 +143,7 @@ export default {
       boardNotFound_title: 'Board Not Found',
       boardSubscribed: 'Board subscribed',
       boardUser: 'Board user',
+      byAutomation: 'by automation "{{name}}"',
       byCreationTime: 'By creation time',
       byDefault: 'By default',
       byDueDate: 'By due date',
