@@ -80,7 +80,8 @@ const Static = React.memo(() => {
     contentNode = <Loader active size="big" />;
   } else {
     wrapperClassNames = [
-      [BoardViews.GRID, BoardViews.LIST].includes(board.view) && styles.wrapperVertical,
+      [BoardViews.GRID, BoardViews.LIST, BoardViews.CALENDAR].includes(board.view) &&
+        styles.wrapperVertical,
       styles.wrapperFlex,
     ];
 

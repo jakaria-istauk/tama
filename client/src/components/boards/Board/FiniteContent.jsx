@@ -11,6 +11,7 @@ import entryActions from '../../../entry-actions';
 import { BoardViews } from '../../../constants/Enums';
 import GridView from './GridView';
 import ListView from './ListView';
+import CalendarView from './CalendarView';
 
 const FiniteContent = React.memo(() => {
   const board = useSelector(selectors.selectCurrentBoard);
@@ -29,6 +30,10 @@ const FiniteContent = React.memo(() => {
   const handleCardPaste = useCallback(() => {
     dispatch(entryActions.pasteCardInCurrentContext());
   }, [dispatch]);
+
+  if (board.view === BoardViews.CALENDAR) {
+    return <CalendarView />;
+  }
 
   let View;
   switch (board.view) {
