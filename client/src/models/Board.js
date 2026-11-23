@@ -579,6 +579,7 @@ export default class extends BaseModel {
 
     this.deleteListsWithRelated(soft);
     this.notificationServices.delete();
+    this.automations.delete();
   }
 
   deleteWithClearable() {

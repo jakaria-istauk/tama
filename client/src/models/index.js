@@ -26,6 +26,7 @@ import Notification from './Notification';
 import NotificationService from './NotificationService';
 import SavedFilter from './SavedFilter';
 import CardRecurrence from './CardRecurrence';
+import BoardAutomation from './BoardAutomation';
 
 export {
   Webhook,
@@ -51,4 +52,5 @@ export {
   NotificationService,
   SavedFilter,
   CardRecurrence,
+  BoardAutomation,
 };

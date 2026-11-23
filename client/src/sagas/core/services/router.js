@@ -96,6 +96,7 @@ export function* handleLocationChange() {
   let customFieldValues1;
   let customFieldValues2;
   let cardRecurrences;
+  let boardAutomations;
   let notificationsToDelete;
 
   switch (pathsMatch.pattern.path) {
@@ -138,6 +139,7 @@ export function* handleLocationChange() {
                 customFields: customFields1,
                 customFieldValues: customFieldValues1,
                 cardRecurrences,
+                boardAutomations,
               },
             } = yield call(request, api.getBoard, currentBoard.id, true));
           } catch {
@@ -200,6 +202,7 @@ export function* handleLocationChange() {
                     customFields: customFields2,
                     customFieldValues: customFieldValues2,
                     cardRecurrences,
+                    boardAutomations,
                   },
                 } = yield call(request, api.getBoard, card.boardId, true));
               } catch {
@@ -253,6 +256,7 @@ export function* handleLocationChange() {
       mergeRecords(customFields1, customFields2),
       mergeRecords(customFieldValues1, customFieldValues2),
       cardRecurrences,
+      boardAutomations,
       notificationsToDelete,
     ),
   );

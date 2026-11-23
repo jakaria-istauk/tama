@@ -45,6 +45,7 @@ export function* handleSocketReconnect() {
   let customFields;
   let customFieldValues;
   let cardRecurrences;
+  let boardAutomations;
   let notifications;
   let notificationServices;
   let savedFilters;
@@ -75,6 +76,7 @@ export function* handleSocketReconnect() {
       customFields,
       customFieldValues,
       cardRecurrences,
+      boardAutomations,
       notifications,
       notificationServices,
       savedFilters,
@@ -109,6 +111,7 @@ export function* handleSocketReconnect() {
       customFields,
       customFieldValues,
       cardRecurrences,
+      boardAutomations,
       notifications,
       notificationServices,
       savedFilters,

@@ -317,6 +317,18 @@ const createSocketEventsChannel = () =>
       emit(entryActions.handleCardRecurrenceDelete(item));
     };
 
+    const handleBoardAutomationCreate = ({ item }) => {
+      emit(entryActions.handleBoardAutomationCreate(item));
+    };
+
+    const handleBoardAutomationUpdate = ({ item }) => {
+      emit(entryActions.handleBoardAutomationUpdate(item));
+    };
+
+    const handleBoardAutomationDelete = ({ item }) => {
+      emit(entryActions.handleBoardAutomationDelete(item));
+    };
+
     socket.on('disconnect', handleDisconnect);
     socket.on('reconnect', handleReconnect);
 
@@ -419,6 +431,10 @@ const createSocketEventsChannel = () =>
     socket.on('cardRecurrenceCreate', handleCardRecurrenceCreate);
     socket.on('cardRecurrenceUpdate', handleCardRecurrenceUpdate);
     socket.on('cardRecurrenceDelete', handleCardRecurrenceDelete);
+
+    socket.on('boardAutomationCreate', handleBoardAutomationCreate);
+    socket.on('boardAutomationUpdate', handleBoardAutomationUpdate);
+    socket.on('boardAutomationDelete', handleBoardAutomationDelete);
 
     return () => {
       socket.off('disconnect', handleDisconnect);
@@ -523,6 +539,10 @@ const createSocketEventsChannel = () =>
       socket.off('cardRecurrenceCreate', handleCardRecurrenceCreate);
       socket.off('cardRecurrenceUpdate', handleCardRecurrenceUpdate);
       socket.off('cardRecurrenceDelete', handleCardRecurrenceDelete);
+
+      socket.off('boardAutomationCreate', handleBoardAutomationCreate);
+      socket.off('boardAutomationUpdate', handleBoardAutomationUpdate);
+      socket.off('boardAutomationDelete', handleBoardAutomationDelete);
     };
   });
 

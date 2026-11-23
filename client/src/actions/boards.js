@@ -61,6 +61,7 @@ fetchBoard.success = (
   customFields,
   customFieldValues,
   cardRecurrences,
+  boardAutomations,
 ) => ({
   type: ActionTypes.BOARD_FETCH__SUCCESS,
   payload: {
@@ -80,6 +81,7 @@ fetchBoard.success = (
     customFields,
     customFieldValues,
     cardRecurrences,
+    boardAutomations,
   },
 });
 
