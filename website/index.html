@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tama: self-hosted kanban with AI assistants built in</title>
+    <meta
+      name="description"
+      content="Tama is a free, self-hosted, real-time kanban board for teams. Connect Claude, ChatGPT, Cursor and other AI assistants to your boards through its built-in MCP server."
+    />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Tama" />
+    <meta
+      property="og:description"
+      content="Free, self-hosted kanban for teams, with AI assistants built in."
+    />
+    <link rel="icon" type="image/svg+xml" href="icon.svg" />
+    <style>
+      :root {
+        --bg: #ffffff;
+        --bg-soft: #f6f7fb;
+        --surface: #ffffff;
+        --text: #111827;
+        --muted: #5b6474;
+        --border: #e4e7ef;
+        --brand: #4f46e5;
+        --brand-strong: #4338ca;
+        --brand-soft: #eef2ff;
+        --code-bg: #0f172a;
+        --code-text: #e2e8f0;
+        --shadow: 0 1px 2px rgb(15 23 42 / 6%), 0 12px 32px rgb(15 23 42 / 8%);
+        --radius: 14px;
+        --max: 1120px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b0d14;
+          --bg-soft: #11141d;
+          --surface: #161a25;
+          --text: #e7e9f0;
+          --muted: #9aa3b5;
+          --border: #262b3a;
+          --brand: #818cf8;
+          --brand-strong: #a5b4fc;
+          --brand-soft: #1e1b4b;
+          --code-bg: #05070c;
+          --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px rgb(0 0 0 / 35%);
+        }
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          Arial,
+          sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: var(--brand);
+      }
+
+      code,
+      pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      .wrap {
+        width: 100%;
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      /* Header */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: color-mix(in srgb, var(--bg) 85%, transparent);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+        gap: 16px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        text-decoration: none;
+      }
+
+      .brand img {
+        width: 30px;
+        height: 30px;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .nav-links a {
+        color: var(--muted);
+        font-size: 15px;
+        text-decoration: none;
+      }
+
+      .nav-links a:hover {
+        color: var(--text);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 20px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+
+      .btn-primary {
+        background: var(--brand);
+        color: #ffffff;
+      }
+
+      .btn-primary:hover {
+        background: var(--brand-strong);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .btn-primary {
+          color: #0b0d14;
+        }
+      }
+
+      .btn-ghost {
+        border-color: var(--border);
+        background: var(--surface);
+        color: var(--text);
+      }
+
+      .btn-ghost:hover {
+        border-color: var(--muted);
+      }
+
+      .nav-links .btn {
+        padding: 8px 14px;
+        color: #ffffff;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .nav-links .btn {
+          color: #0b0d14;
+        }
+      }
+
+      /* Hero */
+      .hero {
+        padding: 88px 0 72px;
+        background:
+          radial-gradient(60% 50% at 50% 0%, var(--brand-soft) 0%, transparent 100%),
+          var(--bg);
+        text-align: center;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        margin-bottom: 20px;
+        padding: 4px 12px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      h1 {
+        max-width: 820px;
+        margin: 0 auto;
+        font-size: clamp(36px, 6vw, 60px);
+        line-height: 1.08;
+        letter-spacing: -0.035em;
+      }
+
+      h1 span {
+        color: var(--brand);
+      }
+
+      .lede {
+        max-width: 640px;
+        margin: 22px auto 0;
+        color: var(--muted);
+        font-size: clamp(17px, 2vw, 19px);
+      }
+
+      .cta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 32px;
+      }
+
+      /* Board mock */
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        max-width: 920px;
+        margin: 56px auto 0;
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--bg-soft);
+        box-shadow: var(--shadow);
+        text-align: left;
+      }
+
+      .list {
+        padding: 12px;
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--border) 45%, transparent);
+      }
+
+      .list h3 {
+        display: flex;
+        justify-content: space-between;
+        margin: 2px 4px 10px;
+        font-size: 14px;
+      }
+
+      .list h3 small {
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .card {
+        margin-bottom: 8px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface);
+        font-size: 14px;
+      }
+
+      .card:last-child {
+        margin-bottom: 0;
+      }
+
+      .labels {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 6px;
+      }
+
+      .label {
+        width: 34px;
+        height: 6px;
+        border-radius: 999px;
+      }
+
+      .meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .avatar {
+        display: inline-grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .card.ai {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent);
+      }
+
+      .ai-tag {
+        color: var(--brand);
+        font-weight: 600;
+      }
+
+      /* Sections */
+      section {
+        padding: 88px 0;
+      }
+
+      .soft {
+        background: var(--bg-soft);
+      }
+
+      .section-head {
+        max-width: 680px;
+        margin: 0 auto 48px;
+        text-align: center;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 40px);
+        line-height: 1.15;
+        letter-spacing: -0.025em;
+      }
+
+      .section-head p {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      .feature {
+        padding: 24px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .feature svg {
+        width: 40px;
+        height: 40px;
+        padding: 9px;
+        border-radius: 10px;
+        background: var(--brand-soft);
+        color: var(--brand);
+      }
+
+      .feature h3 {
+        margin: 16px 0 6px;
+        font-size: 17px;
+      }
+
+      .feature p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      /* AI split */
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: center;
+        gap: 56px;
+      }
+
+      .split h2 {
+        text-align: left;
+      }
+
+      .split > div > p {
+        color: var(--muted);
+        font-size: 17px;
+      }
+
+      .checks {
+        margin: 20px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .checks li {
+        position: relative;
+        margin: 10px 0;
+        padding-left: 30px;
+      }
+
+      .checks li::before {
+        position: absolute;
+        top: 3px;
+        left: 0;
+        display: grid;
+        place-items: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--brand-soft);
+        color: var(--brand);
+        content: '✓';
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .clients {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 24px;
+      }
+
+      .chip {
+        padding: 5px 12px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .terminal {
+        overflow: hidden;
+        border-radius: var(--radius);
+        background: var(--code-bg);
+        box-shadow: var(--shadow);
+      }
+
+      .terminal-bar {
+        display: flex;
+        gap: 7px;
+        padding: 12px 14px;
+        border-bottom: 1px solid rgb(255 255 255 / 8%);
+      }
+
+      .terminal-bar i {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: rgb(255 255 255 / 18%);
+      }
+
+      pre {
+        margin: 0;
+        padding: 18px 20px;
+        overflow-x: auto;
+        color: var(--code-text);
+        font-size: 13.5px;
+        line-height: 1.7;
+      }
+
+      .c {
+        color: #7c8aa5;
+      }
+
+      .k {
+        color: #a5b4fc;
+      }
+
+      .s {
+        color: #86efac;
+      }
+
+      /* Steps */
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+        counter-reset: step;
+      }
+
+      .step {
+        padding: 24px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .step::before {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        margin-bottom: 14px;
+        border-radius: 50%;
+        background: var(--brand);
+        color: #ffffff;
+        content: counter(step);
+        counter-increment: step;
+        font-weight: 700;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .step::before {
+          color: #0b0d14;
+        }
+      }
+
+      .step h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+      }
+
+      .step p {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .step pre {
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: var(--code-bg);
+        font-size: 12.5px;
+      }
+
+      .center {
+        margin-top: 32px;
+        text-align: center;
+      }
+
+      /* License */
+      .license {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 20px;
+      }
+
+      .license .feature h3 {
+        margin-top: 0;
+      }
+
+      .license ul {
+        margin: 0;
+        padding-left: 20px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .license li {
+        margin: 6px 0;
+      }
+
+      /* Footer */
+      footer {
+        padding: 40px 0;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .footer-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .footer-links a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+
+      .footer-links a:hover {
+        color: var(--text);
+      }
+
+      footer p {
+        margin: 20px 0 0;
+        font-size: 13px;
+      }
+
+      @media (max-width: 900px) {
+        .grid,
+        .steps {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .split {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 32px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .nav-links a:not(.btn) {
+          display: none;
+        }
+
+        .hero {
+          padding: 56px 0 48px;
+        }
+
+        section {
+          padding: 64px 0;
+        }
+
+        .board,
+        .grid,
+        .steps,
+        .license {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .board .list:nth-child(n + 2) {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap nav">
+        <a class="brand" href="#top" aria-label="Tama home">
+          <img src="icon.svg" alt="" />
+          tama
+        </a>
+        <nav class="nav-links" aria-label="Main">
+          <a href="#features">Features</a>
+          <a href="#ai">AI assistants</a>
+          <a href="#start">Get started</a>
+          <a href="#license">License</a>
+          <a class="btn btn-primary" href="https://github.com/jakaria-istauk/tama">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <div class="hero">
+        <div class="wrap">
+          <span class="eyebrow">Free · Self-hosted · Source-available</span>
+          <h1>Kanban for teams, with <span>AI assistants</span> built in</h1>
+          <p class="lede">
+            Plan projects in boards, lists and cards, work on them together in real time, and let
+            Claude, ChatGPT or Cursor read and update your boards with your permissions. On your own
+            server.
+          </p>
+          <div class="cta">
+            <a class="btn btn-primary" href="#start">Get started</a>
+            <a class="btn btn-ghost" href="https://github.com/jakaria-istauk/tama">View on GitHub</a>
+          </div>
+
+          <div class="board" aria-hidden="true">
+            <div class="list">
+              <h3>To do <small>3</small></h3>
+              <div class="card">
+                <div class="labels"><span class="label" style="background: #f59e0b"></span></div>
+                Write the release notes
+                <div class="meta"><span>Nov 28</span><span class="avatar" style="background: #0ea5e9">RA</span></div>
+              </div>
+              <div class="card">
+                <div class="labels"><span class="label" style="background: #ef4444"></span><span class="label" style="background: #8b5cf6"></span></div>
+                Fix the login redirect
+                <div class="meta"><span>2 / 4 tasks</span><span class="avatar" style="background: #10b981">NI</span></div>
+              </div>
+            </div>
+            <div class="list">
+              <h3>In progress <small>2</small></h3>
+              <div class="card ai">
+                <div class="labels"><span class="label" style="background: #4f46e5"></span></div>
+                Split the onboarding epic into cards
+                <div class="meta"><span class="ai-tag">Updated by Claude</span><span class="avatar" style="background: #4f46e5">AI</span></div>
+              </div>
+              <div class="card">
+                Design the settings page
+                <div class="meta"><span>3 comments</span><span class="avatar" style="background: #f43f5e">SA</span></div>
+              </div>
+            </div>
+            <div class="list">
+              <h3>Done <small>5</small></h3>
+              <div class="card">
+                <div class="labels"><span class="label" style="background: #10b981"></span></div>
+                Set up two-factor sign-in
+                <div class="meta"><span>Nov 20</span><span class="avatar" style="background: #0ea5e9">RA</span></div>
+              </div>
+              <div class="card">
+                Move the server to Docker
+                <div class="meta"><span>Nov 18</span><span class="avatar" style="background: #10b981">NI</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section id="features">
+        <div class="wrap">
+          <div class="section-head">
+            <h2>Everything a team board needs</h2>
+            <p>Simple to start with, and enough depth for real projects.</p>
+          </div>
+          <div class="grid">
+            <article class="feature">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="5" height="16" rx="1.5" /><rect x="10" y="4" width="5" height="11" rx="1.5" /><rect x="17" y="4" width="4" height="7" rx="1.5" /></svg>
+              <h3>Kanban boards</h3>
+              <p>Projects, boards, lists and cards, with drag and drop.</p>
+            </article>
+            <article class="feature">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9z" /></svg>
+              <h3>Real-time collaboration</h3>
+              <p>Every change shows up for everyone at once. No refresh.</p>
+            </article>
+            <article class="feature">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><path d="M14 3v6h6M8 13h8M8 17h5" /></svg>
+              <h3>Rich cards</h3>
+              <p>Markdown, attachments, comments, tasks, labels, custom fields, due dates and a stopwatch.</p>
+            </article>
+            <article class="feature">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+              <h3>Notifications</h3>
+              <p>Send updates to over 100 services through Apprise.</p>
+            </article>
+            <article class="feature">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6" /></svg>
+              <h3>Webhooks and REST API</h3>
+              <p>Build your own integrations on a documented API.</p>
+            </article>
+            <article class="feature">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /></svg>
+              <h3>Secure sign-in</h3>
+              <p>Google sign-in, two-factor authentication with recovery codes, and personal API keys.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="ai" class="soft">
+        <div class="wrap split">
+          <div>
+            <h2>Your AI assistant, on your board</h2>
+            <p>
+              Tama has a built-in
+              <a href="https://modelcontextprotocol.io">Model Context Protocol</a> server. Connect
+              an assistant and ask it to plan a sprint, sort a backlog or write up a card. It works
+              as you, so it sees and changes only what you can.
+            </p>
+            <ul class="checks">
+              <li>Claude and ChatGPT connect through OAuth, with a consent screen.</li>
+              <li>Coding agents connect with a personal API key.</li>
+              <li>See and disconnect connected apps at any time.</li>
+            </ul>
+            <div class="clients">
+              <span class="chip">Claude</span>
+              <span class="chip">ChatGPT</span>
+              <span class="chip">Claude Code</span>
+              <span class="chip">Codex</span>
+              <span class="chip">Cursor</span>
+              <span class="chip">VS Code</span>
+              <span class="chip">Gemini CLI</span>
+              <span class="chip">Windsurf</span>
+            </div>
+          </div>
+          <div class="terminal">
+            <div class="terminal-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+            <pre><code><span class="c"># Connect Claude Code to your Tama</span>
+<span class="k">claude</span> mcp add --transport http tama \
+  <span class="s">https://tama.example.com/api/mcp</span> \
+  --header <span class="s">"X-Api-Key: &lt;api key&gt;"</span>
+
+<span class="c"># Then just ask</span>
+&gt; Move every overdue card on the Website
+  board to "This week" and assign them to me.</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="start">
+        <div class="wrap">
+          <div class="section-head">
+            <h2>Running in a few minutes</h2>
+            <p>All you need is a server with Docker and Compose.</p>
+          </div>
+          <div class="steps">
+            <div class="step">
+              <h3>Get the code</h3>
+              <p>Clone the repository.</p>
+              <pre><code>git clone https://github.com/jakaria-istauk/tama.git
+cd tama</code></pre>
+            </div>
+            <div class="step">
+              <h3>Configure</h3>
+              <p>In <code>docker-compose.yml</code>, set <code>BASE_URL</code> and a random <code>SECRET_KEY</code>.</p>
+              <pre><code>openssl rand -hex 32</code></pre>
+            </div>
+            <div class="step">
+              <h3>Start it</h3>
+              <p>Start Tama and create the first admin.</p>
+              <pre><code>docker compose up -d --build
+docker compose run --rm tama \
+  npm run db:create-admin-user</code></pre>
+            </div>
+          </div>
+          <p class="center">
+            <a class="btn btn-ghost" href="https://github.com/jakaria-istauk/tama#deploy">More ways to deploy: Kubernetes, Cloudflare Tunnel</a>
+          </p>
+        </div>
+      </section>
+
+      <section id="license" class="soft">
+        <div class="wrap">
+          <div class="section-head">
+            <h2>Free to use, open to read</h2>
+            <p>
+              Tama is based on PLANKA and shares its license, the
+              <a href="https://github.com/jakaria-istauk/tama/blob/master/LICENSE.md">PLANKA Community License</a>.
+              The source is public, and anyone can run, fork and change it.
+            </p>
+          </div>
+          <div class="license">
+            <div class="feature">
+              <h3>You may</h3>
+              <ul>
+                <li>Use, copy, fork and modify it for personal use and inside your own organization.</li>
+                <li>Run it for friends and family, non-profits, education and research.</li>
+              </ul>
+            </div>
+            <div class="feature">
+              <h3>You may not</h3>
+              <ul>
+                <li>Run it as a hosted service for third parties for commercial gain.</li>
+                <li>Remove the license and copyright notices.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <div class="footer-row">
+          <a class="brand" href="#top"><img src="icon.svg" alt="" />tama</a>
+          <nav class="footer-links" aria-label="Footer">
+            <a href="https://github.com/jakaria-istauk/tama">GitHub</a>
+            <a href="https://github.com/jakaria-istauk/tama/blob/master/docs/mcp.md">MCP docs</a>
+            <a href="https://github.com/jakaria-istauk/tama/blob/master/CONTRIBUTING.md">Contributing</a>
+            <a href="https://github.com/jakaria-istauk/tama/blob/master/SECURITY.md">Security</a>
+            <a href="https://github.com/jakaria-istauk/tama/blob/master/LICENSE.md">License</a>
+          </nav>
+        </div>
+        <p>
+          Tama is built on <a href="https://github.com/plankanban/planka">PLANKA</a> by PLANKA
+          Software GmbH and its contributors. Tama is an independent project and is not affiliated
+          with or endorsed by PLANKA Software GmbH. PLANKA is their trademark.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
