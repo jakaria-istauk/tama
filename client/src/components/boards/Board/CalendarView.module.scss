@@ -100,11 +100,18 @@
     overflow: hidden;
   }
 
+  // A surface of its own keeps the month title readable on any board
+  // background image or gradient.
   .header {
     align-items: center;
+    background: var(--pk-surface);
+    border: 1px solid var(--pk-border);
+    border-radius: var(--pk-radius);
     display: flex;
     gap: 16px;
     margin-bottom: 12px;
+    padding: 6px 16px 6px 6px;
+    width: fit-content;
   }
 
   .navigation {
@@ -172,7 +179,7 @@
 
   .wrapper {
     overflow-y: auto;
-    padding: 0 20px 20px;
+    padding: 12px 20px 20px;
     width: 100%;
   }
 }
