@@ -8,7 +8,7 @@
  * /cards/{id}/duplicate:
  *   post:
  *     summary: Duplicate card
- *     description: Creates a duplicate of a card with all its contents (tasks, attachments, etc.). Requires board editor permissions.
+ *     description: Creates a duplicate of a card with all its contents (tasks, attachments, etc.). Duplicating a template creates a normal card unless `isTemplate` is set, so this is also how cards are created from templates and cards are saved as templates. Requires board editor permissions.
  *     tags:
  *       - Cards
  *     operationId: duplicateCard
@@ -47,6 +47,11 @@
  *                 nullable: true
  *                 description: Name/title for the duplicated card
  *                 example: Implement user authentication (copy)
+ *               isTemplate:
+ *                 type: boolean
+ *                 default: false
+ *                 description: Whether the duplicate is a template
+ *                 example: false
  *     responses:
  *       200:
  *         description: Card duplicated successfully
@@ -165,6 +170,9 @@ module.exports = {
       maxLength: 1024,
       allowNull: true,
     },
+    isTemplate: {
+      type: 'boolean',
+    },
   },
 
   exits: {
@@ -249,7 +257,7 @@ module.exports = {
       }
     }
 
-    const values = _.pick(inputs, ['position', 'name']);
+    const values = _.pick(inputs, ['position', 'name', 'isTemplate']);
 
     const {
       card: nextCard,
