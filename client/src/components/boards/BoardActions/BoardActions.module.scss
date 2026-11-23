@@ -25,7 +25,7 @@
   }
 
   .actions {
-    align-items: flex-start;
+    align-items: center;
     column-gap: 20px;
     display: flex;
     min-height: 46px;
@@ -57,7 +57,9 @@
     margin-right: 8px;
   }
 
+  // The filters drawer is positioned against the bar.
   .wrapper {
     padding: 6px 0;
+    position: relative;
   }
 }

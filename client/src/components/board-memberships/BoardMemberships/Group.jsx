@@ -35,7 +35,7 @@ const Group = React.memo(({ items, role, groupsTotal }) => {
       {items.slice(0, visibleTotal).map((item) => (
         <span key={item.id} className={styles.user}>
           <ActionsPopup boardMembershipId={item.id}>
-            <UserAvatar id={item.user.id} size="large" isDisabled={!item.isPersisted} />
+            <UserAvatar id={item.user.id} size="small" isDisabled={!item.isPersisted} />
           </ActionsPopup>
         </span>
       ))}

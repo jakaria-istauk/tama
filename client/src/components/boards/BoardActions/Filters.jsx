@@ -94,6 +94,7 @@ const Filters = React.memo(() => {
   const [t] = useTranslation();
   const [search, setSearch] = useState(board.search);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isDrawerOpened, setIsDrawerOpened] = useState(false);
   // Cache-buster for the "last filter" localStorage bucket below. Bumping it
   // after a write re-runs the memo that reads it, which is all the syncing it
   // needs — nothing here watches storage, so another window's snapshot never
@@ -537,6 +538,41 @@ const Filters = React.memo(() => {
     [currentFilter, dispatch, savedFilters],
   );
 
+  const handleDrawerToggleClick = useCallback(() => {
+    setIsDrawerOpened((prevIsDrawerOpened) => !prevIsDrawerOpened);
+  }, []);
+
+  const handleDrawerCloseClick = useCallback(() => {
+    setIsDrawerOpened(false);
+  }, []);
+
+  // Escape closes the drawer, unless it was meant for something else: an open
+  // popup closes first, and a text field keeps Escape for itself. The check
+  // runs in the capture phase, before the popup removes itself.
+  useEffect(() => {
+    if (!isDrawerOpened) {
+      return undefined;
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      const isInTextField = ['INPUT', 'TEXTAREA'].includes(event.target.tagName);
+
+      if (!isInTextField && !document.querySelector('.ui.popup')) {
+        setIsDrawerOpened(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, true);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [isDrawerOpened]);
+
   useDidUpdate(() => {
     setSearch(board.search);
   }, [board.search]);
@@ -549,145 +585,57 @@ const Filters = React.memo(() => {
   const SaveFilterPopup = usePopup(SaveFilterStep);
   const SavedFiltersPopup = usePopup(SavedFiltersStep);
 
-  const isSearchActive = search || isSearchFocused;
   const isListView = board.view === BoardViews.LIST;
+
+  // How many kinds of filter are on, not counting the search, which shows in
+  // the bar already. Drives the badge on the drawer toggle.
+  const activeFilterCount = [
+    userIds.length > 0 || !!board.filterNoMember,
+    labelIds.length > 0 || excludedLabelIds.length > 0,
+    creatorUserIds.length > 0,
+    !!due,
+    isListView && listIds.length > 0,
+  ].filter(Boolean).length;
+
+  const isSearchActive = search || isSearchFocused;
+
+  const searchNode = (
+    <Input
+      ref={handleSearchFieldRef}
+      value={search}
+      placeholder={t('common.searchCards')}
+      maxLength={128}
+      icon={
+        isSearchActive ? <Icon link name="cancel" onClick={handleCancelSearchClick} /> : 'search'
+      }
+      className={classNames(styles.search, !isSearchActive && styles.searchInactive)}
+      onFocus={handleSearchFocus}
+      onKeyDown={handleSearchKeyDown}
+      onChange={handleSearchChange}
+      onBlur={handleSearchBlur}
+    />
+  );
 
   return (
     <>
+      <span className={styles.filter}>{searchNode}</span>
       <span className={styles.filter}>
-        <BoardMembershipsPopup
-          currentUserIds={userIds}
-          title="common.filterByMembers"
-          onUserSelect={handleUserSelect}
-          onUserDeselect={handleUserDeselect}
-        >
-          <button type="button" className={styles.filterButton}>
-            <span className={styles.filterTitle}>{`${t('common.members')}:`}</span>
-            {userIds.length === 0 && <span className={styles.filterLabel}>{t('common.all')}</span>}
-          </button>
-        </BoardMembershipsPopup>
         <button
           type="button"
-          className={classNames(styles.filterButton, styles.filterLabel)}
-          onClick={handleNoMemberClick}
+          aria-expanded={isDrawerOpened}
+          aria-controls="board-filters-drawer"
+          className={classNames(
+            styles.drawerToggle,
+            (isDrawerOpened || activeFilterCount > 0) && styles.drawerToggleActive,
+          )}
+          onClick={handleDrawerToggleClick}
         >
-          {t('common.noMember')}
+          <Icon fitted name="filter" />
+          <span className={styles.drawerToggleText}>{t('common.filters')}</span>
+          {activeFilterCount > 0 && (
+            <span className={styles.drawerToggleCount}>{activeFilterCount}</span>
+          )}
         </button>
-        {userIds.length === 0 && withCurrentUserSelector && (
-          <Tooltip content={t('action.filterByCurrentUser')}>
-            <button type="button" className={styles.filterButton} onClick={handleCurrentUserSelect}>
-              <span className={styles.filterLabel}>
-                <Icon fitted name="target" className={styles.filterLabelIcon} />
-              </span>
-            </button>
-          </Tooltip>
-        )}
-        {userIds.map((userId) => (
-          <span key={userId} className={styles.filterItem}>
-            <UserAvatar id={userId} size="tiny" onClick={handleUserClick} />
-          </span>
-        ))}
-      </span>
-      <span className={styles.filter}>
-        <LabelsPopup
-          currentIds={[]}
-          currentModes={labelModes}
-          isFilterModeEnabled
-          title="common.filterByLabels"
-          onModeChange={handleLabelModeChange}
-        >
-          <button type="button" className={styles.filterButton}>
-            <span className={styles.filterTitle}>{`${t('common.labels')}:`}</span>
-            {labelIds.length === 0 && excludedLabelIds.length === 0 && (
-              <span className={styles.filterLabel}>{t('common.all')}</span>
-            )}
-          </button>
-        </LabelsPopup>
-        {labelIds.map((labelId) => (
-          <span key={labelId} className={styles.filterItem}>
-            <LabelChip id={labelId} size="small" onClick={handleLabelClick} />
-          </span>
-        ))}
-        {excludedLabelIds.map((labelId) => (
-          <span key={labelId} className={styles.filterItem}>
-            <LabelChip id={labelId} size="small" isExcluded onClick={handleLabelClick} />
-          </span>
-        ))}
-      </span>
-      <span className={styles.filter}>
-        <CreatorsPopup
-          currentUserIds={creatorUserIds}
-          title="common.filterByCreator"
-          onUserSelect={handleCreatorSelect}
-          onUserDeselect={handleCreatorDeselect}
-        >
-          <button type="button" className={styles.filterButton}>
-            <span className={styles.filterTitle}>{`${t('common.createdBy')}:`}</span>
-            {creatorUserIds.length === 0 && (
-              <span className={styles.filterLabel}>{t('common.all')}</span>
-            )}
-          </button>
-        </CreatorsPopup>
-        {creatorUserIds.map((userId) => (
-          <span key={userId} className={styles.filterItem}>
-            <UserAvatar id={userId} size="tiny" onClick={handleCreatorClick} />
-          </span>
-        ))}
-      </span>
-      <span className={styles.filter}>
-        <DueFilterPopup value={due} onChange={handleDueChange}>
-          <button type="button" className={styles.filterButton}>
-            <span className={styles.filterTitle}>{`${t('common.due')}:`}</span>
-            {!due && <span className={styles.filterLabel}>{t('common.anyTime')}</span>}
-          </button>
-        </DueFilterPopup>
-        {due && (
-          <button type="button" className={styles.filterButton} onClick={handleDueClearClick}>
-            <span className={styles.filterLabel}>{formatDueFilterLabel(due, t)}</span>
-          </button>
-        )}
-      </span>
-      {isListView && (
-        <span className={styles.filter}>
-          <ListsFilterPopup
-            currentIds={listIds}
-            title="common.filterByLists"
-            onSelect={handleListSelect}
-            onDeselect={handleListDeselect}
-          >
-            <button type="button" className={styles.filterButton}>
-              <span className={styles.filterTitle}>{`${t('common.lists')}:`}</span>
-              {listIds.length === 0 && (
-                <span className={styles.filterLabel}>{t('common.all')}</span>
-              )}
-            </button>
-          </ListsFilterPopup>
-          {listIds.map((listId) => (
-            <FilterListChip key={listId} id={listId} onClick={handleListDeselect} />
-          ))}
-        </span>
-      )}
-      <span className={styles.filter}>
-        <Input
-          ref={handleSearchFieldRef}
-          value={search}
-          placeholder={t('common.searchCards')}
-          maxLength={128}
-          icon={
-            isSearchActive ? (
-              <Icon link name="cancel" onClick={handleCancelSearchClick} />
-            ) : (
-              'search'
-            )
-          }
-          className={classNames(styles.search, !isSearchActive && styles.searchInactive)}
-          onFocus={handleSearchFocus}
-          onKeyDown={handleSearchKeyDown}
-          onChange={handleSearchChange}
-          onBlur={handleSearchBlur}
-        />
-      </span>
-      <span className={styles.filter}>
         {hasFilter && (
           <Tooltip content={t('common.clearFilter')}>
             <button type="button" className={styles.filterButton} onClick={handleClearClick}>
@@ -697,54 +645,185 @@ const Filters = React.memo(() => {
             </button>
           </Tooltip>
         )}
-        {/* Takes the place of the clear button once the filter is gone, and
-            only while there is something to put back. */}
-        {!hasFilter && !!lastFilter && (
-          <Tooltip content={t('common.restoreFilter')}>
-            <button type="button" className={styles.filterButton} onClick={handleRestoreClick}>
-              <span className={styles.filterLabel}>
-                <Icon fitted name="undo" className={styles.filterLabelIcon} />
-              </span>
-            </button>
-          </Tooltip>
-        )}
-        {/* No Tooltip around either popup trigger: usePopup clones its
-            immediate child to attach the click handler, so anything wrapped
-            around the button swallows the open. */}
-        {hasFilter && (
-          <SaveFilterPopup onSave={handleSaveFilter}>
+      </span>
+      {isDrawerOpened && (
+        <aside id="board-filters-drawer" aria-label={t('common.filters')} className={styles.drawer}>
+          <div className={styles.drawerHeader}>
+            <span className={styles.drawerTitle}>{t('common.filters')}</span>
             <button
               type="button"
-              title={t('common.saveFilter', {
-                context: 'title',
-              })}
-              className={styles.filterButton}
+              aria-label={t('action.close')}
+              className={styles.drawerClose}
+              onClick={handleDrawerCloseClick}
             >
-              <span className={styles.filterLabel}>
-                <Icon fitted name="bookmark outline" className={styles.filterLabelIcon} />
-              </span>
+              <Icon fitted name="close" />
             </button>
-          </SaveFilterPopup>
-        )}
-        <SavedFiltersPopup
-          items={savedFilters}
-          activeId={activeSavedFilterId}
-          onApply={handleSavedFilterApply}
-          onRemove={handleSavedFilterRemove}
-        >
-          <button
-            type="button"
-            title={t('common.savedFilters', {
-              context: 'title',
-            })}
-            className={styles.filterButton}
-          >
-            <span className={styles.filterLabel}>
-              <Icon fitted name="bookmark" className={styles.filterLabelIcon} />
+          </div>
+          <div className={styles.drawerBody}>
+            <span className={styles.filter}>
+              <BoardMembershipsPopup
+                currentUserIds={userIds}
+                title="common.filterByMembers"
+                onUserSelect={handleUserSelect}
+                onUserDeselect={handleUserDeselect}
+              >
+                <button type="button" className={styles.filterButton}>
+                  <span className={styles.filterTitle}>{`${t('common.members')}:`}</span>
+                  {userIds.length === 0 && (
+                    <span className={styles.filterLabel}>{t('common.all')}</span>
+                  )}
+                </button>
+              </BoardMembershipsPopup>
+              <button
+                type="button"
+                className={classNames(styles.filterButton, styles.filterLabel)}
+                onClick={handleNoMemberClick}
+              >
+                {t('common.noMember')}
+              </button>
+              {userIds.length === 0 && withCurrentUserSelector && (
+                <Tooltip content={t('action.filterByCurrentUser')}>
+                  <button
+                    type="button"
+                    className={styles.filterButton}
+                    onClick={handleCurrentUserSelect}
+                  >
+                    <span className={styles.filterLabel}>
+                      <Icon fitted name="target" className={styles.filterLabelIcon} />
+                    </span>
+                  </button>
+                </Tooltip>
+              )}
+              {userIds.map((userId) => (
+                <span key={userId} className={styles.filterItem}>
+                  <UserAvatar id={userId} size="tiny" onClick={handleUserClick} />
+                </span>
+              ))}
             </span>
-          </button>
-        </SavedFiltersPopup>
-      </span>
+            <span className={styles.filter}>
+              <LabelsPopup
+                currentIds={[]}
+                currentModes={labelModes}
+                isFilterModeEnabled
+                title="common.filterByLabels"
+                onModeChange={handleLabelModeChange}
+              >
+                <button type="button" className={styles.filterButton}>
+                  <span className={styles.filterTitle}>{`${t('common.labels')}:`}</span>
+                  {labelIds.length === 0 && excludedLabelIds.length === 0 && (
+                    <span className={styles.filterLabel}>{t('common.all')}</span>
+                  )}
+                </button>
+              </LabelsPopup>
+              {labelIds.map((labelId) => (
+                <span key={labelId} className={styles.filterItem}>
+                  <LabelChip id={labelId} size="small" onClick={handleLabelClick} />
+                </span>
+              ))}
+              {excludedLabelIds.map((labelId) => (
+                <span key={labelId} className={styles.filterItem}>
+                  <LabelChip id={labelId} size="small" isExcluded onClick={handleLabelClick} />
+                </span>
+              ))}
+            </span>
+            <span className={styles.filter}>
+              <CreatorsPopup
+                currentUserIds={creatorUserIds}
+                title="common.filterByCreator"
+                onUserSelect={handleCreatorSelect}
+                onUserDeselect={handleCreatorDeselect}
+              >
+                <button type="button" className={styles.filterButton}>
+                  <span className={styles.filterTitle}>{`${t('common.createdBy')}:`}</span>
+                  {creatorUserIds.length === 0 && (
+                    <span className={styles.filterLabel}>{t('common.all')}</span>
+                  )}
+                </button>
+              </CreatorsPopup>
+              {creatorUserIds.map((userId) => (
+                <span key={userId} className={styles.filterItem}>
+                  <UserAvatar id={userId} size="tiny" onClick={handleCreatorClick} />
+                </span>
+              ))}
+            </span>
+            <span className={styles.filter}>
+              <DueFilterPopup value={due} onChange={handleDueChange}>
+                <button type="button" className={styles.filterButton}>
+                  <span className={styles.filterTitle}>{`${t('common.due')}:`}</span>
+                  {!due && <span className={styles.filterLabel}>{t('common.anyTime')}</span>}
+                </button>
+              </DueFilterPopup>
+              {due && (
+                <button type="button" className={styles.filterButton} onClick={handleDueClearClick}>
+                  <span className={styles.filterLabel}>{formatDueFilterLabel(due, t)}</span>
+                </button>
+              )}
+            </span>
+            {isListView && (
+              <span className={styles.filter}>
+                <ListsFilterPopup
+                  currentIds={listIds}
+                  title="common.filterByLists"
+                  onSelect={handleListSelect}
+                  onDeselect={handleListDeselect}
+                >
+                  <button type="button" className={styles.filterButton}>
+                    <span className={styles.filterTitle}>{`${t('common.lists')}:`}</span>
+                    {listIds.length === 0 && (
+                      <span className={styles.filterLabel}>{t('common.all')}</span>
+                    )}
+                  </button>
+                </ListsFilterPopup>
+                {listIds.map((listId) => (
+                  <FilterListChip key={listId} id={listId} onClick={handleListDeselect} />
+                ))}
+              </span>
+            )}
+            <span className={classNames(styles.filter, styles.drawerActions)}>
+              {hasFilter && (
+                <button type="button" className={styles.drawerAction} onClick={handleClearClick}>
+                  <Icon name="close" />
+                  {t('common.clearFilter')}
+                </button>
+              )}
+              {/* Takes the place of the clear button once the filter is gone, and
+                  only while there is something to put back. */}
+              {!hasFilter && !!lastFilter && (
+                <button type="button" className={styles.drawerAction} onClick={handleRestoreClick}>
+                  <Icon name="undo" />
+                  {t('common.restoreFilter')}
+                </button>
+              )}
+              {/* No Tooltip around either popup trigger: usePopup clones its
+                  immediate child to attach the click handler, so anything
+                  wrapped around the button swallows the open. */}
+              {hasFilter && (
+                <SaveFilterPopup onSave={handleSaveFilter}>
+                  <button type="button" className={styles.drawerAction}>
+                    <Icon name="bookmark outline" />
+                    {t('common.saveFilter', {
+                      context: 'title',
+                    })}
+                  </button>
+                </SaveFilterPopup>
+              )}
+              <SavedFiltersPopup
+                items={savedFilters}
+                activeId={activeSavedFilterId}
+                onApply={handleSavedFilterApply}
+                onRemove={handleSavedFilterRemove}
+              >
+                <button type="button" className={styles.drawerAction}>
+                  <Icon name="bookmark" />
+                  {t('common.savedFilters', {
+                    context: 'title',
+                  })}
+                </button>
+              </SavedFiltersPopup>
+            </span>
+          </div>
+        </aside>
+      )}
     </>
   );
 });
