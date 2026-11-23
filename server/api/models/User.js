@@ -148,6 +148,12 @@
  *           default: 30m
  *           description: Auto-logout behavior on inactivity (personal field)
  *           example: 30m
+ *         colorScheme:
+ *           type: string
+ *           enum: [tangerine, teal, indigo, forest, navy, plum, ocean, graphite]
+ *           default: tangerine
+ *           description: Accent colour scheme of the user interface (personal field)
+ *           example: tangerine
  *         isTotpEnabled:
  *           type: boolean
  *           default: false
@@ -263,6 +269,17 @@ const AutoLogoutModes = {
   HOURS_12: '12h',
 };
 
+const ColorSchemes = {
+  TANGERINE: 'tangerine',
+  TEAL: 'teal',
+  INDIGO: 'indigo',
+  FOREST: 'forest',
+  NAVY: 'navy',
+  PLUM: 'plum',
+  OCEAN: 'ocean',
+  GRAPHITE: 'graphite',
+};
+
 const PRIVATE_FIELD_NAMES = [
   'email',
   'apiKeyPrefix',
@@ -288,6 +305,7 @@ const PERSONAL_FIELD_NAMES = [
   'defaultHomeView',
   'defaultProjectsOrder',
   'autoLogoutMode',
+  'colorScheme',
 ];
 
 const SECRET_FIELD_NAMES = [
@@ -309,6 +327,7 @@ module.exports = {
   HomeViews,
   ProjectOrders,
   AutoLogoutModes,
+  ColorSchemes,
   LANGUAGES,
   PRIVATE_FIELD_NAMES,
   PERSONAL_FIELD_NAMES,
@@ -443,6 +462,12 @@ module.exports = {
       isIn: Object.values(AutoLogoutModes),
       defaultsTo: AutoLogoutModes.MINUTES_30,
       columnName: 'auto_logout_mode',
+    },
+    colorScheme: {
+      type: 'string',
+      isIn: Object.values(ColorSchemes),
+      defaultsTo: ColorSchemes.TANGERINE,
+      columnName: 'color_scheme',
     },
     totpSecret: {
       type: 'string',

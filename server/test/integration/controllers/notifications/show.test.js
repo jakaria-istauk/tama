@@ -22,6 +22,7 @@ const FORBIDDEN_FIELD_NAMES = [
   'defaultHomeView',
   'defaultProjectsOrder',
   'autoLogoutMode',
+  'colorScheme',
   'isTotpEnabled',
   'totpEnabledAt',
   'totpRecoveryCodesRemaining',

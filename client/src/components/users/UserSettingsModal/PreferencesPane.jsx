@@ -4,13 +4,14 @@
  */
 
 import React, { useCallback, useMemo } from 'react';
+import classNames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Dropdown, Radio, Tab } from 'semantic-ui-react';
 
 import selectors from '../../../selectors';
 import entryActions from '../../../entry-actions';
-import { AutoLogoutModes } from '../../../constants/Enums';
+import { AutoLogoutModes, ColorSchemes } from '../../../constants/Enums';
 
 import styles from './PreferencesPane.module.scss';
 
@@ -30,6 +31,18 @@ const AUTO_LOGOUT_TRANSLATION_KEYS = {
   [AutoLogoutModes.MINUTES_10]: 'common.autoLogout_10m',
   [AutoLogoutModes.MINUTES_30]: 'common.autoLogout_30m',
   [AutoLogoutModes.HOURS_12]: 'common.autoLogout_12h',
+};
+
+// Swatch colours match --pk-accent of each scheme in styles.module.scss
+const COLOR_SCHEME_SWATCHES = {
+  [ColorSchemes.TANGERINE]: '#ea580c',
+  [ColorSchemes.TEAL]: '#0f766e',
+  [ColorSchemes.INDIGO]: '#4f46e5',
+  [ColorSchemes.FOREST]: '#2f5d50',
+  [ColorSchemes.NAVY]: '#1e3a5f',
+  [ColorSchemes.PLUM]: '#6d28d9',
+  [ColorSchemes.OCEAN]: '#1d6fe0',
+  [ColorSchemes.GRAPHITE]: '#27272a',
 };
 
 const PreferencesPane = React.memo(() => {
@@ -60,6 +73,17 @@ const PreferencesPane = React.memo(() => {
     [dispatch],
   );
 
+  const handleColorSchemeClick = useCallback(
+    (event) => {
+      dispatch(
+        entryActions.updateCurrentUser({
+          colorScheme: event.currentTarget.value,
+        }),
+      );
+    },
+    [dispatch],
+  );
+
   const autoLogoutOptions = useMemo(
     () =>
       AUTO_LOGOUT_OPTION_ORDER.map((mode) => ({
@@ -71,9 +95,36 @@ const PreferencesPane = React.memo(() => {
   );
 
   const autoLogoutValue = user.autoLogoutMode || AutoLogoutModes.MINUTES_30;
+  const colorSchemeValue = user.colorScheme || ColorSchemes.TANGERINE;
 
   return (
     <Tab.Pane attached={false} className={styles.wrapper}>
+      <div className={styles.colorSchemes}>
+        <span className={styles.label}>{t('common.colorScheme')}</span>
+        <div role="radiogroup" aria-label={t('common.colorScheme')} className={styles.swatches}>
+          {Object.values(ColorSchemes).map((scheme) => (
+            <button
+              key={scheme}
+              type="button"
+              role="radio"
+              aria-checked={scheme === colorSchemeValue}
+              value={scheme}
+              title={t(`common.colorScheme_${scheme}`)}
+              className={classNames(
+                styles.swatch,
+                scheme === colorSchemeValue && styles.swatchActive,
+              )}
+              onClick={handleColorSchemeClick}
+            >
+              <span
+                className={styles.swatchColor}
+                style={{ background: COLOR_SCHEME_SWATCHES[scheme] }}
+              />
+              <span className={styles.swatchName}>{t(`common.colorScheme_${scheme}`)}</span>
+            </button>
+          ))}
+        </div>
+      </div>
       <Radio
         toggle
         name="subscribeToOwnCards"

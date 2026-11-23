@@ -22,6 +22,17 @@ export const AutoLogoutModes = {
   HOURS_12: '12h',
 };
 
+export const ColorSchemes = {
+  TANGERINE: 'tangerine',
+  TEAL: 'teal',
+  INDIGO: 'indigo',
+  FOREST: 'forest',
+  NAVY: 'navy',
+  PLUM: 'plum',
+  OCEAN: 'ocean',
+  GRAPHITE: 'graphite',
+};
+
 export const HomeViews = {
   GRID_PROJECTS: 'gridProjects',
   GROUPED_PROJECTS: 'groupedProjects',
