@@ -18,6 +18,42 @@ const DEFAULT_TASK_LIST_NAME = 'Tasks';
 
 const id = (description) => z.string().regex(ID_REGEX).describe(description);
 
+const AUTOMATION_HELP =
+  'Triggers: cardCreated (optional listId, any list when left out), cardMoved (listId), labelAdded (labelId), dueDatePassed, allTasksCompleted. Actions, run in order on that card: moveCard (listId), addLabel and removeLabel (labelId), addMember and removeMember (userId, a board member), setDueDate (days from now, 0-365), clearDueDate, completeDueDate, postComment (text).';
+
+const automationTriggerSchema = z
+  .object({
+    type: z.enum(['cardCreated', 'cardMoved', 'labelAdded', 'dueDatePassed', 'allTasksCompleted']),
+    listId: id('List ID').nullable().optional(),
+    labelId: id('Label ID').optional(),
+  })
+  .describe('What starts the rule');
+
+const automationActionsSchema = z
+  .array(
+    z.object({
+      type: z.enum([
+        'moveCard',
+        'addLabel',
+        'removeLabel',
+        'addMember',
+        'removeMember',
+        'setDueDate',
+        'clearDueDate',
+        'completeDueDate',
+        'postComment',
+      ]),
+      listId: id('List ID').optional(),
+      labelId: id('Label ID').optional(),
+      userId: id('User ID').optional(),
+      days: z.number().int().min(0).max(365).optional(),
+      text: z.string().min(1).max(10000).optional(),
+    }),
+  )
+  .min(1)
+  .max(10)
+  .describe('What the rule does to the card, in order');
+
 const getEndPosition = (records) =>
   records.length > 0 ? records[records.length - 1].position + POSITION_GAP : POSITION_GAP;
 
@@ -414,6 +450,58 @@ module.exports = [
 
       return runAction('card-recurrences/delete', { id: cardRecurrence.id }, req);
     },
+  },
+  {
+    name: 'list_board_automations',
+    description:
+      'List the automation rules of a board: "when this happens to a card, do that" rules with a trigger, a list of actions and whether they are on.',
+    annotations: READ_ONLY,
+    inputSchema: {
+      boardId: id('Board ID'),
+    },
+    async handler(inputs, req) {
+      const { included } = await runAction('boards/show', { id: inputs.boardId }, req);
+
+      return {
+        items: included.boardAutomations,
+        included: _.pick(included, ['lists', 'labels', 'users']),
+      };
+    },
+  },
+  {
+    name: 'create_board_automation',
+    description: `Add an automation rule to a board. ${AUTOMATION_HELP} Actions run on your behalf.`,
+    annotations: WRITE,
+    inputSchema: {
+      boardId: id('Board ID'),
+      name: z.string().min(1).max(128).describe('Name of the rule'),
+      trigger: automationTriggerSchema,
+      actions: automationActionsSchema,
+      isEnabled: z.boolean().optional().describe('Whether the rule runs. Defaults to true'),
+    },
+    handler: (inputs, req) => runAction('board-automations/create', inputs, req),
+  },
+  {
+    name: 'update_board_automation',
+    description: `Change an automation rule, or turn it on or off. ${AUTOMATION_HELP} Its actions then run on your behalf.`,
+    annotations: WRITE,
+    inputSchema: {
+      id: id('Board automation ID'),
+      name: z.string().min(1).max(128).optional().describe('Name of the rule'),
+      trigger: automationTriggerSchema.optional(),
+      actions: automationActionsSchema.optional(),
+      isEnabled: z.boolean().optional().describe('Whether the rule runs'),
+    },
+    handler: (inputs, req) => runAction('board-automations/update', inputs, req),
+  },
+  {
+    name: 'delete_board_automation',
+    description: 'Delete an automation rule. Changes it already made are kept.',
+    annotations: DESTRUCTIVE,
+    inputSchema: {
+      id: id('Board automation ID'),
+    },
+    handler: (inputs, req) => runAction('board-automations/delete', inputs, req),
   },
   {
     name: 'update_card',
