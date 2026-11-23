@@ -105,14 +105,9 @@
   }
 
   .logoMark {
-    align-items: center;
-    background: var(--pk-accent);
-    border-radius: 8px;
-    color: #fff;
-    display: flex;
-    font-size: 14px;
+    color: var(--pk-accent);
+    flex: none;
     height: 30px;
-    justify-content: center;
     width: 30px;
   }
 
