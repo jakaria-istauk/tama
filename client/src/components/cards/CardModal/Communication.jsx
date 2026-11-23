@@ -20,7 +20,7 @@ const Communication = React.memo(() => {
     {
       menuItem: (
         <Menu.Item key="all" className={styles.menuItem}>
-          <Icon name="list ul" />
+          <Icon name="inbox" />
           {t('common.all')}
         </Menu.Item>
       ),
