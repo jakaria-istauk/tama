@@ -38,7 +38,8 @@ const Item = React.memo(({ boardAutomation, canEdit, onEdit }) => {
     let value = item[field];
 
     if (namesByField[field]) {
-      value = value === null ? t('common.anyList') : namesByField[field][value] || t('common.deleted');
+      value =
+        value === null ? t('common.anyList') : namesByField[field][value] || t('common.deleted');
     } else if (field === 'days') {
       value = `${value} ${t('common.daysFromNow')}`;
     }
