@@ -327,6 +327,7 @@ export default {
       list: 'Liste',
       listActions_title: 'Listenaktionen',
       lists: 'Listen',
+      loading: 'Wird geladen',
       makeProjectPrivate_title: 'Projekt privat machen',
       makeProjectShared_title: 'Projekt freigeben',
       managers: 'Projektleiter',

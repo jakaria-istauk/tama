@@ -437,6 +437,7 @@ export default {
       list: 'List',
       listActions_title: 'List Actions',
       lists: 'Lists',
+      loading: 'Loading',
       makeProjectPrivate_title: 'Make Project Private',
       makeProjectShared_title: 'Make Project Shared',
       managers: 'Managers',
