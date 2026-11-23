@@ -32,6 +32,7 @@ import activities from './activities';
 import notifications from './notifications';
 import notificationServices from './notification-services';
 import savedFilters from './saved-filters';
+import cardRecurrences from './card-recurrences';
 
 export default {
   ...router,
@@ -63,4 +64,5 @@ export default {
   ...notifications,
   ...notificationServices,
   ...savedFilters,
+  ...cardRecurrences,
 };

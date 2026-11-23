@@ -305,6 +305,18 @@ const createSocketEventsChannel = () =>
       emit(entryActions.handleSavedFilterDelete(item));
     };
 
+    const handleCardRecurrenceCreate = ({ item }) => {
+      emit(entryActions.handleCardRecurrenceCreate(item));
+    };
+
+    const handleCardRecurrenceUpdate = ({ item }) => {
+      emit(entryActions.handleCardRecurrenceUpdate(item));
+    };
+
+    const handleCardRecurrenceDelete = ({ item }) => {
+      emit(entryActions.handleCardRecurrenceDelete(item));
+    };
+
     socket.on('disconnect', handleDisconnect);
     socket.on('reconnect', handleReconnect);
 
@@ -404,6 +416,9 @@ const createSocketEventsChannel = () =>
     socket.on('savedFilterCreate', handleSavedFilterCreate);
     socket.on('savedFilterUpdate', handleSavedFilterUpdate);
     socket.on('savedFilterDelete', handleSavedFilterDelete);
+    socket.on('cardRecurrenceCreate', handleCardRecurrenceCreate);
+    socket.on('cardRecurrenceUpdate', handleCardRecurrenceUpdate);
+    socket.on('cardRecurrenceDelete', handleCardRecurrenceDelete);
 
     return () => {
       socket.off('disconnect', handleDisconnect);
@@ -505,6 +520,9 @@ const createSocketEventsChannel = () =>
       socket.off('savedFilterCreate', handleSavedFilterCreate);
       socket.off('savedFilterUpdate', handleSavedFilterUpdate);
       socket.off('savedFilterDelete', handleSavedFilterDelete);
+      socket.off('cardRecurrenceCreate', handleCardRecurrenceCreate);
+      socket.off('cardRecurrenceUpdate', handleCardRecurrenceUpdate);
+      socket.off('cardRecurrenceDelete', handleCardRecurrenceDelete);
     };
   });
 
