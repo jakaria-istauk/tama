@@ -271,7 +271,7 @@ module.exports = [
   {
     name: 'list_card_templates',
     description:
-      'List the card templates of a board. Use create_card_from_template to make a card from one.',
+      'List the card templates of a board, with the schedules of recurring ones. Use create_card_from_template to make a card from one.',
     annotations: READ_ONLY,
     inputSchema: {
       boardId: id('Board ID'),
@@ -279,10 +279,12 @@ module.exports = [
     async handler(inputs, req) {
       const { included } = await runAction('boards/show', { id: inputs.boardId }, req);
 
-      return pickCardRelations(
-        included.cards.filter((card) => card.isTemplate),
-        included,
-      );
+      const templates = included.cards.filter((card) => card.isTemplate);
+
+      return {
+        ...pickCardRelations(templates, included),
+        cardRecurrences: included.cardRecurrences,
+      };
     },
   },
   {
@@ -342,6 +344,75 @@ module.exports = [
         },
         req,
       );
+    },
+  },
+  {
+    name: 'set_card_recurrence',
+    description:
+      'Make a card template recurring, or change its schedule, so a card is made from it automatically. The rule is an RFC 5545 RRULE such as FREQ=WEEKLY;BYDAY=MO,WE;BYHOUR=9;BYMINUTE=0 (FREQ is DAILY, WEEKLY, MONTHLY or YEARLY; one BYHOUR and BYMINUTE, midnight when left out). For "day 31, or the last day of shorter months" use BYMONTHDAY=31,-1;BYSETPOS=1. Cards are made on your behalf.',
+    annotations: WRITE,
+    inputSchema: {
+      templateCardId: id('Card template ID'),
+      rule: z.string().min(1).max(512).describe('RRULE, without the RRULE: prefix'),
+      timeZone: z
+        .string()
+        .min(1)
+        .max(64)
+        .optional()
+        .describe('IANA time zone the rule is read in, such as Europe/Berlin. Defaults to UTC'),
+      listId: id(
+        'List to make cards in, on the board of the template. Defaults to the list of the template',
+      ).optional(),
+    },
+    async handler(inputs, req) {
+      const { item: template } = await runAction('cards/show', { id: inputs.templateCardId }, req);
+
+      if (!template.isTemplate) {
+        throw new ActionError('cardTemplateNotFound', 'Card template not found');
+      }
+
+      const cardRecurrence = await CardRecurrence.qm.getOneByTemplateCardId(template.id);
+
+      if (cardRecurrence) {
+        return runAction(
+          'card-recurrences/update',
+          {
+            id: cardRecurrence.id,
+            ..._.pickBy(_.pick(inputs, ['rule', 'timeZone', 'listId']), (value) => !!value),
+          },
+          req,
+        );
+      }
+
+      return runAction(
+        'card-recurrences/create',
+        {
+          cardId: template.id,
+          listId: inputs.listId || template.listId,
+          rule: inputs.rule,
+          timeZone: inputs.timeZone || 'UTC',
+        },
+        req,
+      );
+    },
+  },
+  {
+    name: 'delete_card_recurrence',
+    description:
+      'Stop a card template from recurring. The template and the cards already made are kept.',
+    annotations: DESTRUCTIVE,
+    inputSchema: {
+      templateCardId: id('Card template ID'),
+    },
+    async handler(inputs, req) {
+      const { item: template } = await runAction('cards/show', { id: inputs.templateCardId }, req);
+      const cardRecurrence = await CardRecurrence.qm.getOneByTemplateCardId(template.id);
+
+      if (!cardRecurrence) {
+        throw new ActionError('cardRecurrenceNotFound', 'Card recurrence not found');
+      }
+
+      return runAction('card-recurrences/delete', { id: cardRecurrence.id }, req);
     },
   },
   {

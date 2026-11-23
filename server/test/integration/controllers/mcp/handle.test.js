@@ -274,6 +274,8 @@ describe('POST /api/mcp', () => {
         'list_card_templates',
         'create_card_from_template',
         'save_card_as_template',
+        'set_card_recurrence',
+        'delete_card_recurrence',
         'create_card',
         'update_card',
         'move_card',
@@ -659,6 +661,65 @@ describe('POST /api/mcp', () => {
         viewer,
         'save_card_as_template',
         { cardId: card.id },
+        'Not enough rights',
+      );
+    });
+
+    it('set_card_recurrence makes a template recurring, then changes its schedule', async () => {
+      const template = await saveAsTemplate(await createCard());
+
+      const { data: created } = await callTool(editor, 'set_card_recurrence', {
+        templateCardId: template.id,
+        rule: 'FREQ=DAILY;BYHOUR=9',
+      });
+
+      expect(created.item.templateCardId).to.equal(template.id);
+      expect(created.item.listId).to.equal(template.listId);
+      expect(created.item.timeZone).to.equal('UTC');
+
+      const { data: updated } = await callTool(editor, 'set_card_recurrence', {
+        templateCardId: template.id,
+        rule: 'FREQ=WEEKLY;BYDAY=FR;BYHOUR=16',
+        timeZone: 'Europe/Berlin',
+      });
+
+      expect(updated.item.id).to.equal(created.item.id);
+      expect(updated.item.rule).to.equal('FREQ=WEEKLY;BYDAY=FR;BYHOUR=16;BYMINUTE=0;BYSECOND=0');
+      expect(updated.item.timeZone).to.equal('Europe/Berlin');
+
+      const { data: listed } = await callTool(editor, 'list_card_templates', {
+        boardId: board.id,
+      });
+
+      expect(sails.helpers.utils.mapRecords(listed.cardRecurrences)).to.include(created.item.id);
+
+      await callTool(editor, 'delete_card_recurrence', { templateCardId: template.id });
+
+      expect(await CardRecurrence.qm.getOneById(created.item.id)).to.equal(undefined);
+    });
+
+    it('set_card_recurrence only takes templates and allowed rules', async () => {
+      const card = await createCard();
+      const template = await saveAsTemplate(await createCard());
+
+      await expectToolError(
+        editor,
+        'set_card_recurrence',
+        { templateCardId: card.id, rule: 'FREQ=DAILY' },
+        'Card template not found',
+      );
+
+      await expectToolError(
+        editor,
+        'set_card_recurrence',
+        { templateCardId: template.id, rule: 'FREQ=HOURLY' },
+        'Invalid rule',
+      );
+
+      await expectToolError(
+        viewer,
+        'set_card_recurrence',
+        { templateCardId: template.id, rule: 'FREQ=DAILY' },
         'Not enough rights',
       );
     });
