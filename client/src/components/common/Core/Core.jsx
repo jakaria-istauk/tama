@@ -6,7 +6,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation, Trans } from 'react-i18next';
-import { Loader } from 'semantic-ui-react';
 
 import selectors from '../../../selectors';
 import version from '../../../version';
@@ -17,6 +16,7 @@ import { SidebarContext } from '../../../contexts';
 import { useTheme } from '../../../hooks';
 import { resolveTheme, subscribeToThemeChange } from '../../../utils/theme-storage';
 import Message from './Message';
+import TamaLoader from '../TamaLoader';
 import Toaster from '../Toaster';
 import Fixed from '../Fixed';
 import Sidebar from '../Sidebar';
@@ -173,7 +173,7 @@ const Core = React.memo(() => {
     <>
       {/* eslint-disable-next-line no-nested-ternary */}
       {isInitializing || !currentUserId ? (
-        <Loader active size="massive" />
+        <TamaLoader size={96} />
       ) : pathsMatch && pathsMatch.pattern.path === Paths.OAUTH_CONSENT ? (
         <OauthConsent />
       ) : (

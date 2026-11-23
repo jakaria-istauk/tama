@@ -7,13 +7,14 @@ import React from 'react';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 import { useTranslation, Trans } from 'react-i18next';
-import { Button, Icon, Loader } from 'semantic-ui-react';
+import { Button, Icon } from 'semantic-ui-react';
 import { usePopup } from '../../../lib/popup';
 
 import selectors from '../../../selectors';
 import { BoardViews } from '../../../constants/Enums';
 import Home from '../Home';
 import GhostError from '../GhostError';
+import TamaLoader from '../TamaLoader';
 import Board from '../../boards/Board';
 import AddBoardStep from '../../boards/AddBoardStep';
 
@@ -37,7 +38,7 @@ const Static = React.memo(() => {
 
   if (isFetching) {
     wrapperClassNames = [styles.wrapperLoader];
-    contentNode = <Loader active size="huge" />;
+    contentNode = <TamaLoader size={80} />;
   } else if (projectId === undefined) {
     wrapperClassNames = [styles.wrapperVertical];
     contentNode = <Home />;
@@ -77,7 +78,7 @@ const Static = React.memo(() => {
   } else if (board.isFetching) {
     wrapperClassNames = [styles.wrapperLoader];
 
-    contentNode = <Loader active size="big" />;
+    contentNode = <TamaLoader size={64} />;
   } else {
     wrapperClassNames = [
       [BoardViews.GRID, BoardViews.LIST, BoardViews.CALENDAR].includes(board.view) &&
