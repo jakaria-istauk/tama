@@ -100,6 +100,11 @@
  *                 enum: [never, 2m, 5m, 10m, 30m, 12h]
  *                 description: Auto-logout behavior on inactivity
  *                 example: 30m
+ *               colorScheme:
+ *                 type: string
+ *                 enum: [tangerine, teal, indigo, forest, navy, plum, ocean, graphite]
+ *                 description: Accent colour scheme of the user interface
+ *                 example: tangerine
  *               isDeactivated:
  *                 type: boolean
  *                 description: Whether the user account is deactivated and cannot log in (for admins)
@@ -209,6 +214,10 @@ module.exports = {
       type: 'string',
       isIn: Object.values(User.AutoLogoutModes),
     },
+    colorScheme: {
+      type: 'string',
+      isIn: Object.values(User.ColorSchemes),
+    },
     isDeactivated: {
       type: 'boolean',
     },
@@ -276,6 +285,7 @@ module.exports = {
         'defaultHomeView',
         'defaultProjectsOrder',
         'autoLogoutMode',
+        'colorScheme',
         'isDeactivated',
       ]),
     };
