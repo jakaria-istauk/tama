@@ -1,0 +1,185 @@
+/*!
+ * Copyright (c) 2026 PLANKA Software GmbH
+ * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
+ */
+
+:global(#app) {
+  .card {
+    background: var(--pk-surface);
+    border: 1px solid var(--pk-border);
+    border-left: 3px solid var(--pk-accent);
+    border-radius: 4px;
+    color: var(--pk-text);
+    cursor: pointer;
+    display: block;
+    font-size: 12px;
+    line-height: 18px;
+    overflow: hidden;
+    padding: 2px 6px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+
+    &:hover {
+      background: var(--pk-hover);
+    }
+
+    &[draggable='true'] {
+      cursor: grab;
+    }
+  }
+
+  .cardCompleted {
+    border-left-color: var(--pk-border-strong);
+    color: var(--pk-text-muted);
+    text-decoration: line-through;
+  }
+
+  .cardOverdue {
+    border-left-color: var(--pk-danger);
+  }
+
+  .day {
+    background: var(--pk-surface-muted);
+    display: flex;
+    flex-direction: column;
+    min-height: 112px;
+    min-width: 0;
+    padding: 4px;
+    transition: background 85ms ease-in;
+  }
+
+  .dayCards {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-height: 160px;
+    overflow-y: auto;
+  }
+
+  .dayDropTarget {
+    background: var(--pk-accent-soft);
+    box-shadow: inset 0 0 0 2px var(--pk-accent);
+  }
+
+  .dayNumber {
+    color: var(--pk-text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 22px;
+    margin-bottom: 2px;
+    padding: 0 4px;
+  }
+
+  .dayOutside {
+    .dayNumber {
+      color: var(--pk-text-muted);
+      font-weight: normal;
+    }
+  }
+
+  .dayToday {
+    .dayNumber {
+      background: var(--pk-accent);
+      border-radius: 11px;
+      color: #fff;
+      min-width: 22px;
+      text-align: center;
+      width: fit-content;
+    }
+  }
+
+  .grid {
+    background: var(--pk-border);
+    border: 1px solid var(--pk-border);
+    border-radius: var(--pk-radius);
+    display: grid;
+    gap: 1px;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    overflow: hidden;
+  }
+
+  // A surface of its own keeps the month title readable on any board
+  // background image or gradient.
+  .header {
+    align-items: center;
+    background: var(--pk-surface);
+    border: 1px solid var(--pk-border);
+    border-radius: var(--pk-radius);
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    padding: 6px 16px 6px 6px;
+    width: fit-content;
+  }
+
+  .navigation {
+    display: flex;
+    gap: 4px;
+
+    :global(.ui.button) {
+      margin: 0;
+    }
+  }
+
+  .title {
+    color: var(--pk-text);
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .undated {
+    background: var(--pk-surface-muted);
+    border: 1.5px dashed var(--pk-border-strong);
+    border-radius: var(--pk-radius);
+    margin-top: 16px;
+    padding: 10px 12px;
+    transition: background 85ms ease-in, border-color 85ms ease-in;
+  }
+
+  .undatedCards {
+    display: grid;
+    gap: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+
+  .undatedCount {
+    color: var(--pk-text-muted);
+    font-weight: normal;
+    margin-left: 6px;
+  }
+
+  .undatedDropTarget {
+    background: var(--pk-accent-soft);
+    border-color: var(--pk-accent);
+  }
+
+  .undatedHint {
+    color: var(--pk-text-muted);
+    font-size: 12px;
+    margin: 0 0 8px;
+  }
+
+  .undatedTitle {
+    color: var(--pk-text);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .weekday {
+    background: var(--pk-surface);
+    color: var(--pk-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 8px;
+    text-transform: uppercase;
+  }
+
+  .wrapper {
+    overflow-y: auto;
+    padding: 12px 20px 20px;
+    width: 100%;
+  }
+}
