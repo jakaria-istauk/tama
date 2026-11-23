@@ -42,6 +42,17 @@ module.exports = {
 
     // TODO: create actions and notifications
 
+    // Recurrences have nowhere left to make cards
+    const cardRecurrences = await CardRecurrence.qm.getByListId(inputs.record.id);
+
+    await Promise.all(
+      cardRecurrences.map((cardRecurrence) =>
+        sails.helpers.cardRecurrences.deleteOne.with({
+          record: cardRecurrence,
+        }),
+      ),
+    );
+
     const list = await List.qm.deleteOne(inputs.record.id);
 
     if (list) {

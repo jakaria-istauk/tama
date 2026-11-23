@@ -64,6 +64,7 @@
  *                     - customFieldGroups
  *                     - customFields
  *                     - customFieldValues
+ *                     - cardRecurrences
  *                   properties:
  *                     users:
  *                       type: array
@@ -142,6 +143,11 @@
  *                       description: Related custom field values
  *                       items:
  *                         $ref: '#/components/schemas/CustomFieldValue'
+ *                     cardRecurrences:
+ *                       type: array
+ *                       description: Recurrences of the board's card templates
+ *                       items:
+ *                         $ref: '#/components/schemas/CardRecurrence'
  *       400:
  *         $ref: '#/components/responses/ValidationError'
  *       401:
@@ -235,6 +241,7 @@ module.exports = {
 
     const customFields = await CustomField.qm.getByCustomFieldGroupIds(customFieldGroupIds);
     const customFieldValues = await CustomFieldValue.qm.getByCardIds(cardIds);
+    const cardRecurrences = await CardRecurrence.qm.getByBoardId(board.id);
 
     const cardSubscriptions = await CardSubscription.qm.getByCardIdsAndUserId(
       cardIds,
@@ -272,6 +279,7 @@ module.exports = {
         customFieldGroups,
         customFields,
         customFieldValues,
+        cardRecurrences,
         users: sails.helpers.users.presentMany(users, currentUser),
         projects: [project],
         attachments: sails.helpers.attachments.presentMany(attachments),

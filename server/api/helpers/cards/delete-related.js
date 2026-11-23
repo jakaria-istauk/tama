@@ -25,6 +25,10 @@ module.exports = {
       cardId: cardIdOrIds,
     });
 
+    await CardRecurrence.qm.delete({
+      templateCardId: cardIdOrIds,
+    });
+
     await CardMembership.qm.delete({
       cardId: cardIdOrIds,
     });

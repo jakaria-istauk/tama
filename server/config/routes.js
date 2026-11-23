@@ -306,6 +306,10 @@ module.exports.routes = {
   'PATCH /api/saved-filters/:id': 'saved-filters/update',
   'DELETE /api/saved-filters/:id': 'saved-filters/delete',
 
+  'POST /api/cards/:cardId/card-recurrence': 'card-recurrences/create',
+  'PATCH /api/card-recurrences/:id': 'card-recurrences/update',
+  'DELETE /api/card-recurrences/:id': 'card-recurrences/delete',
+
   'GET /api/oauth/clients/:clientId': 'oauth-clients/show',
   'POST /api/oauth/consents': 'oauth-consents/create',
   'GET /api/oauth/connections': 'oauth-connections/index',

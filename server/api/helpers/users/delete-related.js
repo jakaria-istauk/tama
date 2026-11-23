@@ -119,6 +119,11 @@ module.exports = {
       userId: userIdOrIds,
     });
 
+    // Their recurrences made cards on their behalf, so they stop with them
+    await CardRecurrence.qm.delete({
+      creatorUserId: userIdOrIds,
+    });
+
     return {
       projectManagers,
       boardMemberships,
