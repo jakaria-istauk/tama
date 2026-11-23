@@ -117,6 +117,16 @@ module.exports = {
   async fn(inputs) {
     const { values } = inputs;
 
+    // Changes made by a board automation rule are marked with the rule in the action log
+    const boardAutomation = sails.hooks.automation.getCurrent();
+
+    if (boardAutomation) {
+      values.data = {
+        ...values.data,
+        boardAutomation: _.pick(boardAutomation, ['id', 'name']),
+      };
+    }
+
     const action = await Action.qm.createOne({
       ...values,
       boardId: values.card.boardId,

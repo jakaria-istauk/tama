@@ -137,6 +137,9 @@ describe('event-bus (hook)', () => {
   it('does not build data when there are no subscribers and no webhooks', () => {
     let isBuilt = false;
 
+    // The automation hook subscribes for as long as the app is lifted
+    sails.hooks.automation.stop();
+
     sendCardUpdate({
       buildData: () => {
         isBuilt = true;
@@ -144,7 +147,10 @@ describe('event-bus (hook)', () => {
       },
     });
 
-    expect(eventBus.hasSubscribers()).to.equal(false);
+    const hasSubscribers = eventBus.hasSubscribers();
+    sails.hooks.automation.start();
+
+    expect(hasSubscribers).to.equal(false);
     expect(isBuilt).to.equal(false);
   });
 });
