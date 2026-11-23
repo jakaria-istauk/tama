@@ -21,7 +21,6 @@ import AccessTokenSteps from '../../../constants/AccessTokenSteps';
 import TermsModal from './TermsModal';
 import TotpChallengeModal from './TotpChallengeModal';
 
-import logo from '../../../assets/images/logo.png';
 import googleIcon from '../../../assets/images/google-icon.svg';
 
 import styles from './Content.module.scss';
@@ -287,7 +286,37 @@ const Content = React.memo(() => {
           <div className={styles.login}>
             <div className={styles.form}>
               <div className={styles.logoWrapper}>
-                <img src={logo} alt="" className={styles.logo} />
+                <svg
+                  viewBox="-372 -372 744 744"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="67"
+                  aria-hidden="true"
+                  className={styles.logo}
+                >
+                  <path
+                    pathLength="1"
+                    className={styles.logoRing}
+                    d="M0 -333.5 A333.5 333.5 0 1 1 0 333.5 A333.5 333.5 0 1 1 0 -333.5"
+                  />
+                  <path
+                    pathLength="1"
+                    className={styles.logoMain}
+                    d="M0 -98 L0 117 A66.5 66.5 0 0 0 66.5 183.5 C82 183.5 91.3 178.2 100 173.2 A200 200 0 1 0 -41.6 195.6"
+                  />
+                  <path
+                    pathLength="1"
+                    strokeWidth="43"
+                    className={styles.logoBar}
+                    d="M-98 -0.5 L100 -0.5"
+                  />
+                  <path
+                    fill="currentColor"
+                    stroke="none"
+                    className={styles.logoFill}
+                    d="M-98 -21 C-52 -21 -33.5 -42 -33.5 -98 L-28 -98 L-28 -21 Z M-33.5 -98 Q0 -106 33.5 -98 Z"
+                  />
+                </svg>
               </div>
               <Header
                 as="h1"

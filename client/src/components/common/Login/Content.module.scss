@@ -41,14 +41,17 @@
   }
 
   .formTitle {
-    font-size: 36px;
+    font-size: 30px;
     font-weight: bold;
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
   }
 
   .formSubtitle {
-    font-size: 28px;
+    color: var(--pk-text-muted);
+    font-size: 16px;
     font-weight: normal;
-    margin-bottom: 32px;
+    margin: 0 0 28px;
   }
 
   .googleButton {
@@ -102,15 +105,66 @@
     row-gap: 40px;
   }
 
+  // The mark draws itself once when the page opens, like the loader does in a loop
   .logo {
-    max-height: 144px;
-    max-width: 80%;
+    color: var(--pk-accent);
+    filter: drop-shadow(
+      0 6px 16px color-mix(in srgb, var(--pk-accent) 30%, transparent)
+    );
+    height: 72px;
+    width: 72px;
+  }
+
+  .logoMain,
+  .logoBar,
+  .logoRing {
+    animation: login-logo-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    stroke-dasharray: 1 1.2;
+    stroke-dashoffset: 1;
+  }
+
+  .logoBar {
+    animation-delay: 0.7s;
+    animation-duration: 0.35s;
+  }
+
+  .logoRing {
+    animation-delay: 0.95s;
+    animation-duration: 0.8s;
+  }
+
+  .logoFill {
+    animation: login-logo-fill 0.25s 0.95s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes login-logo-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes login-logo-fill {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logoMain,
+    .logoBar,
+    .logoRing,
+    .logoFill {
+      animation: none;
+      opacity: 1;
+      stroke-dashoffset: 0;
+    }
   }
 
   .logoWrapper {
     display: flex;
     justify-content: center;
-    margin-bottom: 40px;
+    margin-bottom: 18px;
   }
 
   .modeToggle {
