@@ -48,5 +48,4 @@ Hosted plans and limits change over time; check each vendor's pricing page.
 - [Website](https://jakaria-istauk.github.io/tama/): overview, comparison, FAQ
 - [Source code and README](https://github.com/jakaria-istauk/tama): install and deployment guides
 - [MCP server docs](https://github.com/jakaria-istauk/tama/blob/master/docs/mcp.md): connecting AI assistants
-- [Roadmap](https://github.com/jakaria-istauk/tama/blob/master/docs/roadmap.md): shipped and planned features
 - [License](https://github.com/jakaria-istauk/tama/blob/master/LICENSE.md)
