@@ -3,19 +3,136 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tama: self-hosted kanban with AI assistants built in</title>
+    <title>Tama: Free Self-Hosted Trello Alternative &amp; Task Manager</title>
     <meta
       name="description"
-      content="Tama is a free, self-hosted, real-time kanban board for teams. Kanban, timeline and calendar views, automation rules, recurring cards and a built-in MCP server for Claude, ChatGPT, Cursor and other AI assistants."
+      content="Tama is a free, self-hosted kanban task manager and Trello alternative for teams. Kanban, timeline and calendar views, automation rules, recurring cards, Trello import and built-in AI assistants via MCP."
     />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="Tama contributors" />
+    <meta name="application-name" content="Tama" />
+    <link rel="canonical" href="https://jakaria-istauk.github.io/tama/" />
+    <link rel="alternate" type="text/plain" title="LLM summary" href="https://jakaria-istauk.github.io/tama/llms.txt" />
+    <link rel="sitemap" type="application/xml" href="https://jakaria-istauk.github.io/tama/sitemap.xml" />
     <meta name="theme-color" content="#ea580c" />
+
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Tama" />
+    <meta property="og:site_name" content="Tama" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://jakaria-istauk.github.io/tama/" />
+    <meta property="og:title" content="Tama: the free, self-hosted Trello alternative" />
     <meta
       property="og:description"
-      content="Free, self-hosted kanban for teams: timeline and calendar views, automation rules and AI assistants built in."
+      content="Kanban task manager for teams, on your own server. Timeline and calendar views, automation rules, recurring cards, Trello import and AI assistants built in. No per-user fees."
     />
+    <meta property="og:image" content="https://jakaria-istauk.github.io/tama/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Tama, the free self-hosted Trello alternative: a kanban board with timeline, calendar and AI assistants" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Tama: the free, self-hosted Trello alternative" />
+    <meta
+      name="twitter:description"
+      content="Kanban task manager for teams, on your own server. Timeline, calendar, automation and AI assistants built in. No per-user fees."
+    />
+    <meta name="twitter:image" content="https://jakaria-istauk.github.io/tama/og-image.png" />
+    <meta name="twitter:image:alt" content="Tama, the free self-hosted Trello alternative" />
+
     <link rel="icon" type="image/svg+xml" href="icon.svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://jakaria-istauk.github.io/tama/#website",
+            "url": "https://jakaria-istauk.github.io/tama/",
+            "name": "Tama",
+            "description": "Free, self-hosted kanban task manager and Trello alternative for teams.",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://jakaria-istauk.github.io/tama/#webpage",
+            "url": "https://jakaria-istauk.github.io/tama/",
+            "name": "Tama: Free Self-Hosted Trello Alternative & Task Manager",
+            "isPartOf": { "@id": "https://jakaria-istauk.github.io/tama/#website" },
+            "about": { "@id": "https://jakaria-istauk.github.io/tama/#software" },
+            "primaryImageOfPage": "https://jakaria-istauk.github.io/tama/og-image.png",
+            "dateModified": "2026-11-24",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://jakaria-istauk.github.io/tama/#software",
+            "name": "Tama",
+            "url": "https://jakaria-istauk.github.io/tama/",
+            "description": "Tama is a free, self-hosted, real-time kanban board and task manager for teams, and an alternative to Trello. It offers kanban, grid, list, calendar and timeline views, automation rules, recurring cards, card templates, Trello import and a built-in MCP server for AI assistants such as Claude, ChatGPT and Cursor.",
+            "applicationCategory": "BusinessApplication",
+            "applicationSubCategory": "Project management, Kanban board, Task manager",
+            "operatingSystem": "Linux, macOS, Windows (via Docker)",
+            "softwareRequirements": "Docker and Docker Compose",
+            "isAccessibleForFree": true,
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "license": "https://github.com/jakaria-istauk/tama/blob/master/LICENSE.md",
+            "image": "https://jakaria-istauk.github.io/tama/og-image.png",
+            "screenshot": "https://jakaria-istauk.github.io/tama/og-image.png",
+            "downloadUrl": "https://github.com/jakaria-istauk/tama",
+            "installUrl": "https://jakaria-istauk.github.io/tama/#start",
+            "softwareHelp": "https://github.com/jakaria-istauk/tama#readme",
+            "sameAs": ["https://github.com/jakaria-istauk/tama"],
+            "isBasedOn": "https://github.com/plankanban/planka",
+            "featureList": [
+              "Kanban, grid, list, calendar and timeline board views",
+              "Start dates and a drag-to-reschedule timeline",
+              "Automation rules per board",
+              "Recurring cards and card templates",
+              "Saved filters",
+              "Markdown, attachments, comments, tasks, labels, custom fields and due dates",
+              "Real-time collaboration",
+              "Import from Trello",
+              "Built-in MCP server for Claude, ChatGPT, Cursor and other AI assistants",
+              "Notifications to 100+ services through Apprise, webhooks and a REST API",
+              "Google sign-in, two-factor authentication and role-based access",
+              "35 interface languages"
+            ]
+          },
+          {
+            "@type": "HowTo",
+            "@id": "https://jakaria-istauk.github.io/tama/#install",
+            "name": "How to self-host Tama with Docker",
+            "description": "Install Tama, the free self-hosted Trello alternative, on your own server in a few minutes.",
+            "totalTime": "PT10M",
+            "tool": [{ "@type": "HowToTool", "name": "A server with Docker and Docker Compose" }],
+            "step": [
+              {
+                "@type": "HowToStep",
+                "position": 1,
+                "name": "Get the code",
+                "text": "Clone the repository: git clone https://github.com/jakaria-istauk/tama.git, then cd tama.",
+                "url": "https://jakaria-istauk.github.io/tama/#start"
+              },
+              {
+                "@type": "HowToStep",
+                "position": 2,
+                "name": "Configure",
+                "text": "In docker-compose.yml, set BASE_URL and a random SECRET_KEY, for example one generated with openssl rand -hex 32.",
+                "url": "https://jakaria-istauk.github.io/tama/#start"
+              },
+              {
+                "@type": "HowToStep",
+                "position": 3,
+                "name": "Start it",
+                "text": "Run docker compose up -d --build, then create the first admin with docker compose run --rm tama npm run db:create-admin-user.",
+                "url": "https://jakaria-istauk.github.io/tama/#start"
+              }
+            ]
+          }
+        ]
+      }
+    </script>
     <style>
       :root {
         --bg: #ffffff;
