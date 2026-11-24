@@ -153,6 +153,7 @@ export default {
       closed: 'Geschlossen',
       color: 'Farbe',
       colorScheme: 'Farbschema',
+      colorScheme_default: 'Standard',
       colorScheme_forest: 'Waldgrün',
       colorScheme_graphite: 'Graphit',
       colorScheme_indigo: 'Indigo',
