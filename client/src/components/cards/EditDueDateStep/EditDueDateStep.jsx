@@ -3,12 +3,12 @@
  * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
  */
 
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import DatePicker from 'react-datepicker';
-import { Button, Form } from 'semantic-ui-react';
+import { Button, Form, Message } from 'semantic-ui-react';
 import { useDidUpdate, useToggle } from '../../../lib/hooks';
 import { Input, Popup } from '../../../lib/custom-ui';
 
@@ -19,16 +19,43 @@ import parseTime from '../../../utils/parse-time';
 
 import styles from './EditDueDateStep.module.scss';
 
-const EditDueDateStep = React.memo(({ cardId, onBack, onClose }) => {
+const FieldNames = {
+  START_DATE: 'startDate',
+  DUE_DATE: 'dueDate',
+};
+
+const TITLE_KEY_BY_FIELD_NAME = {
+  [FieldNames.START_DATE]: 'common.editStartDate',
+  [FieldNames.DUE_DATE]: 'common.editDueDate',
+};
+
+const ERROR_KEY_BY_FIELD_NAME = {
+  [FieldNames.START_DATE]: 'common.startDateMustNotBeAfterDueDate',
+  [FieldNames.DUE_DATE]: 'common.dueDateMustNotBeBeforeStartDate',
+};
+
+// Edits either date of a card. A start date is never after the due date, so each
+// is checked against the other before it is saved.
+const EditDueDateStep = React.memo(({ cardId, fieldName, onBack, onClose }) => {
   const selectCardById = useMemo(() => selectors.makeSelectCardById(), []);
 
-  const defaultValue = useSelector((state) => selectCardById(state, cardId).dueDate);
+  const card = useSelector((state) => selectCardById(state, cardId));
+  const defaultValue = card[fieldName];
+  const otherValue =
+    card[fieldName === FieldNames.START_DATE ? FieldNames.DUE_DATE : FieldNames.START_DATE];
 
   const dispatch = useDispatch();
   const [t] = useTranslation();
+  const [isOutOfOrder, setIsOutOfOrder] = useState(false);
 
   const [data, handleFieldChange, setData] = useForm(() => {
-    const date = defaultValue || new Date().setHours(12, 0, 0, 0);
+    let date = defaultValue || new Date().setHours(12, 0, 0, 0);
+
+    if (!defaultValue && otherValue) {
+      if (fieldName === FieldNames.START_DATE ? date > otherValue : date < otherValue) {
+        date = otherValue;
+      }
+    }
 
     return {
       date: t('format:date', {
@@ -80,28 +107,49 @@ const EditDueDateStep = React.memo(({ cardId, onBack, onClose }) => {
       }
     }
 
+    if (
+      otherValue &&
+      (fieldName === FieldNames.START_DATE ? value > otherValue : value < otherValue)
+    ) {
+      setIsOutOfOrder(true);
+      dateFieldRef.current.select();
+      return;
+    }
+
     if (!defaultValue || value.getTime() !== defaultValue.getTime()) {
       dispatch(
         entryActions.updateCard(cardId, {
-          dueDate: value,
+          [fieldName]: value,
         }),
       );
     }
 
     onClose();
-  }, [cardId, onClose, defaultValue, dispatch, t, data, dateFieldRef, timeFieldRef, nullableDate]);
+  }, [
+    cardId,
+    fieldName,
+    onClose,
+    defaultValue,
+    otherValue,
+    dispatch,
+    t,
+    data,
+    dateFieldRef,
+    timeFieldRef,
+    nullableDate,
+  ]);
 
   const handleClearClick = useCallback(() => {
     if (defaultValue) {
       dispatch(
         entryActions.updateCard(cardId, {
-          dueDate: null,
+          [fieldName]: null,
         }),
       );
     }
 
     onClose();
-  }, [cardId, onClose, defaultValue, dispatch]);
+  }, [cardId, fieldName, onClose, defaultValue, dispatch]);
 
   const handleDatePickerChange = useCallback(
     (date) => {
@@ -128,7 +176,7 @@ const EditDueDateStep = React.memo(({ cardId, onBack, onClose }) => {
   return (
     <>
       <Popup.Header onBack={onBack}>
-        {t('common.editDueDate', {
+        {t(TITLE_KEY_BY_FIELD_NAME[fieldName], {
           context: 'title',
         })}
       </Popup.Header>
@@ -162,6 +210,9 @@ const EditDueDateStep = React.memo(({ cardId, onBack, onClose }) => {
             selected={nullableDate}
             onChange={handleDatePickerChange}
           />
+          {isOutOfOrder && (
+            <Message visible error size="tiny" content={t(ERROR_KEY_BY_FIELD_NAME[fieldName])} />
+          )}
           <Button positive content={t('action.save')} />
         </Form>
         <Button
@@ -177,11 +228,13 @@ const EditDueDateStep = React.memo(({ cardId, onBack, onClose }) => {
 
 EditDueDateStep.propTypes = {
   cardId: PropTypes.string.isRequired,
+  fieldName: PropTypes.oneOf(Object.values(FieldNames)),
   onBack: PropTypes.func,
   onClose: PropTypes.func.isRequired,
 };
 
 EditDueDateStep.defaultProps = {
+  fieldName: FieldNames.DUE_DATE,
   onBack: undefined,
 };
 
