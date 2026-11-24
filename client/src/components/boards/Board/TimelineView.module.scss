@@ -1,0 +1,296 @@
+/*!
+ * Copyright (c) 2026 PLANKA Software GmbH
+ * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
+ */
+
+:global(#app) {
+  .bar {
+    display: flex;
+    height: 24px;
+    padding: 0 1px;
+    position: absolute;
+    z-index: 1;
+  }
+
+  .barBody {
+    background: var(--pk-surface);
+    border: 1px solid var(--pk-border);
+    border-left: 3px solid var(--pk-accent);
+    border-radius: 4px;
+    color: var(--pk-text);
+    cursor: pointer;
+    flex: 1;
+    font-size: 12px;
+    line-height: 20px;
+    min-width: 0;
+    overflow: hidden;
+    padding: 0 6px;
+    text-align: left;
+    text-overflow: ellipsis;
+    touch-action: none;
+    user-select: none;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--pk-hover);
+    }
+  }
+
+  .barBodyDraggable {
+    cursor: grab;
+  }
+
+  .barClippedEnd .barBody {
+    border-bottom-right-radius: 0;
+    border-right-style: dashed;
+    border-top-right-radius: 0;
+  }
+
+  .barClippedStart .barBody {
+    border-bottom-left-radius: 0;
+    border-left-style: dashed;
+    border-top-left-radius: 0;
+  }
+
+  .barCompleted .barBody {
+    border-left-color: var(--pk-border-strong);
+    color: var(--pk-text-muted);
+    text-decoration: line-through;
+  }
+
+  .barDragging {
+    z-index: 2;
+
+    .barBody {
+      box-shadow: var(--pk-shadow-md);
+      cursor: grabbing;
+    }
+  }
+
+  .barOverdue .barBody {
+    border-left-color: var(--pk-danger);
+  }
+
+  .corner {
+    background: var(--pk-surface);
+    border-bottom: 1px solid var(--pk-border);
+    left: 0;
+    position: sticky;
+    z-index: 3;
+  }
+
+  .day {
+    align-items: center;
+    border-left: 1px solid transparent;
+    color: var(--pk-text-secondary);
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+    line-height: 14px;
+    min-width: 0;
+    padding: 4px 0;
+  }
+
+  .dayCell {
+    border-left: 1px solid var(--pk-border);
+
+    &:first-child {
+      border-left: none;
+    }
+  }
+
+  .dayCells {
+    display: grid;
+    grid-template-columns: repeat(var(--days-total), minmax(0, 1fr));
+    inset: 0;
+    position: absolute;
+  }
+
+  .dayCellToday {
+    background: var(--pk-accent-soft);
+  }
+
+  .dayCellWeekend {
+    background: var(--pk-surface-muted);
+  }
+
+  .dayMonth {
+    color: var(--pk-text);
+    font-weight: 600;
+    height: 14px;
+    white-space: nowrap;
+  }
+
+  .dayNumber {
+    font-weight: 600;
+    margin-top: 2px;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .days {
+    background: var(--pk-surface);
+    border-bottom: 1px solid var(--pk-border);
+    display: grid;
+    grid-template-columns: repeat(var(--days-total), minmax(0, 1fr));
+  }
+
+  .dayToday .dayNumber {
+    background: var(--pk-accent);
+    border-radius: 10px;
+    color: #fff;
+  }
+
+  .dayWeekday {
+    color: var(--pk-text-muted);
+  }
+
+  .dayWeekend {
+    color: var(--pk-text-muted);
+  }
+
+  .handle {
+    cursor: ew-resize;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    touch-action: none;
+    width: 8px;
+    z-index: 1;
+  }
+
+  .handleEnd {
+    right: -2px;
+  }
+
+  .handleStart {
+    left: -2px;
+  }
+
+  // A surface of its own keeps the range title readable on any board
+  // background image or gradient.
+  .header {
+    align-items: center;
+    background: var(--pk-surface);
+    border: 1px solid var(--pk-border);
+    border-radius: var(--pk-radius);
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    padding: 6px 16px 6px 6px;
+    width: fit-content;
+  }
+
+  .navigation {
+    display: flex;
+    gap: 4px;
+
+    :global(.ui.button) {
+      margin: 0;
+    }
+  }
+
+  .rowLabel {
+    background: var(--pk-surface);
+    border-bottom: 1px solid var(--pk-border);
+    border-right: 1px solid var(--pk-border);
+    color: var(--pk-text);
+    font-size: 13px;
+    font-weight: 600;
+    left: 0;
+    overflow: hidden;
+    padding: 10px 12px;
+    position: sticky;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    z-index: 3;
+  }
+
+  .timeline {
+    background: var(--pk-surface);
+    border: 1px solid var(--pk-border);
+    border-radius: var(--pk-radius);
+    display: grid;
+    grid-template-columns: 180px minmax(calc(var(--days-total) * 28px), 1fr);
+    overflow-x: auto;
+  }
+
+  .title {
+    color: var(--pk-text);
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .track {
+    border-bottom: 1px solid var(--pk-border);
+    position: relative;
+    transition: box-shadow 85ms ease-in;
+  }
+
+  .trackDropTarget {
+    box-shadow: inset 0 0 0 2px var(--pk-accent);
+  }
+
+  .undated {
+    background: var(--pk-surface-muted);
+    border: 1.5px dashed var(--pk-border-strong);
+    border-radius: var(--pk-radius);
+    margin-top: 16px;
+    padding: 10px 12px;
+  }
+
+  .undatedCard {
+    background: var(--pk-surface);
+    border: 1px solid var(--pk-border);
+    border-left: 3px solid var(--pk-border-strong);
+    border-radius: 4px;
+    color: var(--pk-text);
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 18px;
+    overflow: hidden;
+    padding: 2px 6px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--pk-hover);
+    }
+
+    &[draggable="true"] {
+      cursor: grab;
+    }
+  }
+
+  .undatedCards {
+    display: grid;
+    gap: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+
+  .undatedCount {
+    color: var(--pk-text-muted);
+    font-weight: normal;
+    margin-left: 6px;
+  }
+
+  .undatedHint {
+    color: var(--pk-text-muted);
+    font-size: 12px;
+    margin: 0 0 8px;
+  }
+
+  .undatedTitle {
+    color: var(--pk-text);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .wrapper {
+    overflow-y: auto;
+    padding: 12px 20px 20px;
+    width: 100%;
+  }
+}

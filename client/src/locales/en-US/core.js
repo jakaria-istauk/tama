@@ -164,6 +164,8 @@ export default {
       cardNotFound_title: 'Card Not Found',
       cardSavedAsTemplate: 'Saved as a template. Find it under Templates in the board settings.',
       cardsOnACalendarByDueDate: 'Cards on a calendar by their due date.',
+      cardsOnATimelineFromStartToDueDate:
+        'Cards on a timeline from their start date to their due date.',
       cardsOnThisListAreAvailableToAllBoardMembers:
         'Cards on this list are available to all board members.',
       cardsOnThisListAreCompleteAndReadyToBeArchived:
@@ -359,6 +361,7 @@ export default {
       displayCardAges: 'Display card ages',
       dragCardToADayToSetItsDueDate:
         'Drag a card to a day to set its due date, or here to clear it.',
+      dragCardOntoTheTimelineToSetItsDueDate: 'Drag a card onto the timeline to set its due date.',
       dropFileToUpload: 'Drop file to upload',
       due: 'Due',
       dueDateMustNotBeBeforeStartDate: 'The due date must not be before the start date.',
@@ -461,6 +464,7 @@ export default {
       noBoards: 'No boards',
       noCardsFound: 'No cards found.',
       noConnectionToServer: 'No connection to server',
+      noDates: 'No dates',
       noDueDate: 'No due date',
       noLists: 'No lists',
       noMember: 'No member',
@@ -564,6 +568,7 @@ export default {
       thereIsNoPreviewAvailableForThisAttachment:
         'There is no preview available for this attachment.',
       time: 'Time',
+      timeline: 'Timeline',
       title: 'Title',
       trash: 'Trash',
       trashHasBeenSuccessfullyEmptied: 'Trash has been successfully emptied.',
@@ -745,10 +750,12 @@ export default {
       moveCard_title: 'Move Card',
       moveList_title: 'Move List',
       nextMonth: 'Next month',
+      nextWeek: 'Next week',
       openMenu: 'Open menu',
       openTemplate: 'Open template',
       paste: 'Paste',
       previousMonth: 'Previous month',
+      previousWeek: 'Previous week',
       regenerate: 'Regenerate',
       regenerateApiKey: 'Regenerate API key',
       regenerateRecoveryCodes: 'Regenerate recovery codes',
@@ -791,6 +798,7 @@ export default {
       switchToGroupedProjectsView: 'Show projects grouped',
       switchToKanbanView: 'Switch to kanban view',
       switchToListView: 'Switch to list view',
+      switchToTimelineView: 'Switch to timeline view',
       unsubscribe: 'Unsubscribe',
       uploadNewAvatar: 'Upload new avatar',
       uploadNewImage: 'Upload new image',

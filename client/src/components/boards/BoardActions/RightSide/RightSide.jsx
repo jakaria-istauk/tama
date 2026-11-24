@@ -26,6 +26,7 @@ const TOOLTIP_BY_VIEW = {
   [BoardViews.GRID]: 'action.switchToGridView',
   [BoardViews.LIST]: 'action.switchToListView',
   [BoardViews.CALENDAR]: 'action.switchToCalendarView',
+  [BoardViews.TIMELINE]: 'action.switchToTimelineView',
 };
 
 const RightSide = React.memo(() => {
@@ -46,7 +47,7 @@ const RightSide = React.memo(() => {
   const views = [BoardViews.GRID, BoardViews.LIST];
   if (board.context === BoardContexts.BOARD) {
     views.unshift(BoardViews.KANBAN);
-    views.push(BoardViews.CALENDAR);
+    views.push(BoardViews.CALENDAR, BoardViews.TIMELINE);
   }
 
   return (

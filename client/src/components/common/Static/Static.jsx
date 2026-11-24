@@ -81,8 +81,9 @@ const Static = React.memo(() => {
     contentNode = <TamaLoader size={64} />;
   } else {
     wrapperClassNames = [
-      [BoardViews.GRID, BoardViews.LIST, BoardViews.CALENDAR].includes(board.view) &&
-        styles.wrapperVertical,
+      [BoardViews.GRID, BoardViews.LIST, BoardViews.CALENDAR, BoardViews.TIMELINE].includes(
+        board.view,
+      ) && styles.wrapperVertical,
       styles.wrapperFlex,
     ];
 
