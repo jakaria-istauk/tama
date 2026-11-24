@@ -1,0 +1,52 @@
+# Tama
+
+> Tama is a free, self-hosted kanban board and task manager for teams, and an alternative to Trello. You run it on your own server with Docker. It has kanban, grid, list, calendar and timeline views, automation rules, recurring cards, card templates, Trello import and a built-in MCP server so AI assistants such as Claude, ChatGPT and Cursor can work on your boards.
+
+Key facts:
+
+- Price: free. No per-user fees, no paid tiers; every view and feature is included. You pay only for your own server.
+- Hosting: self-hosted with Docker and Docker Compose; also Kubernetes and Cloudflare Tunnel. Data stays in your own PostgreSQL database.
+- License: PLANKA Community License (fair use). Source is public on GitHub. Free for personal use, inside your own organization, non-profits, education and research. Not allowed: running it as a commercial hosted service for third parties.
+- Based on PLANKA. Tama is an independent project, not affiliated with PLANKA Software GmbH or with Atlassian (Trello).
+- Interface languages: 35.
+
+## Features
+
+- Five board views: kanban, grid, list, calendar and timeline.
+- Start dates and a timeline view; drag bars to reschedule.
+- Automation rules per board ("when this happens, do that"): move, label, assign, set due dates or comment.
+- Recurring cards (daily, weekly, monthly) and card templates.
+- Saved filters by member, label, creator or due date.
+- Rich cards: Markdown, attachments, comments, tasks, labels, custom fields, due dates and a stopwatch.
+- Real-time collaboration with a shared activity feed.
+- Notifications to 100+ services through Apprise, webhooks and a REST API.
+- Google sign-in, two-factor authentication, personal API keys, roles from admin to read-only viewer.
+- Import from Trello: lists, cards, labels, checklists and comments.
+- Built-in MCP server with 29 tools. Claude and ChatGPT connect through OAuth; Claude Code, Cursor, VS Code and other clients use a personal API key. Assistants act with exactly the connected user's permissions.
+
+## Tama vs Trello
+
+- Data: Tama on your own server; Trello on Atlassian's cloud.
+- Price: Tama free with no per-user fees; Trello charges per user for its full feature set.
+- Limits: Tama has no limits on boards, cards or members beyond your server; hosted free plans cap boards or collaborators.
+- Views: Tama includes timeline and calendar for everyone; on hosted boards these are often paid features.
+- Automation: Tama has no run quotas; hosted boards usually meter automation runs per month.
+- AI: Tama works with the AI assistant you choose via MCP; hosted boards usually offer only their own AI, often as a paid add-on.
+- Source: Tama's code is public; Trello is closed source.
+
+Hosted plans and limits change over time; check each vendor's pricing page.
+
+## Install
+
+1. git clone https://github.com/jakaria-istauk/tama.git && cd tama
+2. In docker-compose.yml, set BASE_URL and a random SECRET_KEY (openssl rand -hex 32).
+3. docker compose up -d --build
+4. docker compose run --rm tama npm run db:create-admin-user
+
+## Links
+
+- [Website](https://jakaria-istauk.github.io/tama/): overview, comparison, FAQ
+- [Source code and README](https://github.com/jakaria-istauk/tama): install and deployment guides
+- [MCP server docs](https://github.com/jakaria-istauk/tama/blob/master/docs/mcp.md): connecting AI assistants
+- [Roadmap](https://github.com/jakaria-istauk/tama/blob/master/docs/roadmap.md): shipped and planned features
+- [License](https://github.com/jakaria-istauk/tama/blob/master/LICENSE.md)
