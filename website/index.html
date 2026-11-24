@@ -6,47 +6,63 @@
     <title>Tama: self-hosted kanban with AI assistants built in</title>
     <meta
       name="description"
-      content="Tama is a free, self-hosted, real-time kanban board for teams. Connect Claude, ChatGPT, Cursor and other AI assistants to your boards through its built-in MCP server."
+      content="Tama is a free, self-hosted, real-time kanban board for teams. Kanban, timeline and calendar views, automation rules, recurring cards and a built-in MCP server for Claude, ChatGPT, Cursor and other AI assistants."
     />
-    <meta name="theme-color" content="#4f46e5" />
+    <meta name="theme-color" content="#ea580c" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Tama" />
     <meta
       property="og:description"
-      content="Free, self-hosted kanban for teams, with AI assistants built in."
+      content="Free, self-hosted kanban for teams: timeline and calendar views, automation rules and AI assistants built in."
     />
     <link rel="icon" type="image/svg+xml" href="icon.svg" />
     <style>
       :root {
         --bg: #ffffff;
-        --bg-soft: #f6f7fb;
+        --bg-soft: #f7f6f4;
         --surface: #ffffff;
-        --text: #111827;
-        --muted: #5b6474;
-        --border: #e4e7ef;
-        --brand: #4f46e5;
-        --brand-strong: #4338ca;
-        --brand-soft: #eef2ff;
-        --code-bg: #0f172a;
-        --code-text: #e2e8f0;
-        --shadow: 0 1px 2px rgb(15 23 42 / 6%), 0 12px 32px rgb(15 23 42 / 8%);
-        --radius: 14px;
-        --max: 1120px;
+        --surface-muted: #f1efec;
+        --text: #17120e;
+        --muted: #5f5750;
+        --border: #e8e3dd;
+        --brand: #ea580c;
+        --brand-strong: #c2410c;
+        --brand-deep: #9a3412;
+        --brand-soft: #fff1e7;
+        --brand-text: #9a3412;
+        --on-brand: #ffffff;
+        --glow: rgb(234 88 12 / 18%);
+        --code-bg: #17120e;
+        --code-text: #f1ebe5;
+        --green: #059669;
+        --green-soft: #e3f6ee;
+        --shadow: 0 1px 2px rgb(23 18 14 / 6%), 0 18px 40px rgb(23 18 14 / 9%);
+        --shadow-lg: 0 2px 4px rgb(23 18 14 / 6%), 0 30px 70px rgb(154 52 18 / 18%);
+        --radius: 16px;
+        --max: 1160px;
       }
 
       @media (prefers-color-scheme: dark) {
         :root {
-          --bg: #0b0d14;
-          --bg-soft: #11141d;
-          --surface: #161a25;
-          --text: #e7e9f0;
-          --muted: #9aa3b5;
-          --border: #262b3a;
-          --brand: #818cf8;
-          --brand-strong: #a5b4fc;
-          --brand-soft: #1e1b4b;
-          --code-bg: #05070c;
-          --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px rgb(0 0 0 / 35%);
+          --bg: #0f1115;
+          --bg-soft: #14171d;
+          --surface: #181b22;
+          --surface-muted: #232733;
+          --text: #eceae6;
+          --muted: #a29b93;
+          --border: #2a2f3b;
+          --brand: #f26b1d;
+          --brand-strong: #fb8a3c;
+          --brand-deep: #ffb27a;
+          --brand-soft: #3a2316;
+          --brand-text: #ffc9a3;
+          --on-brand: #1a0f08;
+          --glow: rgb(242 107 29 / 22%);
+          --code-bg: #090a0d;
+          --green: #34d399;
+          --green-soft: #10302a;
+          --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 18px 40px rgb(0 0 0 / 35%);
+          --shadow-lg: 0 2px 4px rgb(0 0 0 / 40%), 0 30px 70px rgb(0 0 0 / 50%);
         }
       }
 
@@ -62,6 +78,7 @@
 
       body {
         margin: 0;
+        overflow-x: hidden;
         background: var(--bg);
         color: var(--text);
         font-family:
@@ -80,7 +97,7 @@
       }
 
       a {
-        color: var(--brand);
+        color: var(--brand-strong);
       }
 
       code,
@@ -99,9 +116,9 @@
       header {
         position: sticky;
         top: 0;
-        z-index: 10;
-        background: color-mix(in srgb, var(--bg) 85%, transparent);
-        backdrop-filter: blur(10px);
+        z-index: 20;
+        background: color-mix(in srgb, var(--bg) 82%, transparent);
+        backdrop-filter: blur(12px);
         border-bottom: 1px solid var(--border);
       }
 
@@ -119,7 +136,7 @@
         gap: 10px;
         color: var(--text);
         font-size: 22px;
-        font-weight: 700;
+        font-weight: 750;
         letter-spacing: -0.02em;
         text-decoration: none;
       }
@@ -150,29 +167,45 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        padding: 11px 20px;
+        padding: 12px 22px;
         border: 1px solid transparent;
-        border-radius: 10px;
+        border-radius: 12px;
         font-size: 15px;
-        font-weight: 600;
+        font-weight: 650;
         text-decoration: none;
         transition:
           background 0.15s,
-          border-color 0.15s;
+          border-color 0.15s,
+          transform 0.15s,
+          box-shadow 0.15s;
       }
 
-      .btn-primary {
-        background: var(--brand);
+      .btn svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .btn-primary,
+      .nav-links .btn-primary {
+        background: var(--brand-strong);
         color: #ffffff;
+        box-shadow: 0 8px 24px var(--glow);
       }
 
       .btn-primary:hover {
-        background: var(--brand-strong);
+        background: var(--brand-deep);
+        transform: translateY(-1px);
       }
 
       @media (prefers-color-scheme: dark) {
-        .btn-primary {
-          color: #0b0d14;
+        .btn-primary,
+        .nav-links .btn-primary {
+          background: var(--brand);
+          color: var(--on-brand);
+        }
+
+        .btn-primary:hover {
+          background: var(--brand-strong);
         }
       }
 
@@ -188,52 +221,96 @@
 
       .nav-links .btn {
         padding: 8px 14px;
-        color: #ffffff;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        .nav-links .btn {
-          color: #0b0d14;
-        }
       }
 
       /* Hero */
       .hero {
-        padding: 88px 0 72px;
-        background:
-          radial-gradient(60% 50% at 50% 0%, var(--brand-soft) 0%, transparent 100%),
-          var(--bg);
+        position: relative;
+        padding: 80px 0 0;
+        overflow: hidden;
         text-align: center;
+        isolation: isolate;
+      }
+
+      .hero::before {
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background:
+          radial-gradient(45% 40% at 20% 8%, var(--glow) 0%, transparent 70%),
+          radial-gradient(40% 40% at 85% 18%, rgb(245 158 11 / 14%) 0%, transparent 70%),
+          radial-gradient(60% 50% at 50% 100%, var(--brand-soft) 0%, transparent 70%);
+        content: '';
+      }
+
+      .hero::after {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-image:
+          linear-gradient(var(--border) 1px, transparent 1px),
+          linear-gradient(90deg, var(--border) 1px, transparent 1px);
+        background-size: 44px 44px;
+        mask-image: radial-gradient(70% 55% at 50% 30%, #000 0%, transparent 75%);
+        opacity: 0.55;
+        content: '';
       }
 
       .eyebrow {
-        display: inline-block;
-        margin-bottom: 20px;
-        padding: 4px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 22px;
+        padding: 5px 14px 5px 6px;
         border: 1px solid var(--border);
         border-radius: 999px;
         background: var(--surface);
         color: var(--muted);
-        font-size: 13px;
+        font-size: 13.5px;
+        text-decoration: none;
+        box-shadow: var(--shadow);
+      }
+
+      .eyebrow b {
+        padding: 2px 9px;
+        border-radius: 999px;
+        background: var(--brand-strong);
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .eyebrow b {
+          background: var(--brand);
+          color: var(--on-brand);
+        }
+      }
+
+      .eyebrow:hover {
+        color: var(--text);
       }
 
       h1 {
-        max-width: 820px;
+        max-width: 880px;
         margin: 0 auto;
-        font-size: clamp(36px, 6vw, 60px);
-        line-height: 1.08;
-        letter-spacing: -0.035em;
+        font-size: clamp(38px, 6.4vw, 68px);
+        line-height: 1.04;
+        letter-spacing: -0.04em;
       }
 
-      h1 span {
-        color: var(--brand);
+      .grad {
+        background: linear-gradient(100deg, #ea580c 0%, #f59e0b 55%, #e11d48 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
       }
 
       .lede {
-        max-width: 640px;
-        margin: 22px auto 0;
+        max-width: 660px;
+        margin: 24px auto 0;
         color: var(--muted);
-        font-size: clamp(17px, 2vw, 19px);
+        font-size: clamp(17px, 2vw, 19.5px);
       }
 
       .cta {
@@ -241,35 +318,137 @@
         flex-wrap: wrap;
         justify-content: center;
         gap: 12px;
-        margin-top: 32px;
+        margin-top: 34px;
       }
 
-      /* Board mock */
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 34px;
+        margin: 34px 0 0;
+        padding: 0;
+        list-style: none;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .stats b {
+        margin-right: 6px;
+        color: var(--text);
+        font-size: 18px;
+        letter-spacing: -0.01em;
+      }
+
+      /* App mock */
+      .app {
+        max-width: 1000px;
+        margin: 56px auto 0;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-bottom: 0;
+        border-radius: 18px 18px 0 0;
+        background: var(--bg-soft);
+        box-shadow: var(--shadow-lg);
+        text-align: left;
+      }
+
+      .app-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      .app-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        font-size: 14px;
+        font-weight: 650;
+        white-space: nowrap;
+      }
+
+      .app-title img {
+        width: 22px;
+        height: 22px;
+      }
+
+      .app-title small {
+        overflow: hidden;
+        color: var(--muted);
+        font-weight: 500;
+        text-overflow: ellipsis;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 4px;
+        padding: 3px;
+        border-radius: 10px;
+        background: var(--surface-muted);
+      }
+
+      .tabs button {
+        padding: 5px 12px;
+        border: 0;
+        border-radius: 8px;
+        background: none;
+        color: var(--muted);
+        cursor: pointer;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .tabs button[aria-selected='true'] {
+        background: var(--surface);
+        color: var(--brand-text);
+        box-shadow: 0 1px 2px rgb(0 0 0 / 12%);
+      }
+
+      .panel {
+        min-height: 380px;
+        padding: 18px;
+      }
+
+      .panel[hidden] {
+        display: none;
+      }
+
+      .panel.show {
+        animation: rise 0.35s ease-out;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+      }
+
+      /* Board panel */
       .board {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 16px;
-        max-width: 920px;
-        margin: 56px auto 0;
-        padding: 18px;
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        background: var(--bg-soft);
-        box-shadow: var(--shadow);
-        text-align: left;
+        gap: 14px;
       }
 
       .list {
         padding: 12px;
         border-radius: 12px;
-        background: color-mix(in srgb, var(--border) 45%, transparent);
+        background: var(--surface-muted);
       }
 
       .list h3 {
         display: flex;
         justify-content: space-between;
         margin: 2px 4px 10px;
-        font-size: 14px;
+        font-size: 13.5px;
       }
 
       .list h3 small {
@@ -283,7 +462,7 @@
         border: 1px solid var(--border);
         border-radius: 10px;
         background: var(--surface);
-        font-size: 14px;
+        font-size: 13.5px;
       }
 
       .card:last-child {
@@ -297,7 +476,7 @@
       }
 
       .label {
-        width: 34px;
+        width: 30px;
         height: 6px;
         border-radius: 999px;
       }
@@ -306,35 +485,146 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 8px;
         margin-top: 8px;
         color: var(--muted);
-        font-size: 12px;
+        font-size: 11.5px;
       }
 
       .avatar {
         display: inline-grid;
+        flex: none;
         place-items: center;
         width: 22px;
         height: 22px;
         border-radius: 50%;
         color: #ffffff;
-        font-size: 10px;
+        font-size: 9.5px;
         font-weight: 700;
       }
 
       .card.ai {
         border-color: var(--brand);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent);
+        box-shadow: 0 0 0 3px var(--glow);
       }
 
-      .ai-tag {
-        color: var(--brand);
+      .tag {
+        color: var(--brand-text);
+        font-weight: 650;
+        white-space: nowrap;
+      }
+
+      .tag.green {
+        color: var(--green);
+      }
+
+      /* Timeline panel */
+      .tl {
+        display: grid;
+        grid-template-columns: 96px repeat(15, minmax(0, 1fr));
+        row-gap: 10px;
+        position: relative;
+        font-size: 12px;
+      }
+
+      .tl .day {
+        padding-bottom: 6px;
+        border-bottom: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 11px;
+        text-align: center;
+      }
+
+      .tl .day.today {
+        color: var(--brand-text);
+        font-weight: 700;
+      }
+
+      .tl .row {
+        grid-column: 1;
+        align-self: center;
+        color: var(--muted);
         font-weight: 600;
+      }
+
+      .bar {
+        align-self: center;
+        overflow: hidden;
+        margin: 0 2px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        color: #ffffff;
+        font-weight: 600;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .tray {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 18px;
+        padding: 10px 12px;
+        border: 1px dashed var(--border);
+        border-radius: 10px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .tray span:not(:first-child) {
+        padding: 3px 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+      }
+
+      /* Calendar panel */
+      .cal {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 6px;
+        font-size: 11.5px;
+      }
+
+      .cal .dow {
+        color: var(--muted);
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .cal .cell {
+        min-height: 50px;
+        padding: 5px 6px;
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--muted);
+      }
+
+      .cal .cell.out {
+        opacity: 0.45;
+      }
+
+      .cal .cell.today {
+        box-shadow: inset 0 0 0 2px var(--brand);
+      }
+
+      .chip-c {
+        display: block;
+        margin-top: 4px;
+        overflow: hidden;
+        padding: 2px 6px;
+        border-radius: 5px;
+        color: #ffffff;
+        font-weight: 600;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       /* Sections */
       section {
-        padding: 88px 0;
+        padding: 96px 0;
       }
 
       .soft {
@@ -342,20 +632,30 @@
       }
 
       .section-head {
-        max-width: 680px;
-        margin: 0 auto 48px;
+        max-width: 700px;
+        margin: 0 auto 52px;
         text-align: center;
+      }
+
+      .kicker {
+        display: inline-block;
+        margin-bottom: 12px;
+        color: var(--brand-strong);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
       }
 
       h2 {
         margin: 0;
-        font-size: clamp(28px, 4vw, 40px);
-        line-height: 1.15;
-        letter-spacing: -0.025em;
+        font-size: clamp(30px, 4.2vw, 44px);
+        line-height: 1.1;
+        letter-spacing: -0.03em;
       }
 
       .section-head p {
-        margin: 14px 0 0;
+        margin: 16px 0 0;
         color: var(--muted);
         font-size: 18px;
       }
@@ -367,24 +667,41 @@
       }
 
       .feature {
-        padding: 24px;
+        padding: 26px;
         border: 1px solid var(--border);
         border-radius: var(--radius);
         background: var(--surface);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s,
+          border-color 0.2s;
       }
 
-      .feature svg {
-        width: 40px;
-        height: 40px;
-        padding: 9px;
-        border-radius: 10px;
+      .grid .feature:hover {
+        border-color: color-mix(in srgb, var(--brand) 45%, var(--border));
+        box-shadow: var(--shadow);
+        transform: translateY(-3px);
+      }
+
+      .icon {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
         background: var(--brand-soft);
-        color: var(--brand);
+        color: var(--brand-strong);
+      }
+
+      .icon svg {
+        width: 22px;
+        height: 22px;
       }
 
       .feature h3 {
         margin: 16px 0 6px;
-        font-size: 17px;
+        font-size: 17.5px;
+        letter-spacing: -0.01em;
       }
 
       .feature p {
@@ -393,33 +710,53 @@
         font-size: 15px;
       }
 
-      /* AI split */
-      .split {
+      .new {
+        margin-left: 6px;
+        padding: 1px 8px;
+        border-radius: 999px;
+        background: var(--brand-soft);
+        color: var(--brand-text);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        vertical-align: 2px;
+      }
+
+      /* Spotlights */
+      .spot {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
         align-items: center;
-        gap: 56px;
+        gap: 64px;
       }
 
-      .split h2 {
-        text-align: left;
+      .spot + .spot {
+        margin-top: 110px;
       }
 
-      .split > div > p {
+      .spot.flip > :first-child {
+        order: 2;
+      }
+
+      .spot h2 {
+        font-size: clamp(28px, 3.6vw, 38px);
+      }
+
+      .spot > div > p {
         color: var(--muted);
         font-size: 17px;
       }
 
       .checks {
-        margin: 20px 0 0;
+        margin: 22px 0 0;
         padding: 0;
         list-style: none;
       }
 
       .checks li {
         position: relative;
-        margin: 10px 0;
-        padding-left: 30px;
+        margin: 11px 0;
+        padding-left: 32px;
       }
 
       .checks li::before {
@@ -428,14 +765,308 @@
         left: 0;
         display: grid;
         place-items: center;
-        width: 20px;
-        height: 20px;
+        width: 21px;
+        height: 21px;
         border-radius: 50%;
         background: var(--brand-soft);
-        color: var(--brand);
+        color: var(--brand-strong);
         content: '✓';
         font-size: 12px;
+        font-weight: 800;
+      }
+
+      .visual {
+        padding: 24px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background:
+          radial-gradient(80% 80% at 100% 0%, var(--glow) 0%, transparent 60%),
+          var(--bg-soft);
+        box-shadow: var(--shadow);
+      }
+
+      /* Rule visual */
+      .rule {
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface);
+      }
+
+      .rule + .rule {
+        margin-top: 14px;
+      }
+
+      .rule-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+        font-size: 14.5px;
         font-weight: 700;
+      }
+
+      .switch {
+        position: relative;
+        flex: none;
+        width: 36px;
+        height: 20px;
+        border-radius: 999px;
+        background: var(--brand);
+      }
+
+      .switch::after {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #ffffff;
+        content: '';
+      }
+
+      .step-line {
+        margin-top: 8px;
+        padding-left: 64px;
+        font-size: 14px;
+        text-indent: -64px;
+      }
+
+      .pill {
+        display: inline-block;
+        width: 54px;
+        margin-right: 10px;
+        padding: 3px 0;
+        border-radius: 7px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-align: center;
+        text-indent: 0;
+      }
+
+      .pill.when {
+        background: var(--brand-soft);
+        color: var(--brand-text);
+      }
+
+      .pill.then {
+        background: var(--green-soft);
+        color: var(--green);
+      }
+
+      .step-line + .step-line.then-line {
+        margin-top: 8px;
+      }
+
+      .connector {
+        width: 2px;
+        height: 12px;
+        margin: 4px 0 0 26px;
+        background: var(--border);
+      }
+
+      /* Swatches */
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .swatch {
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .swatch i {
+        display: block;
+        height: 46px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--c) 0%, var(--c) 55%, var(--d) 100%);
+      }
+
+      .swatch.on {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 3px var(--glow);
+      }
+
+      .swatch small {
+        display: block;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .mark-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 18px;
+        padding: 14px 16px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface);
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .mark-row img {
+        width: 40px;
+        height: 40px;
+        animation: spin 6s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Recurring visual */
+      .sched {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 14px;
+      }
+
+      .sched span {
+        padding: 6px 0;
+        border-radius: 8px;
+        background: var(--surface-muted);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .sched span.on {
+        background: var(--brand-strong);
+        color: #ffffff;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .sched span.on {
+          background: var(--brand);
+          color: var(--on-brand);
+        }
+      }
+
+      /* Comparison */
+      .compare-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .compare {
+        width: 100%;
+        min-width: 600px;
+        border-collapse: collapse;
+        font-size: 15px;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 15px 18px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .compare tr:last-child th,
+      .compare tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .compare thead th {
+        background: var(--bg-soft);
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .compare thead th.us {
+        color: var(--brand-strong);
+      }
+
+      .compare tbody th {
+        width: 28%;
+        font-weight: 650;
+      }
+
+      .compare td.us {
+        background: color-mix(in srgb, var(--brand-soft) 55%, transparent);
+      }
+
+      .compare td.them {
+        color: var(--muted);
+      }
+
+      .yes::before,
+      .no::before {
+        margin-right: 8px;
+        font-weight: 700;
+      }
+
+      .yes::before {
+        color: var(--green);
+        content: '✓';
+      }
+
+      .no::before {
+        color: #a29b93;
+        content: '–';
+      }
+
+      .note {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+      }
+
+      /* AI */
+      .ai-band {
+        position: relative;
+        overflow: hidden;
+        background: #17120e;
+        color: #f1ebe5;
+        isolation: isolate;
+      }
+
+      .ai-band::before {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+          radial-gradient(40% 60% at 0% 0%, rgb(234 88 12 / 35%) 0%, transparent 70%),
+          radial-gradient(40% 60% at 100% 100%, rgb(225 29 72 / 22%) 0%, transparent 70%);
+        content: '';
+      }
+
+      .ai-band .kicker {
+        color: #fb8a3c;
+      }
+
+      .ai-band a {
+        color: #fdba74;
+      }
+
+      .ai-band .spot > div > p {
+        color: #c9bfb5;
+      }
+
+      .ai-band .checks li::before {
+        background: rgb(251 138 60 / 18%);
+        color: #fdba74;
       }
 
       .clients {
@@ -447,18 +1078,19 @@
 
       .chip {
         padding: 5px 12px;
-        border: 1px solid var(--border);
+        border: 1px solid rgb(255 255 255 / 14%);
         border-radius: 999px;
-        background: var(--surface);
-        color: var(--muted);
+        background: rgb(255 255 255 / 5%);
+        color: #d9d0c7;
         font-size: 13px;
       }
 
       .terminal {
         overflow: hidden;
+        border: 1px solid rgb(255 255 255 / 10%);
         border-radius: var(--radius);
-        background: var(--code-bg);
-        box-shadow: var(--shadow);
+        background: #090a0d;
+        box-shadow: 0 30px 70px rgb(0 0 0 / 45%);
       }
 
       .terminal-bar {
@@ -475,6 +1107,18 @@
         background: rgb(255 255 255 / 18%);
       }
 
+      .terminal-bar i:nth-child(1) {
+        background: #f87171;
+      }
+
+      .terminal-bar i:nth-child(2) {
+        background: #fbbf24;
+      }
+
+      .terminal-bar i:nth-child(3) {
+        background: #34d399;
+      }
+
       pre {
         margin: 0;
         padding: 18px 20px;
@@ -485,15 +1129,41 @@
       }
 
       .c {
-        color: #7c8aa5;
+        color: #8b8178;
       }
 
       .k {
-        color: #a5b4fc;
+        color: #fdba74;
       }
 
       .s {
         color: #86efac;
+      }
+
+      .tools {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 56px;
+      }
+
+      .tool {
+        padding: 18px;
+        border: 1px solid rgb(255 255 255 / 10%);
+        border-radius: 14px;
+        background: rgb(255 255 255 / 4%);
+      }
+
+      .tool b {
+        display: block;
+        margin-bottom: 4px;
+        color: #ffffff;
+        font-size: 15px;
+      }
+
+      .tool span {
+        color: #b3a99f;
+        font-size: 13.5px;
       }
 
       /* Steps */
@@ -505,7 +1175,7 @@
       }
 
       .step {
-        padding: 24px;
+        padding: 26px;
         border: 1px solid var(--border);
         border-radius: var(--radius);
         background: var(--surface);
@@ -514,20 +1184,21 @@
       .step::before {
         display: grid;
         place-items: center;
-        width: 32px;
-        height: 32px;
+        width: 34px;
+        height: 34px;
         margin-bottom: 14px;
         border-radius: 50%;
-        background: var(--brand);
+        background: var(--brand-strong);
         color: #ffffff;
         content: counter(step);
         counter-increment: step;
-        font-weight: 700;
+        font-weight: 750;
       }
 
       @media (prefers-color-scheme: dark) {
         .step::before {
-          color: #0b0d14;
+          background: var(--brand);
+          color: var(--on-brand);
         }
       }
 
@@ -550,122 +1221,97 @@
       }
 
       .center {
-        margin-top: 32px;
+        margin-top: 34px;
         text-align: center;
-      }
-
-      /* Comparison */
-      .compare-wrap {
-        overflow-x: auto;
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        background: var(--surface);
-      }
-
-      .compare {
-        width: 100%;
-        min-width: 600px;
-        border-collapse: collapse;
-        font-size: 15px;
-      }
-
-      .compare th,
-      .compare td {
-        padding: 14px 18px;
-        border-bottom: 1px solid var(--border);
-        text-align: left;
-        vertical-align: top;
-      }
-
-      .compare tr:last-child th,
-      .compare tr:last-child td {
-        border-bottom: 0;
-      }
-
-      .compare thead th {
-        background: var(--bg-soft);
-        font-size: 13px;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-      }
-
-      .compare thead th.us {
-        color: var(--brand);
-      }
-
-      .compare tbody th {
-        width: 30%;
-        font-weight: 600;
-      }
-
-      .compare td.us {
-        background: color-mix(in srgb, var(--brand-soft) 55%, transparent);
-      }
-
-      .compare td.them {
-        color: var(--muted);
-      }
-
-      .yes::before,
-      .no::before {
-        margin-right: 8px;
-        font-weight: 700;
-      }
-
-      .yes::before {
-        color: #10b981;
-        content: '✓';
-      }
-
-      .no::before {
-        color: #9aa3b5;
-        content: '–';
-      }
-
-      .note {
-        margin: 14px 0 0;
-        color: var(--muted);
-        font-size: 13px;
-        text-align: center;
-      }
-
-      .reasons {
-        margin-top: 40px;
       }
 
       /* Roadmap */
       .roadmap {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: rm;
       }
 
-      .roadmap .feature h3 {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin-top: 0;
+      .roadmap li {
+        position: relative;
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface);
+        counter-increment: rm;
+      }
+
+      .roadmap li::before {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--muted);
+        content: counter(rm, decimal-leading-zero);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+
+      .roadmap li.done {
+        border-color: color-mix(in srgb, var(--green) 35%, var(--border));
+      }
+
+      .roadmap li.next {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 3px var(--glow);
+      }
+
+      .roadmap h3 {
+        margin: 0 0 6px;
+        font-size: 15.5px;
+        line-height: 1.3;
+      }
+
+      .roadmap p {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 13.5px;
       }
 
       .badge {
-        flex: none;
+        display: inline-block;
         padding: 2px 10px;
         border-radius: 999px;
-        background: var(--brand-soft);
-        color: var(--brand);
+        background: var(--surface-muted);
+        color: var(--muted);
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 650;
+        text-decoration: none;
       }
 
       .badge.done {
-        background: color-mix(in srgb, #10b981 16%, transparent);
-        color: #059669;
+        background: var(--green-soft);
+        color: var(--green);
       }
 
-      .badge.later {
-        background: var(--bg-soft);
-        color: var(--muted);
+      .badge.next {
+        background: var(--brand-soft);
+        color: var(--brand-text);
+      }
+
+      .progress {
+        max-width: 520px;
+        height: 10px;
+        margin: -24px auto 44px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: var(--surface-muted);
+      }
+
+      .progress i {
+        display: block;
+        width: 60%;
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #ea580c, #f59e0b);
       }
 
       /* License */
@@ -688,6 +1334,37 @@
 
       .license li {
         margin: 6px 0;
+      }
+
+      /* Final CTA */
+      .final {
+        padding: 64px 32px;
+        border-radius: 24px;
+        background:
+          radial-gradient(60% 90% at 0% 0%, rgb(255 255 255 / 18%) 0%, transparent 60%),
+          linear-gradient(120deg, #c2410c 0%, #ea580c 50%, #f59e0b 100%);
+        color: #ffffff;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .final p {
+        max-width: 560px;
+        margin: 14px auto 0;
+        color: rgb(255 255 255 / 88%);
+        font-size: 18px;
+      }
+
+      .final .cta .btn-primary {
+        background: #ffffff;
+        color: #9a3412;
+        box-shadow: none;
+      }
+
+      .final .cta .btn-ghost {
+        border-color: rgb(255 255 255 / 45%);
+        background: transparent;
+        color: #ffffff;
       }
 
       /* Footer */
@@ -726,16 +1403,40 @@
         font-size: 13px;
       }
 
-      @media (max-width: 900px) {
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      @media (max-width: 960px) {
         .grid,
-        .steps,
-        .roadmap {
+        .steps {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .split {
+        .roadmap {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .tools {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .spot {
           grid-template-columns: minmax(0, 1fr);
           gap: 32px;
+        }
+
+        .spot.flip > :first-child {
+          order: 0;
         }
       }
 
@@ -745,23 +1446,67 @@
         }
 
         .hero {
-          padding: 56px 0 48px;
+          padding-top: 52px;
         }
 
         section {
-          padding: 64px 0;
+          padding: 68px 0;
+        }
+
+        .app-name {
+          display: none;
+        }
+
+        .tabs button {
+          padding: 5px 9px;
+        }
+
+        .panel {
+          padding: 12px;
         }
 
         .board,
         .grid,
         .steps,
         .roadmap,
-        .license {
+        .license,
+        .tools {
           grid-template-columns: minmax(0, 1fr);
         }
 
         .board .list:nth-child(n + 2) {
           display: none;
+        }
+
+        .tl {
+          grid-template-columns: 64px repeat(15, minmax(0, 1fr));
+        }
+
+        .tl .day:nth-child(even) {
+          color: transparent;
+        }
+
+        .bar {
+          padding: 5px 6px;
+          font-size: 11px;
+        }
+
+        .cal .cell {
+          min-height: 40px;
+          padding: 3px;
+        }
+
+        .chip-c {
+          padding: 2px 3px;
+          font-size: 10px;
+        }
+
+        .swatches {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .final {
+          padding: 48px 20px;
         }
 
         .compare {
@@ -812,11 +1557,11 @@
           tama
         </a>
         <nav class="nav-links" aria-label="Main">
-          <a href="#why">Why Tama</a>
           <a href="#features">Features</a>
+          <a href="#automation">Automation</a>
           <a href="#ai">AI assistants</a>
+          <a href="#roadmap">Roadmap</a>
           <a href="#start">Get started</a>
-          <a href="#license">License</a>
           <a class="btn btn-primary" href="https://github.com/jakaria-istauk/tama">GitHub</a>
         </nav>
       </div>
@@ -825,63 +1570,356 @@
     <main id="top">
       <div class="hero">
         <div class="wrap">
-          <span class="eyebrow">Free · Self-hosted · Source-available</span>
-          <h1>Kanban for teams, with <span>AI assistants</span> built in</h1>
+          <a class="eyebrow" href="#timeline"><b>New</b> Timeline view and start dates</a>
+          <h1>Plan, automate and ship, <span class="grad">on your own server</span></h1>
           <p class="lede">
-            Plan projects in boards, lists and cards, work on them together in real time, and let
-            Claude, ChatGPT or Cursor read and update your boards with your permissions. On your own
-            server.
+            Tama is a free, self-hosted kanban board for teams. Five board views, automation
+            rules, recurring cards and a built-in MCP server, so Claude, ChatGPT or Cursor can work
+            on your boards with your permissions.
           </p>
           <div class="cta">
-            <a class="btn btn-primary" href="#start">Get started</a>
+            <a class="btn btn-primary" href="#start">
+              Get started free
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
             <a class="btn btn-ghost" href="https://github.com/jakaria-istauk/tama">View on GitHub</a>
           </div>
+          <ul class="stats">
+            <li><b>5</b>board views</li>
+            <li><b>29</b>MCP tools</li>
+            <li><b>8</b>colour schemes</li>
+            <li><b>$0</b>per user, ever</li>
+          </ul>
 
-          <div class="board" aria-hidden="true">
-            <div class="list">
-              <h3>To do <small>3</small></h3>
-              <div class="card">
-                <div class="labels"><span class="label" style="background: #f59e0b"></span></div>
-                Write the release notes
-                <div class="meta"><span>Nov 28</span><span class="avatar" style="background: #0ea5e9">RA</span></div>
+          <div class="app">
+            <div class="app-bar">
+              <div class="app-title">
+                <img src="icon.svg" alt="" />
+                <span class="app-name">Website relaunch <small>· Marketing</small></span>
               </div>
-              <div class="card">
-                <div class="labels"><span class="label" style="background: #ef4444"></span><span class="label" style="background: #8b5cf6"></span></div>
-                Fix the login redirect
-                <div class="meta"><span>2 / 4 tasks</span><span class="avatar" style="background: #10b981">NI</span></div>
+              <div class="tabs" role="tablist" aria-label="Board views">
+                <button type="button" role="tab" id="tab-board" aria-controls="panel-board" aria-selected="true">Board</button>
+                <button type="button" role="tab" id="tab-timeline" aria-controls="panel-timeline" aria-selected="false" tabindex="-1">Timeline</button>
+                <button type="button" role="tab" id="tab-calendar" aria-controls="panel-calendar" aria-selected="false" tabindex="-1">Calendar</button>
               </div>
             </div>
-            <div class="list">
-              <h3>In progress <small>2</small></h3>
-              <div class="card ai">
-                <div class="labels"><span class="label" style="background: #4f46e5"></span></div>
-                Split the onboarding epic into cards
-                <div class="meta"><span class="ai-tag">Updated by Claude</span><span class="avatar" style="background: #4f46e5">AI</span></div>
-              </div>
-              <div class="card">
-                Design the settings page
-                <div class="meta"><span>3 comments</span><span class="avatar" style="background: #f43f5e">SA</span></div>
+
+            <div class="panel" id="panel-board" role="tabpanel" aria-labelledby="tab-board">
+              <div class="board">
+                <div class="list">
+                  <h3>To do <small>3</small></h3>
+                  <div class="card">
+                    <div class="labels"><span class="label" style="background: #f59e0b"></span></div>
+                    Write the launch post
+                    <div class="meta"><span>Nov 28</span><span class="avatar" style="background: #0ea5e9">RA</span></div>
+                  </div>
+                  <div class="card">
+                    <div class="labels"><span class="label" style="background: #ef4444"></span><span class="label" style="background: #8b5cf6"></span></div>
+                    Fix the pricing page redirect
+                    <div class="meta"><span>2 / 4 tasks</span><span class="avatar" style="background: #10b981">NI</span></div>
+                  </div>
+                  <div class="card">
+                    Weekly analytics report
+                    <div class="meta"><span class="tag">↻ Every Monday</span><span class="avatar" style="background: #f43f5e">SA</span></div>
+                  </div>
+                </div>
+                <div class="list">
+                  <h3>In progress <small>2</small></h3>
+                  <div class="card ai">
+                    <div class="labels"><span class="label" style="background: #ea580c"></span></div>
+                    Split the onboarding epic into cards
+                    <div class="meta"><span class="tag">✦ Updated by Claude</span><span class="avatar" style="background: #ea580c">AI</span></div>
+                  </div>
+                  <div class="card">
+                    Design the new hero section
+                    <div class="meta"><span>Nov 24 → Dec 2</span><span class="avatar" style="background: #f43f5e">SA</span></div>
+                  </div>
+                </div>
+                <div class="list">
+                  <h3>Review <small>2</small></h3>
+                  <div class="card">
+                    <div class="labels"><span class="label" style="background: #10b981"></span></div>
+                    Migrate the blog to the new theme
+                    <div class="meta"><span class="tag green">⚡ Rule: assigned to Nadia</span><span class="avatar" style="background: #10b981">NI</span></div>
+                  </div>
+                  <div class="card">
+                    Update the docs screenshots
+                    <div class="meta"><span>3 comments</span><span class="avatar" style="background: #0ea5e9">RA</span></div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="list">
-              <h3>Done <small>5</small></h3>
-              <div class="card">
-                <div class="labels"><span class="label" style="background: #10b981"></span></div>
-                Set up two-factor sign-in
-                <div class="meta"><span>Nov 20</span><span class="avatar" style="background: #0ea5e9">RA</span></div>
+
+            <div class="panel" id="panel-timeline" role="tabpanel" aria-labelledby="tab-timeline" hidden>
+              <div class="tl">
+                <span></span>
+                <span class="day">17</span><span class="day">18</span><span class="day">19</span><span class="day">20</span><span class="day">21</span>
+                <span class="day">22</span><span class="day">23</span><span class="day today">24</span><span class="day">25</span><span class="day">26</span>
+                <span class="day">27</span><span class="day">28</span><span class="day">29</span><span class="day">30</span><span class="day">1</span>
+
+                <span class="row" style="grid-row: 2">To do</span>
+                <span class="bar" style="grid-row: 2; grid-column: 10 / 14; background: #f59e0b">Write the launch post</span>
+                <span class="row" style="grid-row: 3"></span>
+                <span class="bar" style="grid-row: 3; grid-column: 12 / 17; background: #8b5cf6">Fix the pricing redirect</span>
+
+                <span class="row" style="grid-row: 4">In progress</span>
+                <span class="bar" style="grid-row: 4; grid-column: 4 / 11; background: #ea580c">Onboarding epic</span>
+                <span class="row" style="grid-row: 5"></span>
+                <span class="bar" style="grid-row: 5; grid-column: 9 / 17; background: #f43f5e">Design the new hero section</span>
+
+                <span class="row" style="grid-row: 6">Review</span>
+                <span class="bar" style="grid-row: 6; grid-column: 2 / 9; background: #10b981">Migrate the blog</span>
+                <span class="row" style="grid-row: 7"></span>
+                <span class="bar" style="grid-row: 7; grid-column: 7 / 10; background: #0ea5e9">Docs screenshots</span>
               </div>
-              <div class="card">
-                Move the server to Docker
-                <div class="meta"><span>Nov 18</span><span class="avatar" style="background: #10b981">NI</span></div>
+              <div class="tray">
+                <span>No dates yet, drop on the timeline:</span>
+                <span>Press kit</span>
+                <span>Partner emails</span>
+              </div>
+            </div>
+
+            <div class="panel" id="panel-calendar" role="tabpanel" aria-labelledby="tab-calendar" hidden>
+              <div class="cal">
+                <span class="dow">Mon</span><span class="dow">Tue</span><span class="dow">Wed</span><span class="dow">Thu</span><span class="dow">Fri</span><span class="dow">Sat</span><span class="dow">Sun</span>
+                <div class="cell out">26</div><div class="cell out">27</div><div class="cell out">28</div><div class="cell out">29</div><div class="cell out">30</div><div class="cell out">31</div><div class="cell">1</div>
+                <div class="cell">2<span class="chip-c" style="background: #f43f5e">Weekly report</span></div><div class="cell">3</div><div class="cell">4</div><div class="cell">5<span class="chip-c" style="background: #0ea5e9">Sprint review</span></div><div class="cell">6</div><div class="cell">7</div><div class="cell">8</div>
+                <div class="cell">9<span class="chip-c" style="background: #f43f5e">Weekly report</span></div><div class="cell">10</div><div class="cell">11<span class="chip-c" style="background: #8b5cf6">Copy freeze</span></div><div class="cell">12</div><div class="cell">13</div><div class="cell">14</div><div class="cell">15</div>
+                <div class="cell">16<span class="chip-c" style="background: #f43f5e">Weekly report</span></div><div class="cell">17</div><div class="cell">18</div><div class="cell">19<span class="chip-c" style="background: #10b981">Migrate the blog</span></div><div class="cell">20</div><div class="cell">21</div><div class="cell">22</div>
+                <div class="cell">23<span class="chip-c" style="background: #f43f5e">Weekly report</span></div><div class="cell today">24</div><div class="cell">25</div><div class="cell">26</div><div class="cell">27<span class="chip-c" style="background: #f59e0b">Launch post</span></div><div class="cell">28</div><div class="cell">29</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      <section id="features" class="soft">
+        <div class="wrap">
+          <div class="section-head">
+            <span class="kicker">Features</span>
+            <h2>Everything a team board needs, all included</h2>
+            <p>Simple enough to start in a minute, with the depth real projects need. No paid tiers, no locked views.</p>
+          </div>
+          <div class="grid">
+            <article class="feature">
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="5" height="16" rx="1.5" /><rect x="10" y="4" width="5" height="11" rx="1.5" /><rect x="17" y="4" width="4" height="7" rx="1.5" /></svg></div>
+              <h3>Five board views</h3>
+              <p>Kanban, grid, list, calendar and timeline. Pick one as each board's default.</p>
+            </article>
+            <article class="feature">
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h10M3 12h16M3 18h7" /><circle cx="17" cy="6" r="2" /><circle cx="14" cy="18" r="2" /></svg></div>
+              <h3>Timeline and start dates <span class="new">NEW</span></h3>
+              <p>Give cards a start date and see them as bars from start to due date. Drag to reschedule.</p>
+            </article>
+            <article class="feature">
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9z" /></svg></div>
+              <h3>Automation rules</h3>
+              <p>"When this happens, do that" rules per board: move, label, assign, set due dates or comment.</p>
+            </article>
+            <article class="feature">
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4" /><path d="M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4" /><path d="M21 13v1a4 4 0 0 1-4 4H3" /></svg></div>
+              <h3>Recurring cards and templates</h3>
+              <p>Save cards as templates with labels and tasks ready, and create them daily, weekly or monthly.</p>
+            </article>
+            <article class="feature">
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 3H2l8 9.5V19l4 2v-8.5z" /></svg></div>
+              <h3>Saved filters</h3>
+              <p>Filter by member, label, creator or due date, save it, and get back to it in one click.</p>
+            </article>
+            <article class="feature">
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><path d="M14 3v6h6M8 13h8M8 17h5" /></svg></div>
+              <h3>Rich cards</h3>
+              <p>Markdown, attachments, comments, tasks, labels, custom fields, due dates and a stopwatch.</p>
+            </article>
+            <article class="feature">
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg></div>
+              <h3>Real-time collaboration</h3>
+              <p>Every change shows up for everyone at once, with comments and activity together in one feed.</p>
+            </article>
+            <article class="feature">
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg></div>
+              <h3>Notifications, webhooks, API</h3>
+              <p>Send updates to 100+ services through Apprise, or build on webhooks and a documented REST API.</p>
+            </article>
+            <article class="feature">
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /></svg></div>
+              <h3>Secure and private</h3>
+              <p>Google sign-in, two-factor authentication, personal API keys and roles from admin to viewer.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="timeline">
+        <div class="wrap">
+          <div class="spot">
+            <div>
+              <span class="kicker">New · Timeline view</span>
+              <h2>See the whole plan, from start to finish</h2>
+              <p>
+                Cards now have a start date as well as a due date. The timeline draws each card as a
+                bar across the days it runs, one row per list, so overlaps and gaps stand out at a
+                glance.
+              </p>
+              <ul class="checks">
+                <li>Drag a bar to move it, or drag its ends to change the dates.</li>
+                <li>Cards without dates wait in a tray. Drop one on a day to schedule it.</li>
+                <li>Moving a due date on the calendar moves the start date along with it.</li>
+                <li>Set the timeline as a board's default view.</li>
+              </ul>
+            </div>
+            <div class="visual" aria-hidden="true">
+              <div class="rule">
+                <div class="rule-head">Card dates</div>
+                <div class="step-line"><span class="pill when">START</span> Tue, Nov 24</div>
+                <div class="connector"></div>
+                <div class="step-line"><span class="pill then">DUE</span> Wed, Dec 2</div>
+              </div>
+              <div class="rule">
+                <div class="rule-head">Design the new hero section <span class="avatar" style="background: #f43f5e">SA</span></div>
+                <div class="tl" style="grid-template-columns: repeat(10, minmax(0, 1fr))">
+                  <span class="day">22</span><span class="day">23</span><span class="day today">24</span><span class="day">25</span><span class="day">26</span><span class="day">27</span><span class="day">28</span><span class="day">29</span><span class="day">30</span><span class="day">1</span>
+                  <span class="bar" style="grid-row: 2; grid-column: 3 / 11; background: linear-gradient(90deg, #ea580c, #f59e0b)">9 days · In progress</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="automation" class="soft">
+        <div class="wrap">
+          <div class="spot flip">
+            <div>
+              <span class="kicker">Automation</span>
+              <h2>Let the board do the busywork</h2>
+              <p>
+                Write rules in plain terms: when a card is created or moved, gets a label, passes its
+                due date or has every task done, run up to ten actions. Every change a rule makes
+                shows in the card's activity, with the rule's name.
+              </p>
+              <ul class="checks">
+                <li>Move cards, add or remove labels and members, set or complete due dates, post comments.</li>
+                <li>Recurring cards from templates: every day, on chosen weekdays, or monthly on a day.</li>
+                <li>Turn rules on and off without deleting them.</li>
+              </ul>
+            </div>
+            <div class="visual" aria-hidden="true">
+              <div class="rule">
+                <div class="rule-head">Hand off for review <span class="switch"></span></div>
+                <div class="step-line"><span class="pill when">WHEN</span> Card is moved to <b>Review</b></div>
+                <div class="connector"></div>
+                <div class="step-line"><span class="pill then">THEN</span> Add member <b>Nadia</b></div>
+                <div class="step-line"><span class="pill then">THEN</span> Set due date in <b>2 days</b></div>
+                <div class="step-line"><span class="pill then">THEN</span> Comment "Ready for review"</div>
+              </div>
+              <div class="rule">
+                <div class="rule-head">Close out finished work <span class="switch"></span></div>
+                <div class="step-line"><span class="pill when">WHEN</span> All tasks are completed</div>
+                <div class="connector"></div>
+                <div class="step-line"><span class="pill then">THEN</span> Move to <b>Done</b></div>
+                <div class="step-line"><span class="pill then">THEN</span> Complete the due date</div>
+              </div>
+              <div class="rule">
+                <div class="rule-head">Weekly analytics report <span class="tag">↻ Recurring</span></div>
+                <div class="sched">
+                  <span class="on">Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="look">
+        <div class="wrap">
+          <div class="spot">
+            <div>
+              <span class="kicker">New look</span>
+              <h2>Make it yours</h2>
+              <p>
+                Each person picks the accent colour they like in their preferences, in light or dark
+                mode. Tangerine is the default, alongside seven calmer schemes.
+              </p>
+              <ul class="checks">
+                <li>A fresh Tama mark across the app, from the sidebar to the loader.</li>
+                <li>Light and dark themes for every colour scheme.</li>
+              </ul>
+            </div>
+            <div class="visual" aria-hidden="true">
+              <div class="swatches">
+                <div class="swatch on" style="--c: #ea580c; --d: #fb8a3c"><i></i>Tangerine<small>Default</small></div>
+                <div class="swatch" style="--c: #0f766e; --d: #14a396"><i></i>Teal<small>&nbsp;</small></div>
+                <div class="swatch" style="--c: #4f46e5; --d: #7c74ff"><i></i>Indigo<small>&nbsp;</small></div>
+                <div class="swatch" style="--c: #2f5d50; --d: #4e8e7a"><i></i>Forest<small>&nbsp;</small></div>
+                <div class="swatch" style="--c: #1e3a5f; --d: #3a6596"><i></i>Navy<small>&nbsp;</small></div>
+                <div class="swatch" style="--c: #6d28d9; --d: #8b5cf6"><i></i>Plum<small>&nbsp;</small></div>
+                <div class="swatch" style="--c: #1d6fe0; --d: #4b93f2"><i></i>Ocean<small>&nbsp;</small></div>
+                <div class="swatch" style="--c: #27272a; --d: #52525b"><i></i>Graphite<small>&nbsp;</small></div>
+              </div>
+              <div class="mark-row"><img src="icon.svg" alt="" />The animated Tama mark shows while pages load.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="ai" class="ai-band">
+        <div class="wrap">
+          <div class="spot">
+            <div>
+              <span class="kicker">AI assistants</span>
+              <h2>Your AI assistant, on your board</h2>
+              <p>
+                Tama has a built-in
+                <a href="https://modelcontextprotocol.io">Model Context Protocol</a> server. Connect
+                an assistant and ask it to plan a sprint, sort a backlog, set up a rule or write up a
+                card. It works as you, so it sees and changes only what you can.
+              </p>
+              <ul class="checks">
+                <li>Claude and ChatGPT connect through OAuth, with a consent screen.</li>
+                <li>Coding agents connect with a personal API key.</li>
+                <li>See and disconnect connected apps at any time.</li>
+              </ul>
+              <div class="clients">
+                <span class="chip">Claude</span>
+                <span class="chip">ChatGPT</span>
+                <span class="chip">Claude Code</span>
+                <span class="chip">Codex</span>
+                <span class="chip">Cursor</span>
+                <span class="chip">VS Code</span>
+                <span class="chip">Gemini CLI</span>
+                <span class="chip">Windsurf</span>
+              </div>
+            </div>
+            <div class="terminal">
+              <div class="terminal-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+              <pre><code><span class="c"># Connect Claude Code to your Tama</span>
+<span class="k">claude</span> mcp add --transport http tama \
+  <span class="s">https://tama.example.com/api/mcp</span> \
+  --header <span class="s">"X-Api-Key: &lt;api key&gt;"</span>
+
+<span class="c"># Then just ask</span>
+&gt; Plan the launch on the Website board:
+  one card per step, starting Monday,
+  each due two days after it starts.
+
+&gt; When a card moves to Review, assign
+  it to Nadia and comment "Ready".</code></pre>
+            </div>
+          </div>
+          <div class="tools">
+            <div class="tool"><b>Projects and boards</b><span>List and read projects, boards, lists, labels and members.</span></div>
+            <div class="tool"><b>Cards and tasks</b><span>Create, search, move and update cards with start and due dates; manage tasks.</span></div>
+            <div class="tool"><b>Templates and schedules</b><span>Save templates, create cards from them and set recurring schedules.</span></div>
+            <div class="tool"><b>Automation rules</b><span>List, create, change and turn off a board's rules.</span></div>
+          </div>
+        </div>
+      </section>
+
       <section id="why">
         <div class="wrap">
           <div class="section-head">
+            <span class="kicker">Why Tama</span>
             <h2>Why Tama instead of a hosted board?</h2>
             <p>
               Trello, Asana and similar tools are good boards. Tama gives you the same way of working,
@@ -914,19 +1952,19 @@
                   <td class="them no">Free plans cap boards or collaborators</td>
                 </tr>
                 <tr>
+                  <th scope="row">Views</th>
+                  <td class="us yes">Kanban, grid, list, calendar and timeline, all included</td>
+                  <td class="them no">Timeline and calendar often on paid plans</td>
+                </tr>
+                <tr>
+                  <th scope="row">Automation</th>
+                  <td class="us yes">Rules, recurring cards and templates with no run limits</td>
+                  <td class="them no">Monthly run quotas, more on paid plans</td>
+                </tr>
+                <tr>
                   <th scope="row">AI assistants</th>
                   <td class="us yes">Built-in MCP server; bring Claude, ChatGPT, Cursor and more</td>
                   <td class="them no">Usually the vendor's own AI, often a paid add-on</td>
-                </tr>
-                <tr>
-                  <th scope="row">Views and custom fields</th>
-                  <td class="us yes">Kanban, grid, list and calendar views, custom fields, all included</td>
-                  <td class="them no">Extra views and fields often on paid plans</td>
-                </tr>
-                <tr>
-                  <th scope="row">Integrations</th>
-                  <td class="us yes">Webhooks, REST API and 100+ notification services</td>
-                  <td class="them no">Marketplace add-ons, some paid</td>
                 </tr>
                 <tr>
                   <th scope="row">Source code</th>
@@ -938,110 +1976,96 @@
           </div>
           <p class="note">Plans and limits of hosted tools vary and change over time; check each vendor's pricing page.</p>
 
-          <div class="grid reasons">
+          <div class="grid" style="margin-top: 40px">
             <article class="feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8" /><path d="M21 3v5h-5" /></svg>
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8" /><path d="M21 3v5h-5" /></svg></div>
               <h3>Move from Trello in minutes</h3>
               <p>Import a Trello board export with its lists, cards, labels, checklists and comments.</p>
             </article>
             <article class="feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></div>
               <h3>Private by default</h3>
               <p>Client work, HR boards or internal plans never leave your network. Back up with one script.</p>
             </article>
             <article class="feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4" /><path d="M2 21a7 7 0 0 1 14 0M17 3.5a4 4 0 0 1 0 9M22 21a7 7 0 0 0-4-6.3" /></svg>
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4" /><path d="M2 21a7 7 0 0 1 14 0M17 3.5a4 4 0 0 1 0 9M22 21a7 7 0 0 0-4-6.3" /></svg></div>
               <h3>Fine-grained access</h3>
-              <p>Admins, project owners, board editors and read-only viewers, with Google sign-in and two-factor authentication.</p>
+              <p>Admins, project owners, board editors and read-only viewers, each with the rights they need.</p>
             </article>
           </div>
         </div>
       </section>
 
-      <section id="features" class="soft">
+      <section id="roadmap" class="soft">
         <div class="wrap">
           <div class="section-head">
-            <h2>Everything a team board needs</h2>
-            <p>Simple to start with, and enough depth for real projects.</p>
+            <span class="kicker">Roadmap</span>
+            <h2>Built in the open, shipping fast</h2>
+            <p>The features people miss most when they leave a hosted board. Six of ten have shipped.</p>
           </div>
-          <div class="grid">
-            <article class="feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="5" height="16" rx="1.5" /><rect x="10" y="4" width="5" height="11" rx="1.5" /><rect x="17" y="4" width="4" height="7" rx="1.5" /></svg>
-              <h3>Kanban boards</h3>
-              <p>Projects, boards, lists and cards, with drag and drop.</p>
-            </article>
-            <article class="feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9z" /></svg>
-              <h3>Real-time collaboration</h3>
-              <p>Every change shows up for everyone at once. No refresh.</p>
-            </article>
-            <article class="feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><path d="M14 3v6h6M8 13h8M8 17h5" /></svg>
-              <h3>Rich cards</h3>
-              <p>Markdown, attachments, comments, tasks, labels, custom fields, due dates and a stopwatch.</p>
-            </article>
-            <article class="feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
-              <h3>Notifications</h3>
-              <p>Send updates to over 100 services through Apprise.</p>
-            </article>
-            <article class="feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6" /></svg>
-              <h3>Webhooks and REST API</h3>
-              <p>Build your own integrations on a documented API.</p>
-            </article>
-            <article class="feature">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /></svg>
-              <h3>Secure sign-in</h3>
-              <p>Google sign-in, two-factor authentication with recovery codes, and personal API keys.</p>
-            </article>
-          </div>
+          <div class="progress" role="img" aria-label="6 of 10 roadmap features shipped"><i></i></div>
+          <ol class="roadmap">
+            <li class="done">
+              <h3>Saved filters</h3>
+              <p>Save a board filter and reopen it in one click.</p>
+              <a class="badge done" href="https://github.com/jakaria-istauk/tama/pull/7">Shipped · #7</a>
+            </li>
+            <li class="done">
+              <h3>Calendar view</h3>
+              <p>Cards on a month calendar; drag to reschedule.</p>
+              <a class="badge done" href="https://github.com/jakaria-istauk/tama/pull/11">Shipped · #11</a>
+            </li>
+            <li class="done">
+              <h3>Card templates</h3>
+              <p>Start cards with labels and tasks ready.</p>
+              <a class="badge done" href="https://github.com/jakaria-istauk/tama/pull/15">Shipped · #15</a>
+            </li>
+            <li class="done">
+              <h3>Recurring cards</h3>
+              <p>A card every day, week or month.</p>
+              <a class="badge done" href="https://github.com/jakaria-istauk/tama/pull/16">Shipped · #16</a>
+            </li>
+            <li class="done">
+              <h3>Automation rules</h3>
+              <p>"When this happens, do that" per board.</p>
+              <a class="badge done" href="https://github.com/jakaria-istauk/tama/pull/17">Shipped · #17</a>
+            </li>
+            <li class="done">
+              <h3>Start dates and timeline</h3>
+              <p>Cards as bars from start to due date.</p>
+              <a class="badge done" href="https://github.com/jakaria-istauk/tama/pull/19">Shipped · #19</a>
+            </li>
+            <li class="next">
+              <h3>Card dependencies</h3>
+              <p>"Blocked by" links, with a badge on blocked cards.</p>
+              <span class="badge next">Up next</span>
+            </li>
+            <li>
+              <h3>Board templates</h3>
+              <p>New boards with lists, labels and fields ready.</p>
+              <span class="badge">Later</span>
+            </li>
+            <li>
+              <h3>Email to board</h3>
+              <p>Each board gets an address; emails become cards.</p>
+              <span class="badge">Later</span>
+            </li>
+            <li>
+              <h3>Time reports</h3>
+              <p>Time per card, member and label, with CSV export.</p>
+              <span class="badge">Later</span>
+            </li>
+          </ol>
+          <p class="center">
+            <a class="btn btn-ghost" href="https://github.com/jakaria-istauk/tama/blob/master/docs/roadmap.md">Read the full roadmap</a>
+          </p>
         </div>
       </section>
 
-      <section id="ai">
-        <div class="wrap split">
-          <div>
-            <h2>Your AI assistant, on your board</h2>
-            <p>
-              Tama has a built-in
-              <a href="https://modelcontextprotocol.io">Model Context Protocol</a> server. Connect
-              an assistant and ask it to plan a sprint, sort a backlog or write up a card. It works
-              as you, so it sees and changes only what you can.
-            </p>
-            <ul class="checks">
-              <li>Claude and ChatGPT connect through OAuth, with a consent screen.</li>
-              <li>Coding agents connect with a personal API key.</li>
-              <li>See and disconnect connected apps at any time.</li>
-            </ul>
-            <div class="clients">
-              <span class="chip">Claude</span>
-              <span class="chip">ChatGPT</span>
-              <span class="chip">Claude Code</span>
-              <span class="chip">Codex</span>
-              <span class="chip">Cursor</span>
-              <span class="chip">VS Code</span>
-              <span class="chip">Gemini CLI</span>
-              <span class="chip">Windsurf</span>
-            </div>
-          </div>
-          <div class="terminal">
-            <div class="terminal-bar" aria-hidden="true"><i></i><i></i><i></i></div>
-            <pre><code><span class="c"># Connect Claude Code to your Tama</span>
-<span class="k">claude</span> mcp add --transport http tama \
-  <span class="s">https://tama.example.com/api/mcp</span> \
-  --header <span class="s">"X-Api-Key: &lt;api key&gt;"</span>
-
-<span class="c"># Then just ask</span>
-&gt; Move every overdue card on the Website
-  board to "This week" and assign them to me.</code></pre>
-          </div>
-        </div>
-      </section>
-
-      <section id="start" class="soft">
+      <section id="start">
         <div class="wrap">
           <div class="section-head">
+            <span class="kicker">Get started</span>
             <h2>Running in a few minutes</h2>
             <p>All you need is a server with Docker and Compose.</p>
           </div>
@@ -1071,50 +2095,10 @@ docker compose run --rm tama \
         </div>
       </section>
 
-      <section id="roadmap">
-        <div class="wrap">
-          <div class="section-head">
-            <h2>Roadmap</h2>
-            <p>
-              The features people miss most when they leave a hosted board: what has shipped and
-              what comes next, planned in the open.
-            </p>
-          </div>
-          <div class="roadmap">
-            <article class="feature">
-              <h3>Saved filters <span class="badge done">Shipped</span></h3>
-              <p>Save a board filter by member, label, creator or due date and get back to it in one click.</p>
-            </article>
-            <article class="feature">
-              <h3>Calendar view <span class="badge done">Shipped</span></h3>
-              <p>See every card with a due date on a month calendar, and drag to reschedule.</p>
-            </article>
-            <article class="feature">
-              <h3>Card templates <span class="badge done">Shipped</span></h3>
-              <p>Start bug reports, checklists or onboarding cards from a template with labels and tasks ready.</p>
-            </article>
-            <article class="feature">
-              <h3>Recurring cards <span class="badge done">Shipped</span></h3>
-              <p>Create a card every day, week or month for routine work like reports and reviews.</p>
-            </article>
-            <article class="feature">
-              <h3>Automation rules <span class="badge done">Shipped</span></h3>
-              <p>When a card moves to a list, assign it, label it, set a due date or notify someone.</p>
-            </article>
-            <article class="feature">
-              <h3>Timeline view <span class="badge done">Shipped</span></h3>
-              <p>Plan across weeks with cards on a timeline from start date to due date.</p>
-            </article>
-          </div>
-          <p class="center">
-            <a class="btn btn-ghost" href="https://github.com/jakaria-istauk/tama/blob/master/docs/roadmap.md">Read the full roadmap</a>
-          </p>
-        </div>
-      </section>
-
       <section id="license" class="soft">
         <div class="wrap">
           <div class="section-head">
+            <span class="kicker">License</span>
             <h2>Free to use, open to read</h2>
             <p>
               Tama is based on PLANKA and shares its license, the
@@ -1140,6 +2124,19 @@ docker compose run --rm tama \
           </div>
         </div>
       </section>
+
+      <section>
+        <div class="wrap">
+          <div class="final">
+            <h2>Bring your team's work home</h2>
+            <p>Free, self-hosted and ready for your AI assistant. Up and running in a few minutes.</p>
+            <div class="cta">
+              <a class="btn btn-primary" href="#start">Get started</a>
+              <a class="btn btn-ghost" href="https://github.com/jakaria-istauk/tama">Star on GitHub</a>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer>
@@ -1149,6 +2146,7 @@ docker compose run --rm tama \
           <nav class="footer-links" aria-label="Footer">
             <a href="https://github.com/jakaria-istauk/tama">GitHub</a>
             <a href="https://github.com/jakaria-istauk/tama/blob/master/docs/mcp.md">MCP docs</a>
+            <a href="https://github.com/jakaria-istauk/tama/blob/master/docs/roadmap.md">Roadmap</a>
             <a href="https://github.com/jakaria-istauk/tama/blob/master/CONTRIBUTING.md">Contributing</a>
             <a href="https://github.com/jakaria-istauk/tama/blob/master/SECURITY.md">Security</a>
             <a href="https://github.com/jakaria-istauk/tama/blob/master/LICENSE.md">License</a>
@@ -1161,5 +2159,57 @@ docker compose run --rm tama \
         </p>
       </div>
     </footer>
+
+    <script>
+      (function () {
+        var tabs = Array.prototype.slice.call(document.querySelectorAll('.tabs [role="tab"]'));
+        var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var timer = null;
+
+        function select(index, focus) {
+          tabs.forEach(function (tab, i) {
+            var on = i === index;
+            var panel = document.getElementById(tab.getAttribute('aria-controls'));
+            tab.setAttribute('aria-selected', on ? 'true' : 'false');
+            tab.tabIndex = on ? 0 : -1;
+            panel.hidden = !on;
+            panel.classList.toggle('show', on);
+          });
+          if (focus) tabs[index].focus();
+        }
+
+        function current() {
+          return tabs.findIndex(function (tab) {
+            return tab.getAttribute('aria-selected') === 'true';
+          });
+        }
+
+        function stop() {
+          clearInterval(timer);
+          timer = null;
+        }
+
+        tabs.forEach(function (tab, i) {
+          tab.addEventListener('click', function () {
+            stop();
+            select(i);
+          });
+          tab.addEventListener('keydown', function (event) {
+            var step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+            if (!step) return;
+            event.preventDefault();
+            stop();
+            select((current() + step + tabs.length) % tabs.length, true);
+          });
+        });
+
+        if (!reduced) {
+          timer = setInterval(function () {
+            select((current() + 1) % tabs.length);
+          }, 5000);
+          document.querySelector('.app').addEventListener('pointerenter', stop, { once: true });
+        }
+      })();
+    </script>
   </body>
 </html>
