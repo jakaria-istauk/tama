@@ -33,16 +33,16 @@ const AUTO_LOGOUT_TRANSLATION_KEYS = {
   [AutoLogoutModes.HOURS_12]: 'common.autoLogout_12h',
 };
 
-// Swatch colours match --pk-accent of each scheme in styles.module.scss
+// Swatch colours match --pk-accent of each scheme in styles.module.scss (light, dark)
 const COLOR_SCHEME_SWATCHES = {
-  [ColorSchemes.TANGERINE]: '#ea580c',
-  [ColorSchemes.TEAL]: '#0f766e',
-  [ColorSchemes.INDIGO]: '#4f46e5',
-  [ColorSchemes.FOREST]: '#2f5d50',
-  [ColorSchemes.NAVY]: '#1e3a5f',
-  [ColorSchemes.PLUM]: '#6d28d9',
-  [ColorSchemes.OCEAN]: '#1d6fe0',
-  [ColorSchemes.GRAPHITE]: '#27272a',
+  [ColorSchemes.TANGERINE]: ['#ea580c', '#fb8a3c'],
+  [ColorSchemes.TEAL]: ['#0f766e', '#14a396'],
+  [ColorSchemes.INDIGO]: ['#4f46e5', '#7c74ff'],
+  [ColorSchemes.FOREST]: ['#2f5d50', '#4e8e7a'],
+  [ColorSchemes.NAVY]: ['#1e3a5f', '#3a6596'],
+  [ColorSchemes.PLUM]: ['#6d28d9', '#8b5cf6'],
+  [ColorSchemes.OCEAN]: ['#1d6fe0', '#4b93f2'],
+  [ColorSchemes.GRAPHITE]: ['#27272a', '#52525b'],
 };
 
 const PreferencesPane = React.memo(() => {
@@ -118,9 +118,14 @@ const PreferencesPane = React.memo(() => {
             >
               <span
                 className={styles.swatchColor}
-                style={{ background: COLOR_SCHEME_SWATCHES[scheme] }}
+                style={{
+                  background: `linear-gradient(135deg, ${COLOR_SCHEME_SWATCHES[scheme][0]} 0%, ${COLOR_SCHEME_SWATCHES[scheme][0]} 55%, ${COLOR_SCHEME_SWATCHES[scheme][1]} 100%)`,
+                }}
               />
               <span className={styles.swatchName}>{t(`common.colorScheme_${scheme}`)}</span>
+              <span className={styles.swatchNote}>
+                {scheme === ColorSchemes.TANGERINE ? t('common.colorScheme_default') : '\u00a0'}
+              </span>
             </button>
           ))}
         </div>

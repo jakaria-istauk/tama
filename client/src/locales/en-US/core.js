@@ -178,6 +178,7 @@ export default {
       closed: 'Closed',
       color: 'Color',
       colorScheme: 'Color scheme',
+      colorScheme_default: 'Default',
       colorScheme_forest: 'Forest',
       colorScheme_graphite: 'Graphite',
       colorScheme_indigo: 'Indigo',
