@@ -12,6 +12,7 @@ import { BoardViews } from '../../../constants/Enums';
 import GridView from './GridView';
 import ListView from './ListView';
 import CalendarView from './CalendarView';
+import TimelineView from './TimelineView';
 
 const FiniteContent = React.memo(() => {
   const board = useSelector(selectors.selectCurrentBoard);
@@ -33,6 +34,10 @@ const FiniteContent = React.memo(() => {
 
   if (board.view === BoardViews.CALENDAR) {
     return <CalendarView />;
+  }
+
+  if (board.view === BoardViews.TIMELINE) {
+    return <TimelineView />;
   }
 
   let View;

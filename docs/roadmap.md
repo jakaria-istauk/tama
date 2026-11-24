@@ -18,7 +18,7 @@ Progress:
 - [x] 3. Card templates ([#15](https://github.com/jakaria-istauk/tama/pull/15))
 - [x] 4. Recurring cards ([#16](https://github.com/jakaria-istauk/tama/pull/16))
 - [x] 5. Automation rules ([#17](https://github.com/jakaria-istauk/tama/pull/17))
-- [ ] 6. Start dates and timeline view
+- [x] 6. Start dates and timeline view ([#19](https://github.com/jakaria-istauk/tama/pull/19))
 - [ ] 7. Card dependencies
 - [ ] 8. Board templates
 - [ ] 9. Email to board
@@ -31,8 +31,8 @@ Progress:
 | 3 | Card templates | ✅ Done ([#15](https://github.com/jakaria-istauk/tama/pull/15)) | M |
 | 4 | Recurring cards | ✅ Done ([#16](https://github.com/jakaria-istauk/tama/pull/16)) | M |
 | 5 | Automation rules | ✅ Done ([#17](https://github.com/jakaria-istauk/tama/pull/17)) | L |
-| 6 | Start dates and timeline view | ⏭️ Next | L |
-| 7 | Card dependencies | 📋 Planned | M |
+| 6 | Start dates and timeline view | ✅ Done ([#19](https://github.com/jakaria-istauk/tama/pull/19)) | L |
+| 7 | Card dependencies | ⏭️ Next | M |
 | 8 | Board templates | 💤 Later | S |
 | 9 | Email to board | 💤 Later | L |
 | 10 | Time reports | 💤 Later | S |
@@ -130,7 +130,11 @@ Per-board rules in the form "when this happens, do that", like Trello's Butler.
 - **Tests:** a test for each trigger and action, and a loop test (a rule that
   moves cards into its own trigger list runs once).
 
-## 6. Start dates and timeline view
+## 6. Start dates and timeline view ✅ Done
+
+Shipped in [#19](https://github.com/jakaria-istauk/tama/pull/19). Rows are per list
+only; rows per member and moving cards between rows by dragging are left for later.
+Cards without dates wait in a tray and get a due date when dropped on the timeline.
 
 - **Server:** add `start_date` to `card` (migration, nullable), with validation
   that it is not after `dueDate`.

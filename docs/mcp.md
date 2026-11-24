@@ -80,8 +80,8 @@ Any client that reads an `.mcp.json`-style config:
 | `create_board_automation` | Add a "when this happens, do that" rule: a trigger (card created or moved to a list, label added, due date passed, all tasks completed) and up to ten actions (move, labels, members, due date, comment), run on your behalf |
 | `update_board_automation` | Change a rule's name, trigger or actions, or turn it on or off |
 | `delete_board_automation` | Delete a rule; changes it already made stay |
-| `create_card` | New card, at the end of the list unless a position is given |
-| `update_card` | Name, description, type, due date |
+| `create_card` | New card, at the end of the list unless a position is given, with an optional start and due date |
+| `update_card` | Name, description, type, start date, due date |
 | `move_card` | Move to another list or board, at the end unless a position is given |
 | `delete_card` | Delete a card |
 | `create_task` | New task on a card; uses the first task list, creating one when the card has none |

@@ -72,6 +72,7 @@ export const BoardViews = {
   GRID: 'grid',
   LIST: 'list',
   CALENDAR: 'calendar',
+  TIMELINE: 'timeline',
 };
 
 export const BoardContexts = {

@@ -27,6 +27,7 @@
  *         - position
  *         - name
  *         - description
+ *         - startDate
  *         - dueDate
  *         - isDueCompleted
  *         - stopwatch
@@ -83,6 +84,12 @@
  *           nullable: true
  *           description: Detailed description of the card
  *           example: Add JWT-based authentication system...
+ *         startDate:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *           description: Start date for the card, never after the due date
+ *           example: 2023-12-25T00:00:00.000Z
  *         dueDate:
  *           type: string
  *           format: date-time
@@ -176,6 +183,10 @@ module.exports = {
       type: 'string',
       isNotEmptyString: true,
       allowNull: true,
+    },
+    startDate: {
+      type: 'ref',
+      columnName: 'start_date',
     },
     dueDate: {
       type: 'ref',

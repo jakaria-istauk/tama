@@ -66,6 +66,7 @@ module.exports = {
           position: trelloCard.pos,
           name: trelloCard.name,
           description: trelloCard.desc || null,
+          startDate: trelloCard.start || null,
           dueDate: trelloCard.due,
           isDueCompleted: trelloCard.due && trelloCard.dueComplete,
           listChangedAt: new Date().toISOString(),

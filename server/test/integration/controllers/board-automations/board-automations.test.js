@@ -559,6 +559,28 @@ describe('Board automations', () => {
       expect(nextCard.isDueCompleted).to.equal(null);
     });
 
+    it('clears a start date that would fall after the due date it sets', async () => {
+      const day = 24 * 60 * 60 * 1000;
+      const keptStartDate = new Date(Date.now() + day).toISOString();
+
+      const card = await createCard({ startDate: keptStartDate });
+
+      await runActions(card, [{ type: 'setDueDate', days: 3 }]);
+
+      let nextCard = await Card.qm.getOneById(card.id);
+      expect(new Date(nextCard.startDate).toISOString()).to.equal(keptStartDate);
+
+      await Card.qm.updateOne(card.id, {
+        startDate: new Date(Date.now() + 10 * day).toISOString(),
+      });
+
+      await runActions(card, [{ type: 'setDueDate', days: 3 }]);
+
+      nextCard = await Card.qm.getOneById(card.id);
+      expect(nextCard.startDate).to.equal(null);
+      expect(nextCard.dueDate).to.not.equal(null);
+    });
+
     it('post a comment as the rule creator', async () => {
       const card = await createCard();
 

@@ -20,6 +20,7 @@ const DESCRIPTION_BY_VIEW = {
   [BoardViews.GRID]: 'common.dynamicAndUnevenlySpacedLayout',
   [BoardViews.LIST]: 'common.sequentialDisplayOfCards',
   [BoardViews.CALENDAR]: 'common.cardsOnACalendarByDueDate',
+  [BoardViews.TIMELINE]: 'common.cardsOnATimelineFromStartToDueDate',
 };
 
 const DefaultView = React.memo(() => {

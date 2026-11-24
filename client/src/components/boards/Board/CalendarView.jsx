@@ -11,6 +11,7 @@ import { Button, Icon } from 'semantic-ui-react';
 import {
   addDays,
   addMonths,
+  differenceInCalendarDays,
   endOfMonth,
   endOfWeek,
   isSameDay,
@@ -164,9 +165,26 @@ const CalendarView = React.memo(() => {
         return;
       }
 
+      const dueDate = moveToDay(day, card.dueDate);
+
+      // A start date never comes after the due date, so it moves along by the same
+      // number of days, and no further than the due date
+      let startDate;
+      if (card.startDate && card.startDate > dueDate) {
+        startDate = addDays(
+          card.startDate,
+          differenceInCalendarDays(dueDate, card.dueDate || card.startDate),
+        );
+
+        if (startDate > dueDate) {
+          startDate = dueDate;
+        }
+      }
+
       dispatch(
         entryActions.updateCard(card.id, {
-          dueDate: moveToDay(day, card.dueDate),
+          dueDate,
+          ...(startDate && { startDate }),
         }),
       );
     },

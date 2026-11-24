@@ -51,6 +51,7 @@ export const BoardViewIcons = {
   [BoardViews.GRID]: 'th',
   [BoardViews.LIST]: 'unordered list',
   [BoardViews.CALENDAR]: 'calendar alternate outline',
+  [BoardViews.TIMELINE]: 'align left',
 };
 
 export const BoardContextIcons = {
