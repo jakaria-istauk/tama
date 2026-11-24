@@ -30,7 +30,11 @@
   }
 
   .divider {
-    font-weight: normal;
+    color: var(--pk-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin: 22px 0;
   }
 
   .form {
@@ -38,6 +42,17 @@
     flex: 1;
     flex-direction: column;
     justify-content: center;
+  }
+
+  // A soft wash of the accent behind the logo, fading into white
+  .formColumn {
+    background:
+      radial-gradient(
+        ellipse 70% 40% at 50% 0%,
+        var(--pk-accent-soft),
+        transparent 70%
+      ),
+      #fff;
   }
 
   .formTitle {
@@ -57,22 +72,41 @@
   .googleButton {
     align-items: center;
     background: #fff;
-    border: 1px solid rgba(9, 30, 66, 0.25);
-    color: #172b4d;
+    border: 1px solid var(--pk-border-strong);
+    border-radius: 10px;
+    box-shadow: var(--pk-shadow-sm);
+    color: var(--pk-text);
     display: flex;
-    font-size: 16px;
-    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    gap: 12px;
+    height: 46px;
     justify-content: center;
+    margin: 0;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
 
-    &:hover,
-    &:focus {
-      background: #f4f5f7;
+    &:hover {
+      background: #f9fafb;
+      border-color: #98a2b3;
+      box-shadow: var(--pk-shadow-md);
+      color: var(--pk-text);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 4px var(--pk-accent-soft);
+    }
+
+    &:active {
+      background: #f2f4f7;
     }
   }
 
   .googleIcon {
-    height: 18px;
-    width: 18px;
+    height: 20px;
+    width: 20px;
   }
 
   .grid {
@@ -85,10 +119,32 @@
     padding: 0;
   }
 
+  .input input {
+    background: #fff;
+    border: 1px solid var(--pk-border-strong);
+    border-radius: 10px;
+    box-shadow: var(--pk-shadow-sm);
+    color: var(--pk-text);
+    font-size: 15px;
+    height: 46px;
+    padding: 0 14px;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:focus {
+      border-color: var(--pk-accent);
+      border-radius: 10px;
+      box-shadow: 0 0 0 4px var(--pk-accent-soft);
+    }
+  }
+
   .inputLabel {
-    font-size: 16px;
+    color: var(--pk-text-secondary);
+    font-size: 14px;
+    font-weight: 600;
     line-height: 20px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   .inputWrapper {
@@ -168,7 +224,8 @@
   }
 
   .modeToggle {
-    color: #6b808c;
+    color: var(--pk-text-muted);
+    font-size: 14px;
     margin-top: 24px;
     text-align: center;
   }
@@ -176,9 +233,10 @@
   .modeToggleButton {
     background: none;
     border: none;
-    color: #2185d0;
+    color: var(--pk-accent);
     cursor: pointer;
     font: inherit;
+    font-weight: 600;
     padding: 0;
 
     &:hover {
@@ -188,6 +246,39 @@
     &:disabled {
       cursor: default;
       opacity: 0.5;
+    }
+  }
+
+  .submitButton {
+    margin: 8px 0 0;
+
+    :global(.ui.button) {
+      background: var(--pk-accent);
+      border-radius: 10px;
+      box-shadow:
+        0 1px 2px rgba(16, 24, 40, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      font-size: 15px;
+      font-weight: 600;
+      height: 46px;
+      transition:
+        background 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.1s ease;
+
+      &:hover {
+        background: var(--pk-accent-hover);
+        box-shadow: 0 6px 16px
+          color-mix(in srgb, var(--pk-accent) 30%, transparent);
+      }
+
+      &:active {
+        transform: translateY(1px);
+      }
+
+      &:focus-visible {
+        box-shadow: 0 0 0 4px var(--pk-accent-soft);
+      }
     }
   }
 
