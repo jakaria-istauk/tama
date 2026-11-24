@@ -49,7 +49,7 @@
  *           example: Development Board
  *         defaultView:
  *           type: string
- *           enum: [kanban, grid, list]
+ *           enum: [kanban, grid, list, calendar, timeline]
  *           default: kanban
  *           description: Default view for the board
  *           example: kanban
@@ -105,6 +105,7 @@ const Views = {
   GRID: 'grid',
   LIST: 'list',
   CALENDAR: 'calendar',
+  TIMELINE: 'timeline',
 };
 
 const ImportTypes = {

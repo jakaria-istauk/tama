@@ -146,4 +146,13 @@ describe('Card start dates', () => {
     expect(response.body.item.isDueCompleted).to.equal(null);
   });
 
+  it('accepts timeline as a default board view', async () => {
+    const response = await app()
+      .patch(`/api/boards/${board.id}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ defaultView: Board.Views.TIMELINE });
+
+    expect(response.status).to.equal(200);
+    expect(response.body.item.defaultView).to.equal('timeline');
+  });
 });
