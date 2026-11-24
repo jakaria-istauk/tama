@@ -20,10 +20,19 @@ module.exports = {
 
   exits: {
     positionMustBeInValues: {},
+    startDateInValuesMustNotBeAfterDueDate: {},
   },
 
   async fn(inputs) {
     const { values } = inputs;
+
+    if (
+      values.startDate &&
+      values.dueDate &&
+      new Date(values.startDate) > new Date(values.dueDate)
+    ) {
+      throw 'startDateInValuesMustNotBeAfterDueDate';
+    }
 
     if (values.dueDate) {
       if (_.isNil(values.isDueCompleted)) {

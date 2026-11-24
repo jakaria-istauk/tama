@@ -205,12 +205,17 @@ module.exports = {
 
           return;
         }
-        case ActionTypes.SET_DUE_DATE:
+        case ActionTypes.SET_DUE_DATE: {
+          const dueDate = new Date(Date.now() + action.days * DAY);
+
           await updateCard({
-            dueDate: new Date(Date.now() + action.days * DAY).toISOString(),
+            dueDate: dueDate.toISOString(),
+            // A start date after the new due date would be rejected, so it is cleared
+            ...(card.startDate && new Date(card.startDate) > dueDate && { startDate: null }),
           });
 
           return;
+        }
         case ActionTypes.CLEAR_DUE_DATE:
           if (card.dueDate) {
             await updateCard({

@@ -52,6 +52,11 @@
  *                 nullable: true
  *                 description: Detailed description of the card
  *                 example: Add JWT-based authentication system...
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Start date for the card, never after the due date
+ *                 example: 2023-12-25T00:00:00.000Z
  *               dueDate:
  *                 type: string
  *                 format: date-time
@@ -116,6 +121,9 @@ const Errors = {
   POSITION_MUST_BE_PRESENT: {
     positionMustBePresent: 'Position must be present',
   },
+  START_DATE_MUST_NOT_BE_AFTER_DUE_DATE: {
+    startDateMustNotBeAfterDueDate: 'Start date must not be after due date',
+  },
 };
 
 module.exports = {
@@ -145,6 +153,10 @@ module.exports = {
       maxLength: 1048576,
       allowNull: true,
     },
+    startDate: {
+      type: 'string',
+      custom: isDueDate,
+    },
     dueDate: {
       type: 'string',
       custom: isDueDate,
@@ -167,6 +179,9 @@ module.exports = {
       responseType: 'notFound',
     },
     positionMustBePresent: {
+      responseType: 'unprocessableEntity',
+    },
+    startDateMustNotBeAfterDueDate: {
       responseType: 'unprocessableEntity',
     },
   },
@@ -196,6 +211,7 @@ module.exports = {
       'position',
       'name',
       'description',
+      'startDate',
       'dueDate',
       'isDueCompleted',
       'stopwatch',
@@ -212,7 +228,11 @@ module.exports = {
         },
         request: this.req,
       })
-      .intercept('positionMustBeInValues', () => Errors.POSITION_MUST_BE_PRESENT);
+      .intercept('positionMustBeInValues', () => Errors.POSITION_MUST_BE_PRESENT)
+      .intercept(
+        'startDateInValuesMustNotBeAfterDueDate',
+        () => Errors.START_DATE_MUST_NOT_BE_AFTER_DUE_DATE,
+      );
 
     return {
       item: card,

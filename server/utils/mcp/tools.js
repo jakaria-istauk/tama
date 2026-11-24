@@ -287,6 +287,7 @@ module.exports = [
       description: z.string().min(1).max(1048576).optional().describe('Markdown'),
       type: z.enum(Object.values(Card.Types)).default(Card.Types.PROJECT),
       position: z.number().min(0).optional(),
+      startDate: z.iso.datetime({ offset: true }).optional().describe('Must not be after dueDate'),
       dueDate: z.iso.datetime({ offset: true }).optional(),
     },
     async handler(inputs, req) {
@@ -505,13 +506,18 @@ module.exports = [
   },
   {
     name: 'update_card',
-    description: 'Update the name, description, type or due date of a card.',
+    description: 'Update the name, description, type, start date or due date of a card.',
     annotations: WRITE,
     inputSchema: {
       cardId: id('Card ID'),
       name: z.string().min(1).max(1024).optional(),
       description: z.string().min(1).max(1048576).nullable().optional().describe('Markdown'),
       type: z.enum(Object.values(Card.Types)).optional(),
+      startDate: z.iso
+        .datetime({ offset: true })
+        .nullable()
+        .optional()
+        .describe('Must not be after dueDate'),
       dueDate: z.iso.datetime({ offset: true }).nullable().optional(),
       isDueCompleted: z.boolean().nullable().optional(),
     },

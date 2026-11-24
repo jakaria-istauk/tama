@@ -43,6 +43,7 @@ module.exports = {
     listMustBeInValues: {},
     listInValuesMustBelongToBoard: {},
     coverAttachmentInValuesMustContainImage: {},
+    startDateInValuesMustNotBeAfterDueDate: {},
   },
 
   // TODO: use normalizeValues and refactor
@@ -106,6 +107,11 @@ module.exports = {
     }
 
     const dueDate = _.isUndefined(values.dueDate) ? inputs.record.dueDate : values.dueDate;
+    const startDate = _.isUndefined(values.startDate) ? inputs.record.startDate : values.startDate;
+
+    if (startDate && dueDate && new Date(startDate) > new Date(dueDate)) {
+      throw 'startDateInValuesMustNotBeAfterDueDate';
+    }
 
     if (dueDate) {
       const isDueCompleted = _.isUndefined(values.isDueCompleted)
